@@ -1,0 +1,203 @@
+package com.yopachara.fourtosixmethod.data
+
+class Recipe(
+    _ratio: Int = 12,
+    _coffeeWeight: Float = 15f,
+    _balance: Balance = Balance.Basic,
+    _level: Level = Level.Basic,
+    var steps: List<Step> = getDefaultSteps(),
+) {
+    var ratio: Int = _ratio
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    var coffeeWeight: Float = _coffeeWeight
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    var balance: Balance = _balance
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    var level: Level = _level
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    fun getTotalWater(): Float {
+        return (coffeeWeight.times(ratio))
+    }
+
+    fun getTotalState(): Int {
+        return when (level) {
+            Level.Basic -> 5
+            Level.Strong -> 6
+            Level.Week -> 4
+        }
+    }
+
+
+    fun getStateTotalTime(state: State?): Int {
+        return when (state) {
+            State.First,
+            State.Second,
+            -> 45
+            State.Third,
+            State.Forth,
+            State.Fifth,
+            State.Sixth,
+            -> {
+                when (level) {
+                    Level.Basic -> if (state != State.Fifth) 45 else 30
+                    Level.Strong -> 30
+                    Level.Week -> 60
+                }
+            }
+            null -> 45
+        }
+    }
+
+    fun getTotalTime(): Int {
+        return when (level) {
+            Level.Basic,
+            Level.Strong,
+            Level.Week,
+            -> 210
+        }
+    }
+
+    fun getCurrentWater(state: State?): Float {
+        return steps[state?.ordinal ?: 0].waterWeight
+    }
+
+    fun getWaterPercentState(secondsRemaining: Int?): Float {
+        return when (getCurrentStatePosition(secondsRemaining)) {
+            State.First -> balance.sweetIndex
+            State.Second -> balance.acidIndex
+            State.Third,
+            State.Forth,
+            State.Fifth,
+            State.Sixth,
+            -> level.firstIndex
+            null -> balance.sweetIndex
+        }
+    }
+
+
+    fun getCurrentStatePosition(secondsRemaining: Int?): State? {
+        return when (secondsRemaining) {
+            in 166..210 -> {
+                State.First
+            }
+            in 121..165 -> {
+                State.Second
+            }
+            in 0..120 -> {
+                return when (level) {
+                    Level.Basic -> when (secondsRemaining) {
+                        in 0..30 -> State.Fifth
+                        in 31..75 -> State.Forth
+                        in 76..120 -> State.Third
+                        else -> null
+                    }
+
+                    Level.Strong -> when (secondsRemaining) {
+                        in 0..30 -> State.Sixth
+                        in 31..60 -> State.Fifth
+                        in 61..90 -> State.Forth
+                        in 91..120 -> State.Third
+                        else -> null
+                    }
+
+                    Level.Week -> when (secondsRemaining) {
+                        in 0..60 -> State.Forth
+                        in 61..120 -> State.Third
+                        else -> null
+                    }
+                }
+            }
+            else -> null
+        }
+    }
+
+
+    private fun generateSteps() {
+        steps = arrayListOf<Step>().apply {
+            for (i in 1..getTotalState()) {
+                add(
+                    computeStep(
+                        state = i.intToState(),
+                        level = level,
+                        balance = balance,
+                        weight = getTotalWater()
+                    )
+                )
+            }
+        }
+    }
+
+    fun getCurrentStateTime(secondsRemaining: Int?): Int {
+        secondsRemaining?.let { remaining ->
+            return when (getCurrentStatePosition(remaining)) {
+                State.First,
+                State.Second,
+                -> {
+                    remaining.minus(120).rem(45)
+                }
+                State.Third,
+                State.Forth,
+                State.Fifth,
+                State.Sixth,
+                -> {
+                    when (level) {
+                        Level.Basic -> if (getCurrentStatePosition(remaining) != State.Fifth) {
+                            remaining.minus(30).rem(45)
+                        } else {
+                            remaining.rem(30)
+                        }
+                        Level.Strong -> remaining.rem(30)
+                        Level.Week -> remaining.rem(60)
+                    }
+                }
+                null -> TODO()
+            }
+        } ?: return 45
+    }
+
+
+    override fun equals(other: Any?): Boolean {
+        return false
+    }
+}
+
+fun getDefaultSteps(): List<Step> {
+    return arrayListOf<Step>().apply {
+        add(Step(time = 45,
+            waterWeight = 36f,
+            stepPercentage = 0.20f,
+            state = State.First))
+        add(Step(time = 45,
+            waterWeight = 36f,
+            stepPercentage = 0.20f,
+            state = State.Second))
+        add(Step(time = 45,
+            waterWeight = 36f,
+            stepPercentage = 0.20f,
+            state = State.Third))
+        add(Step(time = 45,
+            waterWeight = 36f,
+            stepPercentage = 0.20f,
+            state = State.Forth))
+        add(Step(time = 30,
+            waterWeight = 36f,
+            stepPercentage = 0.20f,
+            state = State.Fifth))
+    }
+}

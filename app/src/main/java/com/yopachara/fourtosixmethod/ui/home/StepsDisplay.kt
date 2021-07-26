@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,16 +32,15 @@ fun StepsDisplay(timerState: TimerState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 8.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
+                .padding(vertical = 8.dp)
                 .fillMaxWidth()
-                .background(
-                        Color.White
-                ),
 
-            ) {
+        ) {
             Text(text = """time""",
                 style = Typography.body1,
                 modifier = Modifier.padding(
@@ -73,15 +73,16 @@ fun StepsDisplay(timerState: TimerState) {
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
                         .fillParentMaxWidth()
+                        .padding(vertical = 2.dp)
                         .background(
-                        color = if (index == timerState.getCurrentStateIndex()) {
-                                Color.LightGray
+                            color = if (index == timerState.getCurrentStateIndex()) {
+                                MaterialTheme.colors.primaryVariant
                             } else {
-                            Color.White
-                        }
-                    ),
+                                Color.Transparent
+                            }
+                        ),
 
-                ) {
+                    ) {
                     Text(text = """${item.time} sec""",
                         style = Typography.body1,
                         modifier = Modifier.padding(

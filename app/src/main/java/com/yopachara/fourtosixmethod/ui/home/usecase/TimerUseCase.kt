@@ -2,6 +2,7 @@ package com.yopachara.fourtosixmethod.ui.home.usecase
 
 import com.yopachara.fourtosixmethod.data.Balance
 import com.yopachara.fourtosixmethod.data.Level
+import com.yopachara.fourtosixmethod.data.Recipe
 import com.yopachara.fourtosixmethod.data.TimerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -19,8 +20,8 @@ class TimerUseCase(private val timerScope: CoroutineScope) {
     fun toggleTime() {
         job = if (job == null || job?.isCompleted == true) {
             timerScope.launch {
-                initTimer(_timerStateFlow.value.getTotalTime()) { remainingTime ->
-                    val second = _timerStateFlow.value.getTotalTime() - remainingTime
+                initTimer(_timerStateFlow.value.recipe.getTotalTime()) { remainingTime ->
+                    val second = _timerStateFlow.value.recipe.getTotalTime() - remainingTime
                     _timerStateFlow.value.copy(
                         secondsRemaining = remainingTime,
                         seconds = second,
@@ -39,25 +40,29 @@ class TimerUseCase(private val timerScope: CoroutineScope) {
 
     fun setCoffeeWeight(value: Float) {
         _timerStateFlow.value = _timerStateFlow.value.copy(
-            weight = value
+            recipe = _timerStateFlow.value.recipe.apply {
+                coffeeWeight = value
+            }
         )
     }
 
     fun setCoffeeRatio(value: Int) {
-        _timerStateFlow.value = _timerStateFlow.value.copy(
-            ratio = value
-        )
+        _timerStateFlow.value = _timerStateFlow.value.copy().apply {
+            recipe.ratio = value
+        }
     }
 
     fun setCoffeeBalance(value: Balance) {
-        _timerStateFlow.value = _timerStateFlow.value.copy(
-            balance = value
-        )
+        _timerStateFlow.value = _timerStateFlow.value.copy().apply {
+            recipe.balance = value
+        }
     }
 
     fun setCoffeeLevel(value: Level) {
         _timerStateFlow.value = _timerStateFlow.value.copy(
-            level = value
+            recipe = _timerStateFlow.value.recipe.apply {
+                level = value
+            }
         )
     }
 

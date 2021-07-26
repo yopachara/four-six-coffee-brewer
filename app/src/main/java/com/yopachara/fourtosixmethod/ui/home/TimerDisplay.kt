@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.*
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.yopachara.fourtosixmethod.data.TimerState
+import com.yopachara.fourtosixmethod.ui.theme.Typography
 
 @Composable
 fun TimerDisplay(timerState: TimerState, toggleStartStop: () -> Unit) {
@@ -87,7 +88,7 @@ fun TimerDisplay(timerState: TimerState, toggleStartStop: () -> Unit) {
         )
 
         Text(
-            text = timerState.getCurrentStateTime().toString(),
+            text = timerState.getCurrentStateMaxTime().toString(),
             fontSize = 32.sp,
             textAlign = TextAlign.Center,
             fontStyle = FontStyle.Italic,

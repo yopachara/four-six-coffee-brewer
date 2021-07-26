@@ -25,10 +25,10 @@ fun RatioDisplay(timerState: TimerState, setRatioChange: (Int) -> Unit) {
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
     ) {
-        var sliderPosition by remember { mutableStateOf(timerState.ratio) }
+        var sliderPosition by remember { mutableStateOf(timerState.recipe.ratio) }
 
         Text(
-            text = "1:${timerState.ratio.toString()}",
+            text = "1:${timerState.recipe.ratio.toString()}",
             fontSize = 32.sp,
             textAlign = TextAlign.Center,
             fontStyle = FontStyle.Italic,

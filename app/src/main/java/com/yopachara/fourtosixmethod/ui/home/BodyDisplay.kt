@@ -25,7 +25,7 @@ fun BodyDisplay(timerState: TimerState, changeBodyLevel: (Level) -> Unit) {
         modifier = Modifier
             .padding(horizontal = 24.dp)
     ) {
-        val mRememberObserver = remember { mutableStateOf(timerState.level) }
+        val mRememberObserver = remember { mutableStateOf(timerState.recipe.level) }
 
         Text(
             text = "Body",

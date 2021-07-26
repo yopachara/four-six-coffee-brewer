@@ -25,10 +25,10 @@ fun WeightDisplay(timerState: TimerState, setWeight: (Float) -> Unit) {
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
     ) {
-        var sliderPosition by remember { mutableStateOf(timerState.weight * 10) }
+        var sliderPosition by remember { mutableStateOf(timerState.recipe.coffeeWeight * 10) }
 
         Text(
-            text = "${timerState.weight.toString()} g",
+            text = "${timerState.recipe.coffeeWeight.toString()} g",
             fontSize = 32.sp,
             textAlign = TextAlign.Center,
             fontStyle = FontStyle.Italic,

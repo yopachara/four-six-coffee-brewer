@@ -44,12 +44,7 @@ class MainActivity : ComponentActivity() {
                 )
 
                 Column() {
-                    TimerDisplay(timerState.value) {
-                        vm.toggleStart()
-                        scope.launch {
-                            bottomSheetScaffoldState.bottomSheetState.collapse()
-                        }
-                    }
+
                     BottomSheetScaffold(
                         scaffoldState = bottomSheetScaffoldState,
                         sheetContent = {
@@ -90,9 +85,15 @@ class MainActivity : ComponentActivity() {
                                     contentDescription = "Localized description")
                             }
                         },
-                    ) { innerPadding ->
-                        Text(text = "Hello !")
+                    ) {
+                        TimerDisplay(timerState.value) {
+                            vm.toggleStart()
+                            scope.launch {
+                                bottomSheetScaffoldState.bottomSheetState.collapse()
+                            }
+                        }
 
+                        StepsDisplay(timerState.value)
 
                     }
 

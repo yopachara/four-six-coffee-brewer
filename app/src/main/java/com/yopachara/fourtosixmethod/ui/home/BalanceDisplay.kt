@@ -25,7 +25,7 @@ fun BalanceDisplay(timerState: TimerState, changeBalanceLevel: (Balance) -> Unit
         modifier = Modifier
             .padding(horizontal = 24.dp)
     ) {
-        val mRememberObserver = remember { mutableStateOf(timerState.balance) }
+        val mRememberObserver = remember { mutableStateOf(timerState.recipe.balance) }
 
         Text(
             text = "Balance",

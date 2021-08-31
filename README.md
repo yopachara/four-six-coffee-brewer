@@ -1,5 +1,10 @@
 # 4:6 Method Brewer Scale ☕
 
+This is the coffee timer scale application for calculating the 4:6 method style.
+Can adjust weight, ratio, and taste preference (Body, Sweet, Acidity) easier!!
+
 respect to Tetsu Kasuya
 
-<img width="458" alt="Screen Shot 2564-07-27 at 00 10 27" src="https://user-images.githubusercontent.com/9361646/127030619-38b2cbcd-09b1-4bc9-a844-26f336d6616e.png"><img width="458" alt="Screen Shot 2564-07-27 at 00 10 35" src="https://user-images.githubusercontent.com/9361646/127030607-844aa73d-0aa1-428e-9bc8-188156daa2f3.png">
+![Screen Shot 2564-08-31 at 16 24 15](https://user-images.githubusercontent.com/9361646/131477901-a80fbc8c-6652-4ea7-aa69-95d663b1bc02.png)
+![Screen Shot 2564-08-31 at 16 24 03](https://user-images.githubusercontent.com/9361646/131477916-8e5d2fb3-6561-42f6-b2c8-1683f721343f.png)
+![Screen Shot 2564-08-31 at 16 24 00](https://user-images.githubusercontent.com/9361646/131477921-516acd61-d229-4d19-ac3a-935b658950dc.png)

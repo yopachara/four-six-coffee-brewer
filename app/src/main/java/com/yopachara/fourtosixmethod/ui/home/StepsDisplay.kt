@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import com.yopachara.fourtosixmethod.data.Step
 import com.yopachara.fourtosixmethod.data.TimerState
 import com.yopachara.fourtosixmethod.ui.theme.Typography
+import java.math.RoundingMode
 import java.sql.Time
 import kotlin.math.roundToInt
 
@@ -41,25 +42,25 @@ fun StepsDisplay(timerState: TimerState) {
                 .fillMaxWidth()
 
         ) {
-            Text(text = """time""",
+            Text(text = "time",
                 style = Typography.body1,
                 modifier = Modifier.padding(
                     horizontal = 12.dp
                 )
             )
-            Text(text = """water""",
+            Text(text = "water",
                 style = Typography.body1,
                 modifier = Modifier.padding(
                     horizontal = 12.dp
                 )
             )
-            Text(text = """percentage""",
+            Text(text = "percentage",
                 style = Typography.body1,
                 modifier = Modifier.padding(
                     horizontal = 12.dp
                 )
             )
-            Text(text = """total""",
+            Text(text = "total",
                 style = Typography.body1,
                 modifier = Modifier.padding(
                     horizontal = 12.dp
@@ -76,7 +77,7 @@ fun StepsDisplay(timerState: TimerState) {
                         .padding(vertical = 2.dp)
                         .background(
                             color = if (index == timerState.getCurrentStateIndex()) {
-                                MaterialTheme.colors.primaryVariant
+                                MaterialTheme.colors.secondaryVariant
                             } else {
                                 Color.Transparent
                             }
@@ -89,7 +90,7 @@ fun StepsDisplay(timerState: TimerState) {
                             horizontal = 12.dp
                         )
                     )
-                    Text(text = """${item.waterWeight} g""",
+                    Text(text = """${item.getWaterWithScale(1)} g""",
                         style = Typography.body1,
                         modifier = Modifier.padding(
                             horizontal = 12.dp
@@ -117,7 +118,7 @@ fun StepsDisplay(timerState: TimerState) {
 
 fun weightOnScale(index: Int, steps: List<Step>): String {
     return if (index == 0) {
-        steps[index].waterWeight.toString()
+        steps[index].waterWeight.toBigDecimal().setScale(1, RoundingMode.UP).toString()
     } else {
         var total = 0f
         steps.forEachIndexed { currentIndex, step ->
@@ -125,7 +126,7 @@ fun weightOnScale(index: Int, steps: List<Step>): String {
                 total += step.waterWeight
             }
         }
-        total.toString()
+        total.toBigDecimal().setScale(1, RoundingMode.UP).toString()
     }
 }
 

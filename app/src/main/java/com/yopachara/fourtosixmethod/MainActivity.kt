@@ -3,18 +3,11 @@ package com.yopachara.fourtosixmethod
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,8 +18,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yopachara.fourtosixmethod.data.TimerState
 import com.yopachara.fourtosixmethod.ui.home.*
 import com.yopachara.fourtosixmethod.ui.theme.FourSixMethodTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 @ExperimentalMaterialApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +28,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FourSixMethodTheme {
                 val vm: TimerViewModel = viewModel()
+                val historyState = vm.historyStateFlow.collectAsState()
                 val timerState = vm.timerStateFlow.collectAsState()
                 val scope = rememberCoroutineScope()
 
@@ -44,7 +39,6 @@ class MainActivity : ComponentActivity() {
                 )
 
                 Column() {
-
                     BottomSheetScaffold(
                         scaffoldState = bottomSheetScaffoldState,
                         sheetContent = {
@@ -67,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
                             }
                         },
-                        sheetPeekHeight = 48.dp,
+                        sheetPeekHeight = 84.dp,
                         floatingActionButtonPosition = FabPosition.End,
                         floatingActionButton = {
                             FloatingActionButton(
@@ -86,7 +80,7 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                     ) {
-                        TimerDisplay(timerState.value) {
+                        TimerDisplay(timerState.value, historyState.value) {
                             vm.toggleStart()
                             scope.launch {
                                 bottomSheetScaffoldState.bottomSheetState.collapse()
@@ -115,7 +109,7 @@ fun DefaultPreview() {
     FourSixMethodTheme {
         val timerState = TimerState()
         Column() {
-            TimerDisplay(timerState) {}
+            TimerDisplay(timerState, emptyList()) {}
             WeightDisplay(timerState) { weight ->
             }
             RatioDisplay(timerState) { ratio ->

@@ -1,11 +1,25 @@
 package com.yopachara.fourtosixmethod.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.math.RoundingMode
+
+@Entity
 data class Step(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0,
     val time: Int,
     val waterWeight: Float,
     val stepPercentage: Float,
     val state: State,
-)
+) {
+    fun getWaterWithScale(scale: Int): String {
+        return waterWeight.toBigDecimal().setScale(scale, RoundingMode.UP).toString()
+    }
+}
 
 fun computeStep(state: State, level: Level, balance: Balance, weight: Float): Step {
     val time = getStateTotalTime(state, level)

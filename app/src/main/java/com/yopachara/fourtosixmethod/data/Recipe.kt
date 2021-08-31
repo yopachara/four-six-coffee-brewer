@@ -1,30 +1,48 @@
 package com.yopachara.fourtosixmethod.data
 
+import androidx.room.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.time.LocalDate
+import java.util.*
+import javax.inject.Inject
+
+@Entity
 class Recipe(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0,
     _ratio: Int = 12,
     _coffeeWeight: Float = 15f,
     _balance: Balance = Balance.Basic,
     _level: Level = Level.Basic,
+    @ColumnInfo(name = "steps")
     var steps: List<Step> = getDefaultSteps(),
+    @ColumnInfo(name = "createAt")
+    var createAt: Date = Date()
 ) {
+
+    @ColumnInfo(name = "ratio")
     var ratio: Int = _ratio
         set(value) {
             field = value
             generateSteps()
         }
 
+    @ColumnInfo(name = "coffee_weight")
     var coffeeWeight: Float = _coffeeWeight
         set(value) {
             field = value
             generateSteps()
         }
 
+    @ColumnInfo(name = "balance")
     var balance: Balance = _balance
         set(value) {
             field = value
             generateSteps()
         }
 
+    @ColumnInfo(name = "level")
     var level: Level = _level
         set(value) {
             field = value
@@ -179,25 +197,72 @@ class Recipe(
 
 fun getDefaultSteps(): List<Step> {
     return arrayListOf<Step>().apply {
-        add(Step(time = 45,
-            waterWeight = 36f,
-            stepPercentage = 0.20f,
-            state = State.First))
-        add(Step(time = 45,
-            waterWeight = 36f,
-            stepPercentage = 0.20f,
-            state = State.Second))
-        add(Step(time = 45,
-            waterWeight = 36f,
-            stepPercentage = 0.20f,
-            state = State.Third))
-        add(Step(time = 45,
-            waterWeight = 36f,
-            stepPercentage = 0.20f,
-            state = State.Forth))
-        add(Step(time = 30,
-            waterWeight = 36f,
-            stepPercentage = 0.20f,
-            state = State.Fifth))
+        add(
+            Step(
+                time = 45,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.First
+            )
+        )
+        add(
+            Step(
+                time = 45,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.Second
+            )
+        )
+        add(
+            Step(
+                time = 45,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.Third
+            )
+        )
+        add(
+            Step(
+                time = 45,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.Forth
+            )
+        )
+        add(
+            Step(
+                time = 30,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.Fifth
+            )
+        )
+    }
+}
+
+@ProvidedTypeConverter
+class DateConverter  @Inject constructor(){
+    @TypeConverter
+    fun recipeToString(date: Date): Long {
+        return date.time
+    }
+
+    @TypeConverter
+    fun stringToRecipe(value: Long): Date {
+        return Date(value)
+    }
+}
+
+@ProvidedTypeConverter
+class StateListConverter @Inject constructor(){
+    @TypeConverter
+    fun stateToString(recipe: List<Step>): String {
+        return Gson().toJson(recipe)
+    }
+
+    @TypeConverter
+    fun stringToState(value: String): List<Step> {
+        val result = Gson().fromJson(value, Array<Step>::class.java).toList()
+        return result
     }
 }

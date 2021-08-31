@@ -15,7 +15,8 @@ data class TimerState(
 
     private fun getTimeDisplay(seconds: Int?): String {
         return if (seconds != null) {
-            String.format("%02d:%02d",
+            String.format(
+                "%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(seconds.toLong() * 1000),
                 TimeUnit.MILLISECONDS.toSeconds(seconds.toLong() * 1000) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(seconds.toLong() * 1000))
@@ -29,8 +30,11 @@ data class TimerState(
     // Show 100% if seconds remaining is null
     val progressPercentage: Float = (secondsRemaining ?: totalSeconds) / totalSeconds.toFloat()
     val statePercentage: Float =
-        recipe.getCurrentStateTime(secondsRemaining) / recipe.getStateTotalTime(recipe.getCurrentStatePosition(
-            secondsRemaining)).toFloat()
+        (recipe.getStateTotalTime(
+            recipe.getCurrentStatePosition(secondsRemaining)
+        ).minus(seconds ?: 0)) / recipe.getStateTotalTime(
+            recipe.getCurrentStatePosition(secondsRemaining)
+        ).toFloat()
 
 
     fun getWaterWeightCurrentState(): Float {

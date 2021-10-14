@@ -33,7 +33,16 @@ class TimerUseCase @Inject constructor(
                     _historyStateFlow.value = emptyList()
                 }
                 is Result.Success -> {
-                    _historyStateFlow.value = result.data
+                    _historyStateFlow.value = result.data?.also {
+                        _timerStateFlow.value.recipe.apply {
+                        val latestRecipe = it.first()
+                            setCoffeeWeight(latestRecipe.coffeeWeight)
+                            setCoffeeBalance(latestRecipe.balance)
+                            setCoffeeLevel(latestRecipe.level)
+                            setCoffeeRatio(latestRecipe.ratio)
+                        }
+                    }
+
                 }
                 else -> {
                     _historyStateFlow.value = emptyList()

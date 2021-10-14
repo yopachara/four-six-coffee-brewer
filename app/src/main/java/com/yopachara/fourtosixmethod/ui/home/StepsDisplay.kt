@@ -42,6 +42,12 @@ fun StepsDisplay(timerState: TimerState) {
                 .fillMaxWidth()
 
         ) {
+            Text(text = "step",
+                style = Typography.body1,
+                modifier = Modifier.padding(
+                    horizontal = 12.dp
+                )
+            )
             Text(text = "time",
                 style = Typography.body1,
                 modifier = Modifier.padding(
@@ -49,12 +55,6 @@ fun StepsDisplay(timerState: TimerState) {
                 )
             )
             Text(text = "water",
-                style = Typography.body1,
-                modifier = Modifier.padding(
-                    horizontal = 12.dp
-                )
-            )
-            Text(text = "percentage",
                 style = Typography.body1,
                 modifier = Modifier.padding(
                     horizontal = 12.dp
@@ -84,6 +84,12 @@ fun StepsDisplay(timerState: TimerState) {
                         ),
 
                     ) {
+                    Text(text = """${(index+1)}""",
+                        style = Typography.body1,
+                        modifier = Modifier.padding(
+                            horizontal = 12.dp
+                        )
+                    )
                     Text(text = """${item.time} sec""",
                         style = Typography.body1,
                         modifier = Modifier.padding(
@@ -91,12 +97,6 @@ fun StepsDisplay(timerState: TimerState) {
                         )
                     )
                     Text(text = """${item.getWaterWithScale(1)} g""",
-                        style = Typography.body1,
-                        modifier = Modifier.padding(
-                            horizontal = 12.dp
-                        )
-                    )
-                    Text(text = """${(item.stepPercentage * 100)} %""",
                         style = Typography.body1,
                         modifier = Modifier.padding(
                             horizontal = 12.dp

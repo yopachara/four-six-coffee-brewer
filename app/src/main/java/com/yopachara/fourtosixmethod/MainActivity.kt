@@ -1,25 +1,30 @@
 package com.yopachara.fourtosixmethod
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.*
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yopachara.fourtosixmethod.data.TimerState
 import com.yopachara.fourtosixmethod.ui.home.*
 import com.yopachara.fourtosixmethod.ui.theme.FourSixMethodTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+
 @AndroidEntryPoint
 @ExperimentalMaterialApi
 class MainActivity : ComponentActivity() {
@@ -38,11 +43,19 @@ class MainActivity : ComponentActivity() {
                     )
                 )
 
+                Log.i("timerState",timerState.value.toString())
+
                 Column() {
                     BottomSheetScaffold(
                         scaffoldState = bottomSheetScaffoldState,
                         sheetContent = {
-                            Column() {
+                            Column(
+                                modifier = Modifier
+                                    .padding(
+                                        top = 40.dp
+                                    )
+                                    .background(color = Color.White)
+                            ) {
 
                                 WeightDisplay(timerState.value) { weight ->
                                     vm.setWeight(weight)
@@ -61,7 +74,9 @@ class MainActivity : ComponentActivity() {
 
                             }
                         },
-                        sheetPeekHeight = 84.dp,
+                        sheetElevation = 0.dp,
+                        sheetBackgroundColor = Color.Transparent,
+                        sheetPeekHeight = 40.dp,
                         floatingActionButtonPosition = FabPosition.End,
                         floatingActionButton = {
                             FloatingActionButton(
@@ -75,8 +90,10 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             ) {
-                                Icon(Icons.Default.Settings,
-                                    contentDescription = "Localized description")
+                                Icon(
+                                    Icons.Default.Settings,
+                                    contentDescription = "Localized description"
+                                )
                             }
                         },
                     ) {

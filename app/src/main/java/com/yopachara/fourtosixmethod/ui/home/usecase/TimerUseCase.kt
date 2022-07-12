@@ -1,6 +1,5 @@
 package com.yopachara.fourtosixmethod.ui.home.usecase
 
-import android.util.Log
 import com.yopachara.fourtosixmethod.data.*
 import com.yopachara.fourtosixmethod.repository.RecipeRepository
 import kotlinx.coroutines.CoroutineScope
@@ -33,13 +32,15 @@ class TimerUseCase @Inject constructor(
                     _historyStateFlow.value = emptyList()
                 }
                 is Result.Success -> {
-                    _historyStateFlow.value = result.data?.also {
+                    _historyStateFlow.value = result.data.also {
                         _timerStateFlow.value.recipe.apply {
-                        val latestRecipe = it.first()
-                            setCoffeeWeight(latestRecipe.coffeeWeight)
-                            setCoffeeBalance(latestRecipe.balance)
-                            setCoffeeLevel(latestRecipe.level)
-                            setCoffeeRatio(latestRecipe.ratio)
+                            it.firstOrNull()?.let { latestRecipe ->
+                                setCoffeeWeight(latestRecipe.coffeeWeight)
+                                setCoffeeBalance(latestRecipe.balance)
+                                setCoffeeLevel(latestRecipe.level)
+                                setCoffeeRatio(latestRecipe.ratio)
+
+                            }
                         }
                     }
 
@@ -114,7 +115,7 @@ class TimerUseCase @Inject constructor(
     ): Flow<DisplayState> =
 //        generateSequence(totalSeconds - 1 ) { it - 1 }.asFlow()
         (totalSeconds - 1 downTo 0).asFlow() // Emit total - 1 because the first was emitted onStart
-            .onEach { delay(1000) } // Each second later emit a number
+            .onEach { delay(100) } // Each second later emit a number
             .onStart { emit(totalSeconds) } // Emit total seconds immediately
             .conflate() // In case the operation onTick takes some time, conflate keeps the time ticking separately
             .transform { remainingSeconds: Int ->

@@ -30,9 +30,7 @@ data class TimerState(
     // Show 100% if seconds remaining is null
     val progressPercentage: Float = (secondsRemaining ?: totalSeconds) / totalSeconds.toFloat()
     val statePercentage: Float =
-        (recipe.getStateTotalTime(
-            recipe.getCurrentStatePosition(secondsRemaining)
-        ).minus(seconds ?: 0)) / recipe.getStateTotalTime(
+        (recipe.getCurrentStateTime(seconds)) / recipe.getStateTotalTime(
             recipe.getCurrentStatePosition(secondsRemaining)
         ).toFloat()
 
@@ -56,6 +54,6 @@ data class TimerState(
 
 
     override fun toString(): String =
-        "Seconds Remaining $secondsRemaining, totalSeconds: $totalSeconds, progress: $progressPercentage"
+        "Seconds Remaining $secondsRemaining, totalSeconds: $totalSeconds, progress: $progressPercentage, state percentage: $statePercentage,  second $seconds"
 
 }

@@ -2,8 +2,6 @@ package com.yopachara.fourtosixmethod.data
 
 import androidx.room.*
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.time.LocalDate
 import java.util.*
 import javax.inject.Inject
 
@@ -161,34 +159,45 @@ class Recipe(
         }
     }
 
-    fun getCurrentStateTime(secondsRemaining: Int?): Int {
-        secondsRemaining?.let { remaining ->
-            return when (getCurrentStatePosition(remaining)) {
-                State.First,
-                State.Second,
-                -> {
-                    remaining.minus(120).rem(45)
-                }
-                State.Third,
-                State.Forth,
-                State.Fifth,
-                State.Sixth,
-                -> {
-                    when (level) {
-                        Level.Basic -> if (getCurrentStatePosition(remaining) != State.Fifth) {
-                            remaining.minus(30).rem(45)
-                        } else {
-                            remaining.rem(30)
-                        }
-                        Level.Strong -> remaining.rem(30)
-                        Level.Week -> remaining.rem(60)
-                    }
-                }
-                null -> TODO()
-            }
-        } ?: return 45
+    fun getCurrentStateTime(second: Int?): Int {
+        return second?.minus(getTotalStatePass(second ?: 0)) ?: 0
     }
 
+    fun getTotalStatePass(second: Int): Int {
+        return when (second) {
+            in 0..45 -> {
+                0
+            }
+            in 46..90 -> {
+                45
+            }
+            in 91..225 -> {
+                return when (level) {
+                    Level.Basic -> when (second) {
+                        in 91..135 -> 90
+                        in 136..180 -> 135
+                        in 181..225 -> 180
+                        else -> 0
+                    }
+
+                    Level.Strong -> when (second) {
+                        in 91..120 -> 90
+                        in 121..150 -> 120
+                        in 151..180 -> 150
+                        in 181..210 -> 180
+                        else -> 0
+                    }
+
+                    Level.Week -> when (second) {
+                        in 91..150 -> 90
+                        in 151..210 -> 150
+                        else -> 0
+                    }
+                }
+            }
+            else -> 0
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         return false
@@ -241,7 +250,7 @@ fun getDefaultSteps(): List<Step> {
 }
 
 @ProvidedTypeConverter
-class DateConverter  @Inject constructor(){
+class DateConverter @Inject constructor() {
     @TypeConverter
     fun recipeToString(date: Date): Long {
         return date.time
@@ -254,7 +263,7 @@ class DateConverter  @Inject constructor(){
 }
 
 @ProvidedTypeConverter
-class StateListConverter @Inject constructor(){
+class StateListConverter @Inject constructor() {
     @TypeConverter
     fun stateToString(recipe: List<Step>): String {
         return Gson().toJson(recipe)

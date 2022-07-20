@@ -1,11 +1,9 @@
 package com.yopachara.fourtosixmethod.ui.home
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.yopachara.fourtosixmethod.data.Balance
-import com.yopachara.fourtosixmethod.data.Level
-import com.yopachara.fourtosixmethod.data.Recipe
-import com.yopachara.fourtosixmethod.data.TimerState
+import com.yopachara.fourtosixmethod.core.data.model.Balance
+import com.yopachara.fourtosixmethod.core.data.model.Level
+import com.yopachara.fourtosixmethod.core.database.model.Recipe
+import com.yopachara.fourtosixmethod.core.database.model.TimerState
 import com.yopachara.fourtosixmethod.ui.BaseViewModel
 import com.yopachara.fourtosixmethod.ui.home.usecase.TimerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

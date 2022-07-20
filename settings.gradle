@@ -8,3 +8,8 @@ dependencyResolutionManagement {
 }
 rootProject.name = "FourSixMethod"
 include ':app'
+include ':core-common'
+include ':core-designsystem'
+include ':core-data'
+include ':core-database'
+include ':core-model'

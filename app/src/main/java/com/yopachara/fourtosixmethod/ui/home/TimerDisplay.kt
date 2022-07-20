@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.yopachara.fourtosixmethod.data.Recipe
-import com.yopachara.fourtosixmethod.data.TimerState
-import com.yopachara.fourtosixmethod.ui.theme.Typography
+import com.yopachara.fourtosixmethod.core.database.model.Recipe
+import com.yopachara.fourtosixmethod.core.database.model.TimerState
+import com.yopachara.fourtosixmethod.core.designsystem.theme.Typography
 import java.text.SimpleDateFormat
 import java.util.*
 

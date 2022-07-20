@@ -1,9 +1,10 @@
 package com.yopachara.fourtosixmethod.ui.home
 
-import com.yopachara.fourtosixmethod.data.TimerState
+import com.yopachara.fourtosixmethod.core.database.model.TimerState
 
 sealed class HomeIntent {
 }
+
 sealed class HomeViewEffect {
 
 }

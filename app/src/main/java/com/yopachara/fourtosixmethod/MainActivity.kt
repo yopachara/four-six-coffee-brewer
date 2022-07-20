@@ -19,9 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.yopachara.fourtosixmethod.data.TimerState
+import com.yopachara.fourtosixmethod.core.database.model.TimerState
+import com.yopachara.fourtosixmethod.core.designsystem.theme.FourSixMethodTheme
 import com.yopachara.fourtosixmethod.ui.home.*
-import com.yopachara.fourtosixmethod.ui.theme.FourSixMethodTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

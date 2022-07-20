@@ -7,6 +7,7 @@ import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -14,9 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yopachara.fourtosixmethod.data.Balance
-import com.yopachara.fourtosixmethod.data.TimerState
-import com.yopachara.fourtosixmethod.ui.theme.Purple200
+import com.yopachara.fourtosixmethod.core.data.model.Balance
+import com.yopachara.fourtosixmethod.core.database.model.TimerState
+import com.yopachara.fourtosixmethod.core.designsystem.theme.Purple200
 
 @Composable
 fun BalanceDisplay(timerState: TimerState, changeBalanceLevel: (Balance) -> Unit) {
@@ -25,7 +26,8 @@ fun BalanceDisplay(timerState: TimerState, changeBalanceLevel: (Balance) -> Unit
         modifier = Modifier
             .padding(horizontal = 24.dp)
     ) {
-        val mRememberObserver = remember { mutableStateOf(timerState.recipe.balance) }
+        val mRememberObserver =
+            remember<MutableState<Balance>> { mutableStateOf(timerState.recipe.balance) }
 
         Text(
             text = "Balance",

@@ -4,13 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.yopachara.fourtosixmethod.core.database.model.Recipe
+import com.yopachara.fourtosixmethod.core.database.model.RecipeEntity
 
 @Dao
 interface RecipeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveRecipe(recipe: Recipe)
+    suspend fun insertRecipe(recipe: RecipeEntity)
 
-    @Query("SELECT * FROM Recipe")
-    suspend fun getRecipeList(): List<Recipe>
+    @Query(value = "SELECT * FROM recipes")
+    fun getRecipeList(): List<RecipeEntity>
 }

@@ -1,50 +1,40 @@
 package com.yopachara.fourtosixmethod.core.database.model
 
-import androidx.room.*
-import com.google.gson.Gson
+import androidx.room.ColumnInfo
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
 import com.yopachara.fourtosixmethod.core.data.model.State
 import com.yopachara.fourtosixmethod.core.data.model.intToState
-import java.util.*
-import javax.inject.Inject
+import java.util.Date
 
-@Entity
 class Recipe(
-    @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     _ratio: Int = 12,
     _coffeeWeight: Float = 15f,
     _balance: Balance = Balance.Basic,
     _level: Level = Level.Basic,
-    @ColumnInfo(name = "steps")
     var steps: List<Step> = getDefaultSteps(),
-    @ColumnInfo(name = "createAt")
     var createAt: Date = Date()
 ) {
 
-    @ColumnInfo(name = "ratio")
     var ratio: Int = _ratio
         set(value) {
             field = value
             generateSteps()
         }
 
-    @ColumnInfo(name = "coffee_weight")
     var coffeeWeight: Float = _coffeeWeight
         set(value) {
             field = value
             generateSteps()
         }
 
-    @ColumnInfo(name = "balance")
     var balance: Balance = _balance
         set(value) {
             field = value
             generateSteps()
         }
 
-    @ColumnInfo(name = "level")
     var level: Level = _level
         set(value) {
             field = value
@@ -69,6 +59,7 @@ class Recipe(
             State.First,
             State.Second,
             -> 45
+
             State.Third,
             State.Forth,
             State.Fifth,
@@ -80,6 +71,7 @@ class Recipe(
                     Level.Week -> 60
                 }
             }
+
             null -> 45
         }
     }
@@ -106,6 +98,7 @@ class Recipe(
             State.Fifth,
             State.Sixth,
             -> level.firstIndex
+
             null -> balance.sweetIndex
         }
     }
@@ -116,9 +109,11 @@ class Recipe(
             in 166..210 -> {
                 State.First
             }
+
             in 121..165 -> {
                 State.Second
             }
+
             in 0..120 -> {
                 return when (level) {
                     Level.Basic -> when (secondsRemaining) {
@@ -143,6 +138,7 @@ class Recipe(
                     }
                 }
             }
+
             else -> null
         }
     }
@@ -172,9 +168,11 @@ class Recipe(
             in 0..45 -> {
                 0
             }
+
             in 46..90 -> {
                 45
             }
+
             in 91..225 -> {
                 return when (level) {
                     Level.Basic -> when (second) {
@@ -199,6 +197,7 @@ class Recipe(
                     }
                 }
             }
+
             else -> 0
         }
     }
@@ -253,29 +252,14 @@ fun getDefaultSteps(): List<Step> {
     }
 }
 
-@ProvidedTypeConverter
-class DateConverter @Inject constructor() {
-    @TypeConverter
-    fun recipeToString(date: Date): Long {
-        return date.time
-    }
-
-    @TypeConverter
-    fun stringToRecipe(value: Long): Date {
-        return Date(value)
-    }
-}
-
-@ProvidedTypeConverter
-class StateListConverter @Inject constructor() {
-    @TypeConverter
-    fun stateToString(recipe: List<Step>): String {
-        return Gson().toJson(recipe)
-    }
-
-    @TypeConverter
-    fun stringToState(value: String): List<Step> {
-        val result = Gson().fromJson(value, Array<Step>::class.java).toList()
-        return result
-    }
+fun Recipe.asEntity(): RecipeEntity {
+    return RecipeEntity(
+        id = id,
+        steps = getDefaultSteps().map { it.asEntity() },
+        createAt = createAt,
+        ratio = ratio,
+        coffeeWeight = coffeeWeight,
+        balance = balance,
+        level = level
+    )
 }

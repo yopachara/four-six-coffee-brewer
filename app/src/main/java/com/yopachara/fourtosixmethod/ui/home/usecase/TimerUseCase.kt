@@ -9,7 +9,15 @@ import com.yopachara.fourtosixmethod.core.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,6 +43,7 @@ class TimerUseCase @Inject constructor(
                 is Result.Error -> {
                     _historyStateFlow.value = emptyList()
                 }
+
                 is Result.Success -> {
                     _historyStateFlow.value = result.data.also {
                         _timerStateFlow.value.recipe.apply {
@@ -49,6 +58,7 @@ class TimerUseCase @Inject constructor(
                     }
 
                 }
+
                 else -> {
                     _historyStateFlow.value = emptyList()
 

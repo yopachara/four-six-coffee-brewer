@@ -7,9 +7,7 @@ import com.yopachara.fourtosixmethod.core.data.model.Level
 import com.yopachara.fourtosixmethod.core.data.model.State
 import java.math.RoundingMode
 
-@Entity
 data class Step(
-    @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     val time: Int,
     val waterWeight: Float,
@@ -46,7 +44,6 @@ fun getWaterPercentState(state: State, balance: Balance, level: Level): Float {
         State.Fifth,
         State.Sixth,
         -> level.firstIndex
-        null -> balance.sweetIndex
     }
 }
 
@@ -55,6 +52,7 @@ fun getStateTotalTime(state: State?, level: Level): Int {
         State.First,
         State.Second,
         -> 45
+
         State.Third,
         State.Forth,
         State.Fifth,
@@ -66,6 +64,17 @@ fun getStateTotalTime(state: State?, level: Level): Int {
                 Level.Week -> 60
             }
         }
+
         null -> 45
     }
+}
+
+fun Step.asEntity(): StepEntity {
+    return StepEntity(
+        id = id,
+        time = time,
+        waterWeight = waterWeight,
+        stepPercentage = stepPercentage,
+        state = state
+    )
 }

@@ -6,13 +6,23 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ProgressIndicatorDefaults
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -31,7 +41,7 @@ import com.yopachara.fourtosixmethod.core.database.model.Recipe
 import com.yopachara.fourtosixmethod.core.database.model.TimerState
 import com.yopachara.fourtosixmethod.core.designsystem.theme.Typography
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 @Composable
 fun TimerDisplay(timerState: TimerState, historyState: List<Recipe>, toggleStartStop: () -> Unit) {
@@ -121,28 +131,28 @@ fun TimerDisplay(timerState: TimerState, historyState: List<Recipe>, toggleStart
 
                         Text(
                             text = """${recipe.coffeeWeight} g""",
-                            style = Typography.body1,
+                            style = Typography.bodySmall,
                             modifier = Modifier.padding(
                                 horizontal = 12.dp
                             )
                         )
                         Text(
                             text = """1:${recipe.ratio}""",
-                            style = Typography.body1,
+                            style = Typography.bodySmall,
                             modifier = Modifier.padding(
                                 horizontal = 12.dp
                             )
                         )
                         Text(
                             text = """${recipe.balance}""",
-                            style = Typography.body1,
+                            style = Typography.bodySmall,
                             modifier = Modifier.padding(
                                 horizontal = 12.dp
                             )
                         )
                         Text(
                             text = """${recipe.level}""",
-                            style = Typography.body1,
+                            style = Typography.bodySmall,
                             modifier = Modifier.padding(
                                 horizontal = 12.dp
                             )
@@ -153,7 +163,7 @@ fun TimerDisplay(timerState: TimerState, historyState: List<Recipe>, toggleStart
                         Text(
 
                             text = """${firstApiFormat.format(recipe.createAt)}""",
-                            style = Typography.body1,
+                            style = Typography.bodySmall,
                             modifier = Modifier.padding(
                                 horizontal = 12.dp
                             )

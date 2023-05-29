@@ -17,7 +17,6 @@ class TimerViewModel @Inject constructor(
 
     val timerStateFlow: StateFlow<TimerState> = timerIntent.timerStateFlow
     val historyStateFlow: StateFlow<List<Recipe>> = timerIntent.historyStateFlow
-
     fun setWeight(value: Float) = timerIntent.setCoffeeWeight(value)
     fun setRatio(value: Int) = timerIntent.setCoffeeRatio(value)
     fun setBalance(value: Balance) = timerIntent.setCoffeeBalance(value)

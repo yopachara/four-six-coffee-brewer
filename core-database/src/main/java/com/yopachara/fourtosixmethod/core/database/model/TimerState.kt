@@ -1,6 +1,5 @@
 package com.yopachara.fourtosixmethod.core.database.model
 
-import com.yopachara.fourtosixmethod.core.database.model.Recipe
 import java.math.RoundingMode
 import java.util.concurrent.TimeUnit
 

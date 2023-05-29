@@ -4,8 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,28 +33,28 @@ fun StepsDisplay(timerState: TimerState) {
         ) {
             Text(
                 text = "step",
-                style = Typography.body1,
+                style = Typography.bodySmall,
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 12.dp)
             )
             Text(
                 text = "time",
-                style = Typography.body1,
+                style = Typography.bodySmall,
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 12.dp)
             )
             Text(
                 text = "water",
-                style = Typography.body1,
+                style = Typography.bodySmall,
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 12.dp)
             )
             Text(
                 text = "total",
-                style = Typography.body1,
+                style = Typography.bodySmall,
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 12.dp)
@@ -70,7 +70,7 @@ fun StepsDisplay(timerState: TimerState) {
                         .padding(vertical = 2.dp)
                         .background(
                             color = if (index == timerState.getCurrentStateIndex()) {
-                                MaterialTheme.colors.secondaryVariant
+                                MaterialTheme.colorScheme.secondary
                             } else {
                                 Color.Transparent
                             }
@@ -79,28 +79,28 @@ fun StepsDisplay(timerState: TimerState) {
                     ) {
                     Text(
                         text = """${(index + 1)}""",
-                        style = Typography.body1,
+                        style = Typography.bodySmall,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 12.dp)
                     )
                     Text(
                         text = """${item.time} sec""",
-                        style = Typography.body1,
+                        style = Typography.bodySmall,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 12.dp)
                     )
                     Text(
                         text = """${item.getWaterWithScale(1)} g""",
-                        style = Typography.body1,
+                        style = Typography.bodySmall,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 12.dp)
                     )
                     Text(
                         text = """${weightOnScale(index, timerState.recipe.steps)} g""",
-                        style = Typography.body1,
+                        style = Typography.bodySmall,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 12.dp)

@@ -1,6 +1,6 @@
-package com.yopachara.fourtosixmethod.ui.home
+package com.yopachara.fourtosixmethod.feature.timer
 
-import com.yopachara.fourtosixmethod.core.database.model.TimerState
+import com.yopachara.fourtosixmethod.core.data.model.TimerState
 
 sealed class HomeIntent {
 }

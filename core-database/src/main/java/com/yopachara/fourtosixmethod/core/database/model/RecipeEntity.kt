@@ -5,8 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
-import com.yopachara.fourtosixmethod.core.data.model.State
-import com.yopachara.fourtosixmethod.core.data.model.intToState
+import com.yopachara.fourtosixmethod.core.data.model.Recipe
 import java.util.Date
 
 @Entity(tableName = "recipes")

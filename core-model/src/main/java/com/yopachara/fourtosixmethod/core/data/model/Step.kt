@@ -1,10 +1,5 @@
-package com.yopachara.fourtosixmethod.core.database.model
+package com.yopachara.fourtosixmethod.core.data.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.yopachara.fourtosixmethod.core.data.model.Balance
-import com.yopachara.fourtosixmethod.core.data.model.Level
-import com.yopachara.fourtosixmethod.core.data.model.State
 import java.math.RoundingMode
 
 data class Step(
@@ -69,12 +64,3 @@ fun getStateTotalTime(state: State?, level: Level): Int {
     }
 }
 
-fun Step.asEntity(): StepEntity {
-    return StepEntity(
-        id = id,
-        time = time,
-        waterWeight = waterWeight,
-        stepPercentage = stepPercentage,
-        state = state
-    )
-}

@@ -1,4 +1,4 @@
-package com.yopachara.fourtosixmethod.ui.home
+package com.yopachara.fourtosixmethod.feature.timer
 
 import android.widget.Toast
 import androidx.compose.animation.core.TweenSpec
@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.yopachara.fourtosixmethod.core.database.model.Recipe
-import com.yopachara.fourtosixmethod.core.database.model.TimerState
+import com.yopachara.fourtosixmethod.core.data.model.Recipe
+import com.yopachara.fourtosixmethod.core.data.model.TimerState
 import com.yopachara.fourtosixmethod.core.designsystem.theme.Typography
 import java.text.SimpleDateFormat
 import java.util.Locale

@@ -10,4 +10,6 @@ android {
 
 dependencies {
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 }

@@ -1,4 +1,4 @@
-package com.yopachara.fourtosixmethod.ui.home
+package com.yopachara.fourtosixmethod.feature.timer
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yopachara.fourtosixmethod.core.data.model.Level
-import com.yopachara.fourtosixmethod.core.database.model.TimerState
+import com.yopachara.fourtosixmethod.core.data.model.TimerState
 import com.yopachara.fourtosixmethod.core.designsystem.theme.Purple200
 
 @Composable

@@ -1,8 +1,9 @@
 package com.yopachara.fourtosixmethod.core.data.repository
 
+import com.yopachara.fourtosixmethod.core.data.model.Recipe
+import com.yopachara.fourtosixmethod.core.data.model.asEntity
 import com.yopachara.fourtosixmethod.core.database.dao.RecipeDao
-import com.yopachara.fourtosixmethod.core.database.model.Recipe
-import com.yopachara.fourtosixmethod.core.database.model.asEntity
+import com.yopachara.fourtosixmethod.core.database.model.RecipeEntity
 import com.yopachara.fourtosixmethod.core.database.model.asExternalModel
 import com.yopachara.fourtosixmethod.core.network.Dispatcher
 import com.yopachara.fourtosixmethod.core.network.FsmDispatchers
@@ -18,11 +19,9 @@ class OfflineRecipeRepository @Inject constructor(
 ) : RecipeRepository {
     override suspend fun getListRecipe(): Result<List<Recipe>> = withContext(ioDispatcher) {
         return@withContext try {
-            Result.Success(recipeDao.getRecipeList().map {
+            Result.Success(recipeDao.getRecipeList().map<RecipeEntity, Recipe> {
                 it.asExternalModel()
-            }.sortedByDescending {
-                it.createAt
-            })
+            }.sortedByDescending { it.createAt })
         } catch (e: Exception) {
             Result.Error(e)
         }

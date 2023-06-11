@@ -3,11 +3,9 @@ package com.yopachara.fourtosixmethod.core.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.yopachara.fourtosixmethod.core.data.model.Balance
-import com.yopachara.fourtosixmethod.core.data.model.Level
 import com.yopachara.fourtosixmethod.core.data.model.State
+import com.yopachara.fourtosixmethod.core.data.model.Step
 import kotlinx.serialization.Serializable
-import java.math.RoundingMode
 
 @Entity
 @Serializable

@@ -1,7 +1,11 @@
-package com.yopachara.fourtosixmethod.ui.home
+package com.yopachara.fourtosixmethod.feature.timer
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
@@ -11,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.yopachara.fourtosixmethod.core.database.model.Step
-import com.yopachara.fourtosixmethod.core.database.model.TimerState
+import com.yopachara.fourtosixmethod.core.data.model.Step
+import com.yopachara.fourtosixmethod.core.data.model.TimerState
 import com.yopachara.fourtosixmethod.core.designsystem.theme.Typography
 import java.math.RoundingMode
 

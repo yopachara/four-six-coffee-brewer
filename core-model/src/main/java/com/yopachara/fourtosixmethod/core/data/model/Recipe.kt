@@ -1,10 +1,5 @@
-package com.yopachara.fourtosixmethod.core.database.model
+package com.yopachara.fourtosixmethod.core.data.model
 
-import androidx.room.ColumnInfo
-import com.yopachara.fourtosixmethod.core.data.model.Balance
-import com.yopachara.fourtosixmethod.core.data.model.Level
-import com.yopachara.fourtosixmethod.core.data.model.State
-import com.yopachara.fourtosixmethod.core.data.model.intToState
 import java.util.Date
 
 class Recipe(
@@ -250,16 +245,4 @@ fun getDefaultSteps(): List<Step> {
             )
         )
     }
-}
-
-fun Recipe.asEntity(): RecipeEntity {
-    return RecipeEntity(
-        id = id,
-        steps = getDefaultSteps().map { it.asEntity() },
-        createAt = createAt,
-        ratio = ratio,
-        coffeeWeight = coffeeWeight,
-        balance = balance,
-        level = level
-    )
 }

@@ -1,3 +1,4 @@
+include(":core-domain")
 
 pluginManagement {
     includeBuild("build-logic")

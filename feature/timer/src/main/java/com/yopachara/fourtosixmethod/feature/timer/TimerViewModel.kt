@@ -26,7 +26,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimerViewModel @Inject constructor(
-    private val getRecipeHistoryListUseCase: GetRecipeHistoryListUseCase,
     private val insertRecipeUseCase: InsertRecipeUseCase,
     private val timerScope: CoroutineScope,
 ) : ViewModel() {
@@ -40,9 +39,7 @@ class TimerViewModel @Inject constructor(
 
 
     private var _timerStateFlow = MutableStateFlow(TimerState())
-    private var _historyStateFlow = MutableStateFlow(emptyList<Recipe>())
     val timerStateFlow: StateFlow<TimerState> = _timerStateFlow
-    val historyStateFlow: StateFlow<List<Recipe>> = _historyStateFlow
 
 
     /**
@@ -77,7 +74,6 @@ class TimerViewModel @Inject constructor(
                     timerScope.launch {
                         insertRecipeUseCase(timerStateFlow.value.recipe)
                     }
-                    updateHistory()
                 }.onCompletion {
                     _timerStateFlow.emit(
                         _timerStateFlow.value.copy(secondsRemaining = null, seconds = null)
@@ -118,33 +114,4 @@ class TimerViewModel @Inject constructor(
         )
     }
 
-    private fun updateHistory() {
-        timerScope.launch {
-            when (val result = getRecipeHistoryListUseCase()) {
-                is Result.Error -> {
-                    _historyStateFlow.value = emptyList()
-                }
-
-                is Result.Success -> {
-                    _historyStateFlow.value = result.data.also {
-                        _timerStateFlow.value.recipe.apply {
-                            it.firstOrNull()?.let { latestRecipe ->
-                                setCoffeeWeight(latestRecipe.coffeeWeight)
-                                setCoffeeBalance(latestRecipe.balance)
-                                setCoffeeLevel(latestRecipe.level)
-                                setCoffeeRatio(latestRecipe.ratio)
-
-                            }
-                        }
-                    }
-
-                }
-
-                else -> {
-                    _historyStateFlow.value = emptyList()
-
-                }
-            }
-        }
-    }
 }

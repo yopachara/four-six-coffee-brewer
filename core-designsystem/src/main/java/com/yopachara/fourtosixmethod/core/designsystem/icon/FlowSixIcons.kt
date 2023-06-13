@@ -47,8 +47,10 @@ object FlowSixIcons {
     val VolumeOff = Icons.Rounded.VolumeOff
     val VolumeUp = Icons.Rounded.VolumeUp
 
-    val MenuBook = R.drawable.ic_menu_book
-    val MenuBookBorder = R.drawable.ic_menu_book_border
+    val TimerBlack = R.drawable.timer_24
+    val TimerGrey = R.drawable.timer_grey_24
+    val HistoryBlack = R.drawable.history_24
+    val HistoryGrey = R.drawable.history_grey_24
 }
 
 

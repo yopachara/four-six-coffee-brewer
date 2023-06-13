@@ -18,12 +18,22 @@ enum class TopLevelDestination(
 ) {
     TIMER(
         selectedIcon = DrawableResourceIcon(
-            FlowSixIcons.MenuBook
+            FlowSixIcons.TimerBlack
         ),
         unselectedIcon = DrawableResourceIcon(
-            FlowSixIcons.MenuBookBorder
+            FlowSixIcons.TimerGrey
         ),
-        iconTextId = R.string.app_name,
-        titleTextId = R.string.app_name,
+        iconTextId = R.string.timer,
+        titleTextId = R.string.timer,
+    ),
+    HISTORY(
+        selectedIcon = DrawableResourceIcon(
+            FlowSixIcons.HistoryBlack
+        ),
+        unselectedIcon = DrawableResourceIcon(
+            FlowSixIcons.HistoryGrey
+        ),
+        iconTextId = R.string.history,
+        titleTextId = R.string.history,
     ),
 }

@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":core-model"))
     implementation(project(":core-database"))
     implementation(project(":feature:timer"))
+    implementation(project(":feature:history"))
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation(libs.androidx.activity.compose)

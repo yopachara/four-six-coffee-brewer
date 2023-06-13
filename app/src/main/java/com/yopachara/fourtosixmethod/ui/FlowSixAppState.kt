@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.yopachara.fourtosixmethod.feature.history.navigation.navigateToHistory
 import com.yopachara.fourtosixmethod.feature.timer.navigation.navigateToTimer
 import com.yopachara.fourtosixmethod.feature.timer.navigation.timerRoute
 import com.yopachara.fourtosixmethod.navigation.TopLevelDestination
@@ -80,6 +81,7 @@ class FlowSixAppState(
 
         when (topLevelDestination) {
             TopLevelDestination.TIMER -> navController.navigateToTimer(topLevelNavOptions)
+            TopLevelDestination.HISTORY -> navController.navigateToHistory(topLevelNavOptions)
         }
     }
 

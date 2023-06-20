@@ -47,10 +47,14 @@ object FlowSixIcons {
     val VolumeOff = Icons.Rounded.VolumeOff
     val VolumeUp = Icons.Rounded.VolumeUp
 
-    val TimerBlack = R.drawable.timer_24
-    val TimerGrey = R.drawable.timer_grey_24
-    val HistoryBlack = R.drawable.history_24
-    val HistoryGrey = R.drawable.history_grey_24
+    val TimerBlack = R.drawable.ic_timer_24
+    val TimerGrey = R.drawable.ic_timer_grey_24
+    val HistoryBlack = R.drawable.ic_history_24
+    val HistoryGrey = R.drawable.ic_history_grey_24
+    val AboutBlack = R.drawable.ic_about
+    val AboutGrey = R.drawable.ic_about_grey
+    val GithubIcon = R.drawable.ic_github
+    val RepoIcon = R.drawable.ic_git_repo
 }
 
 

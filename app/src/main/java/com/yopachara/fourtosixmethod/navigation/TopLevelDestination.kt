@@ -36,4 +36,14 @@ enum class TopLevelDestination(
         iconTextId = R.string.history,
         titleTextId = R.string.history,
     ),
+    ABOUT(
+        selectedIcon = DrawableResourceIcon(
+            FlowSixIcons.AboutBlack
+        ),
+        unselectedIcon = DrawableResourceIcon(
+            FlowSixIcons.AboutGrey
+        ),
+        iconTextId = R.string.about,
+        titleTextId = R.string.about,
+    ),
 }

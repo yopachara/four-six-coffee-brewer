@@ -3,6 +3,7 @@ package com.yopachara.fourtosixmethod.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.yopachara.flowsixmethod.feature.about.navigation.aboutScreen
 import com.yopachara.fourtosixmethod.feature.history.navigation.historyScreen
 import com.yopachara.fourtosixmethod.feature.timer.navigation.navigateToTimer
 import com.yopachara.fourtosixmethod.feature.timer.navigation.timerRoute
@@ -21,13 +22,15 @@ fun NavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        // TODO: handle topic clicks from each top level destination
         timerScreen(
             onTopicClick = {
                 navController.navigateToTimer()
             },
         )
         historyScreen {
+
+        }
+        aboutScreen{
 
         }
     }

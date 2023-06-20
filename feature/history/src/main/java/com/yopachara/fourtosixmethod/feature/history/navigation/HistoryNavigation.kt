@@ -6,14 +6,14 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.yopachara.fourtosixmethod.feature.history.HistoryRoute
 
-const val timerRoute = "history_route"
+const val historyRoute = "history_route"
 
 fun NavController.navigateToHistory(navOptions: NavOptions? = null) {
-    this.navigate(timerRoute, navOptions)
+    this.navigate(historyRoute, navOptions)
 }
 
 fun NavGraphBuilder.historyScreen(onTopicClick: (String) -> Unit) {
-    composable(route = timerRoute) {
+    composable(route = historyRoute) {
         HistoryRoute(onTopicClick)
     }
 }

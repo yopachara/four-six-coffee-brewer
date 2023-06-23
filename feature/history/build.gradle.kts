@@ -11,4 +11,5 @@ android {
 dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation("com.patrykandpatrick.vico:compose-m3:1.6.5")
 }

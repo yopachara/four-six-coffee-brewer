@@ -2,9 +2,7 @@ package com.yopachara.fourtosixmethod.feature.history
 
 import androidx.lifecycle.ViewModel
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
-import com.yopachara.fourtosixmethod.core.data.model.TimerState
 import com.yopachara.fourtosixmethod.core.domain.GetRecipeHistoryListUseCase
-import com.yopachara.fourtosixmethod.core.domain.InsertRecipeUseCase
 import com.yopachara.fourtosixmethod.core.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

@@ -1,29 +1,29 @@
-package com.yopachara.fourtosixmethod.core.data.model
+package com.yopachara.fourtosixmethod.feature.timer.state
 
+import com.yopachara.fourtosixmethod.core.data.model.Recipe
 import java.math.RoundingMode
 import java.util.concurrent.TimeUnit
 
-data class TimerState(
+data class TimerDisplayState(
     val secondsRemaining: Int? = null,
     val seconds: Int? = null,
     var totalSeconds: Int = 210,
-    val textWhenStopped: String = "start",
     var recipe: Recipe = Recipe(),
+    var timerState: TimerState = TimerState.Stop,
 ) {
     val displaySeconds: String = (getTimeDisplay(seconds))
 
+    fun isPlaying() = timerState == TimerState.Play
+    fun isComplete() = totalSeconds == seconds
 
     private fun getTimeDisplay(seconds: Int?): String {
-        return if (seconds != null) {
-            String.format(
-                "%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes(seconds.toLong() * 1000),
-                TimeUnit.MILLISECONDS.toSeconds(seconds.toLong() * 1000) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(seconds.toLong() * 1000))
-            )
-        } else {
-            textWhenStopped
-        }
+        return String.format(
+            "%02d:%02d",
+            TimeUnit.MILLISECONDS.toMinutes(seconds?.toLong()?.times(1000) ?: 0),
+            TimeUnit.MILLISECONDS.toSeconds(seconds?.toLong()?.times(1000) ?: 0) -
+                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((seconds?.toLong()
+                        ?: 0) * 1000))
+        )
 
     }
 

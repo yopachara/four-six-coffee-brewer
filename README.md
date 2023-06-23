@@ -1,3 +1,4 @@
+
 # 4:6 Method Brewer Scale ☕
 
 This is the coffee timer scale application for calculating the 4:6 method style.
@@ -7,10 +8,10 @@ respect to Tetsu Kasuya
 
 <table style="padding:10px">
   <tr>
-    <td> 
-         <img src="https://user-images.githubusercontent.com/9361646/131477921-516acd61-d229-4d19-ac3a-935b658950dc.png"  alt="1" width = 279px height = 496px ></td>
-      
- <td><img src="https://user-images.githubusercontent.com/9361646/131477916-8e5d2fb3-6561-42f6-b2c8-1683f721343f.png" align="right" alt="2" width = 279px height = 496px></td>
-   <td><img src="https://user-images.githubusercontent.com/9361646/131477901-a80fbc8c-6652-4ea7-aa69-95d663b1bc02.png" alt="3" width = 288px height = 512px></td>   
+    <td><img src="https://github.com/yopachara/four-six-coffee-brewer/assets/9361646/e1a2d76c-b8c0-4655-b806-3984b477d5d2" alt="1" width = 260px> </td>
+    <td><img src="https://github.com/yopachara/four-six-coffee-brewer/assets/9361646/47d395fd-2c39-4407-90e9-066f169b9368" alt="4" width = 260px ></td>   
+    <td><img src="https://github.com/yopachara/four-six-coffee-brewer/assets/9361646/b7bbc320-b2e3-4284-9289-8047be361e4c" alt="2" width = 260px></td>
+    <td><img src="https://github.com/yopachara/four-six-coffee-brewer/assets/9361646/e2364d41-78fd-495b-9858-a96cc7e40051" alt="3" width = 260px ></td>   
+
   </tr>
 </table>

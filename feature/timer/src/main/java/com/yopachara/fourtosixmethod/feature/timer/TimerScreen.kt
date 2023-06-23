@@ -1,10 +1,9 @@
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
-import com.yopachara.fourtosixmethod.core.data.model.TimerState
 import com.yopachara.fourtosixmethod.feature.timer.BalanceDisplay
 import com.yopachara.fourtosixmethod.feature.timer.BodyDisplay
 import com.yopachara.fourtosixmethod.feature.timer.RatioDisplay
@@ -33,6 +31,7 @@ import com.yopachara.fourtosixmethod.feature.timer.StepsDisplay
 import com.yopachara.fourtosixmethod.feature.timer.TimerDisplay
 import com.yopachara.fourtosixmethod.feature.timer.TimerViewModel
 import com.yopachara.fourtosixmethod.feature.timer.WeightDisplay
+import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,11 +40,12 @@ internal fun TimerRoute(
     modifier: Modifier = Modifier,
     viewModel: TimerViewModel = hiltViewModel(),
 ) {
-    val timerState = viewModel.timerStateFlow.collectAsState()
+    val timerState = viewModel.timerDisplayStateFlow.collectAsState()
 
     TimerScreen(
-        timerState = timerState,
-        toggleStartStop = viewModel::toggleTime,
+        timerDisplayState = timerState,
+        toggleStartPause = viewModel::toggleTime,
+        onStop = viewModel::stopTime,
         onWeightChanged = viewModel::setWeight,
         onRatioChanged = viewModel::setRatio,
         onBalanceChange = viewModel::setBalance,
@@ -57,15 +57,18 @@ internal fun TimerRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun TimerScreen(
-    timerState: State<TimerState>,
-    toggleStartStop: () -> Unit,
+    timerDisplayState: State<TimerDisplayState>,
+    toggleStartPause: () -> Unit,
+    onStop: () -> Unit,
     onWeightChanged: (Float) -> Unit,
     onRatioChanged: (Int) -> Unit,
     onBalanceChange: (Balance) -> Unit,
     onBodyChange: (Level) -> Unit,
     modifier: Modifier,
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -73,22 +76,24 @@ internal fun TimerScreen(
         Scaffold(
             floatingActionButton = {
                 ExtendedFloatingActionButton(
+                    shape = RoundedCornerShape(10.dp),
                     text = { Text("Settings") },
                     icon = { Icon(Icons.Filled.Settings, contentDescription = "") },
                     onClick = {
                         showBottomSheet = true
-                    }
+                    },
                 )
             }
         ) { contentPadding ->
             // Screen content
 
             Column(modifier = Modifier.padding(contentPadding)) {
-                TimerDisplay(timerState.value) {
-                    toggleStartStop()
+                TimerDisplay(timerDisplayState.value, {
+                    toggleStartPause()
+                }) {
+                    onStop()
                 }
-
-                StepsDisplay(timerState.value)
+                StepsDisplay(timerDisplayState.value)
             }
 
             if (showBottomSheet) {
@@ -101,33 +106,21 @@ internal fun TimerScreen(
                     // Sheet content
                     Column(
                         modifier = Modifier
-                            .padding(bottom = 40.dp)
+                            .padding(start = 12.dp, end = 12.dp, bottom = 48.dp)
                     ) {
-                        Button(onClick = {
-                            scope.launch {
-                                sheetState.hide()
-                            }.invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    showBottomSheet = false
-                                }
-                            }
-                        }, modifier = Modifier.padding(horizontal = 24.dp)) {
-                            Icon(Icons.Filled.Close, contentDescription = "")
+                        WeightDisplay(timerDisplayState.value, onWeightChanged)
+                        RatioDisplay(timerDisplayState.value, onRatioChanged)
+                        Row {
+                            BalanceDisplay(
+                                timerDisplayState = timerDisplayState.value,
+                                changeBalanceLevel = onBalanceChange
+                            )
+                            BodyDisplay(
+                                timerDisplayState = timerDisplayState.value,
+                                changeBodyLevel = onBodyChange
+                            )
                         }
                     }
-                    WeightDisplay(timerState.value, onWeightChanged)
-                    RatioDisplay(timerState.value, onRatioChanged)
-                    Row {
-                        BalanceDisplay(
-                            timerState = timerState.value,
-                            changeBalanceLevel = onBalanceChange
-                        )
-                        BodyDisplay(
-                            timerState = timerState.value,
-                            changeBodyLevel = onBodyChange
-                        )
-                    }
-
                 }
             }
         }

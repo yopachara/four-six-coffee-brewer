@@ -16,12 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yopachara.fourtosixmethod.core.data.model.Step
-import com.yopachara.fourtosixmethod.core.data.model.TimerState
 import com.yopachara.fourtosixmethod.core.designsystem.theme.Typography
+import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 import java.math.RoundingMode
 
 @Composable
-fun StepsDisplay(timerState: TimerState) {
+fun StepsDisplay(timerDisplayState: TimerDisplayState) {
 
     Column(
         modifier = Modifier
@@ -66,15 +66,15 @@ fun StepsDisplay(timerState: TimerState) {
         }
 
         LazyColumn {
-            itemsIndexed(timerState.recipe.steps) { index, item ->
+            itemsIndexed(timerDisplayState.recipe.steps) { index, item ->
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
                         .fillParentMaxWidth()
                         .padding(vertical = 2.dp)
                         .background(
-                            color = if (index == timerState.getCurrentStateIndex()) {
-                                MaterialTheme.colorScheme.secondary
+                            color = if (index == timerDisplayState.getCurrentStateIndex()) {
+                                MaterialTheme.colorScheme.primary
                             } else {
                                 Color.Transparent
                             }
@@ -86,28 +86,48 @@ fun StepsDisplay(timerState: TimerState) {
                         style = Typography.bodySmall,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 12.dp)
+                            .padding(horizontal = 12.dp),
+                        color = if (index == timerDisplayState.getCurrentStateIndex()) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onBackground
+                        }
                     )
                     Text(
                         text = """${item.time} sec""",
                         style = Typography.bodySmall,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 12.dp)
+                            .padding(horizontal = 12.dp),
+                        color = if (index == timerDisplayState.getCurrentStateIndex()) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onBackground
+                        }
                     )
                     Text(
                         text = """${item.getWaterWithScale(1)} g""",
                         style = Typography.bodySmall,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 12.dp)
+                            .padding(horizontal = 12.dp),
+                        color = if (index == timerDisplayState.getCurrentStateIndex()) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onBackground
+                        }
                     )
                     Text(
-                        text = """${weightOnScale(index, timerState.recipe.steps)} g""",
+                        text = """${weightOnScale(index, timerDisplayState.recipe.steps)} g""",
                         style = Typography.bodySmall,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 12.dp)
+                            .padding(horizontal = 12.dp),
+                        color = if (index == timerDisplayState.getCurrentStateIndex()) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onBackground
+                        }
                     )
                 }
             }
@@ -134,5 +154,5 @@ fun weightOnScale(index: Int, steps: List<Step>): String {
 @Preview(showBackground = true)
 @Composable
 fun PreviewStepsDisplay() {
-    StepsDisplay(timerState = TimerState())
+    StepsDisplay(timerDisplayState = TimerDisplayState())
 }

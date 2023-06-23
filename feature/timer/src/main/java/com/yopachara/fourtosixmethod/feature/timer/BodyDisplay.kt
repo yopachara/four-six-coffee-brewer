@@ -4,30 +4,29 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yopachara.fourtosixmethod.core.data.model.Level
-import com.yopachara.fourtosixmethod.core.data.model.TimerState
-import com.yopachara.fourtosixmethod.core.designsystem.theme.Purple200
+import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 
 @Composable
-fun BodyDisplay(timerState: TimerState, changeBodyLevel: (Level) -> Unit) {
+fun BodyDisplay(timerDisplayState: TimerDisplayState, changeBodyLevel: (Level) -> Unit) {
 
     Column(
         modifier = Modifier
             .padding(horizontal = 24.dp)
     ) {
         val mRememberObserver =
-            remember<MutableState<Level>> { mutableStateOf(timerState.recipe.level) }
+            remember<MutableState<Level>> { mutableStateOf(timerDisplayState.recipe.level) }
 
         Text(
             text = "Body",
@@ -44,12 +43,13 @@ fun BodyDisplay(timerState: TimerState, changeBodyLevel: (Level) -> Unit) {
                         changeBodyLevel.invoke(mRememberObserver.value)
                     },
                     enabled = true,
-                    colors = RadioButtonDefaults.colors(selectedColor = Purple200)
                 )
                 Text(
                     text = "Basic",
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
 
@@ -62,12 +62,13 @@ fun BodyDisplay(timerState: TimerState, changeBodyLevel: (Level) -> Unit) {
                         changeBodyLevel.invoke(mRememberObserver.value)
                     },
                     enabled = true,
-                    colors = RadioButtonDefaults.colors(selectedColor = Purple200)
                 )
                 Text(
                     text = "Week",
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
 
@@ -80,12 +81,13 @@ fun BodyDisplay(timerState: TimerState, changeBodyLevel: (Level) -> Unit) {
                         changeBodyLevel.invoke(mRememberObserver.value)
                     },
                     enabled = true,
-                    colors = RadioButtonDefaults.colors(selectedColor = Purple200)
                 )
                 Text(
                     text = "Strong",
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
         }
@@ -95,5 +97,5 @@ fun BodyDisplay(timerState: TimerState, changeBodyLevel: (Level) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewBodyDisplay() {
-    BodyDisplay(timerState = TimerState()) {}
+    BodyDisplay(timerDisplayState = TimerDisplayState()) {}
 }

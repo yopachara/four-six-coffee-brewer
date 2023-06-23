@@ -4,30 +4,29 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yopachara.fourtosixmethod.core.data.model.Balance
-import com.yopachara.fourtosixmethod.core.data.model.TimerState
-import com.yopachara.fourtosixmethod.core.designsystem.theme.Purple200
+import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 
 @Composable
-fun BalanceDisplay(timerState: TimerState, changeBalanceLevel: (Balance) -> Unit) {
+fun BalanceDisplay(timerDisplayState: TimerDisplayState, changeBalanceLevel: (Balance) -> Unit) {
 
     Column(
         modifier = Modifier
             .padding(horizontal = 24.dp)
     ) {
         val mRememberObserver =
-            remember<MutableState<Balance>> { mutableStateOf(timerState.recipe.balance) }
+            remember<MutableState<Balance>> { mutableStateOf(timerDisplayState.recipe.balance) }
 
         Text(
             text = "Balance",
@@ -44,12 +43,13 @@ fun BalanceDisplay(timerState: TimerState, changeBalanceLevel: (Balance) -> Unit
                         changeBalanceLevel.invoke(mRememberObserver.value)
                     },
                     enabled = true,
-                    colors = RadioButtonDefaults.colors(selectedColor = Purple200)
                 )
                 Text(
                     text = "Basic",
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
 
@@ -62,12 +62,13 @@ fun BalanceDisplay(timerState: TimerState, changeBalanceLevel: (Balance) -> Unit
                         changeBalanceLevel.invoke(mRememberObserver.value)
                     },
                     enabled = true,
-                    colors = RadioButtonDefaults.colors(selectedColor = Purple200)
                 )
                 Text(
                     text = "Sweet",
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
 
@@ -80,12 +81,13 @@ fun BalanceDisplay(timerState: TimerState, changeBalanceLevel: (Balance) -> Unit
                         changeBalanceLevel.invoke(mRememberObserver.value)
                     },
                     enabled = true,
-                    colors = RadioButtonDefaults.colors(selectedColor = Purple200)
                 )
                 Text(
                     text = "Acid",
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
         }
@@ -95,5 +97,5 @@ fun BalanceDisplay(timerState: TimerState, changeBalanceLevel: (Balance) -> Unit
 @Preview(showBackground = true)
 @Composable
 fun PreviewBalanceDisplay() {
-    BalanceDisplay(timerState = TimerState()) {}
+    BalanceDisplay(timerDisplayState = TimerDisplayState()) {}
 }

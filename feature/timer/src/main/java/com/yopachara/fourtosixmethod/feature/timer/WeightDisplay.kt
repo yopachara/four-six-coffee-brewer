@@ -13,23 +13,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yopachara.fourtosixmethod.core.data.model.TimerState
+import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 import com.yopachara.fourtosixmethod.util.roundTo
 
 @Composable
-fun WeightDisplay(timerState: TimerState, setWeight: (Float) -> Unit) {
+fun WeightDisplay(timerDisplayState: TimerDisplayState, setWeight: (Float) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
     ) {
-        var sliderPosition by remember { mutableStateOf(timerState.recipe.coffeeWeight * 10) }
+        var sliderPosition by remember { mutableStateOf(timerDisplayState.recipe.coffeeWeight * 10) }
         fun updateWeight(value: Float) {
             sliderPosition = value * 10
             setWeight(value)
@@ -37,7 +38,7 @@ fun WeightDisplay(timerState: TimerState, setWeight: (Float) -> Unit) {
 
         Row {
             Text(
-                text = "${timerState.recipe.coffeeWeight} g",
+                text = "${timerDisplayState.recipe.coffeeWeight} g",
                 fontSize = 32.sp,
                 textAlign = TextAlign.Center,
                 fontStyle = FontStyle.Italic,
@@ -45,22 +46,22 @@ fun WeightDisplay(timerState: TimerState, setWeight: (Float) -> Unit) {
             )
 
             Button(
-                enabled = timerState.recipe.coffeeWeight < 40,
+                enabled = timerDisplayState.recipe.coffeeWeight < 40,
                 onClick = {
-                    updateWeight(timerState.recipe.coffeeWeight.plus(0.1f).roundTo(1))
+                    updateWeight(timerDisplayState.recipe.coffeeWeight.plus(0.1f).roundTo(1))
                 }, modifier = Modifier
                     .padding(horizontal = 8.dp)
             ) {
-                Text(text = "+0.1", fontStyle = FontStyle.Italic)
+                Text(text = "+0.1", color = Color.White, fontStyle = FontStyle.Italic)
             }
             Button(
-                enabled = timerState.recipe.coffeeWeight > 10,
+                enabled = timerDisplayState.recipe.coffeeWeight > 10,
                 onClick = {
                     updateWeight(
-                        timerState.recipe.coffeeWeight.minus(0.1f).roundTo(1)
+                        timerDisplayState.recipe.coffeeWeight.minus(0.1f).roundTo(1)
                     )
                 }) {
-                Text(text = "-0.1", fontStyle = FontStyle.Italic)
+                Text(text = "-0.1", color = Color.White, fontStyle = FontStyle.Italic)
             }
         }
 
@@ -85,5 +86,5 @@ fun WeightDisplay(timerState: TimerState, setWeight: (Float) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewWeightDisplay() {
-    WeightDisplay(timerState = TimerState()) {}
+    WeightDisplay(timerDisplayState = TimerDisplayState()) {}
 }

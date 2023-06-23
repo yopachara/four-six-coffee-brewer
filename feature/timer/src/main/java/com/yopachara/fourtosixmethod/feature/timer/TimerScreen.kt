@@ -32,7 +32,6 @@ import com.yopachara.fourtosixmethod.feature.timer.TimerDisplay
 import com.yopachara.fourtosixmethod.feature.timer.TimerViewModel
 import com.yopachara.fourtosixmethod.feature.timer.WeightDisplay
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun TimerRoute(

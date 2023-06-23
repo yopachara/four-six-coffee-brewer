@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("foursixmethod.android.library")
     id("foursixmethod.android.hilt")

@@ -1,6 +1,5 @@
 package com.yopachara.fourtosixmethod.feature.timer
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween

@@ -10,6 +10,7 @@ import com.yopachara.fourtosixmethod.feature.timer.navigation.timerRoute
 import com.yopachara.fourtosixmethod.feature.timer.navigation.timerScreen
 import com.yopachara.fourtosixmethod.ui.FlowSixAppState
 
+
 @Composable
 fun NavHost(
     appState: FlowSixAppState,
@@ -30,8 +31,9 @@ fun NavHost(
         historyScreen {
 
         }
-        aboutScreen{
+        aboutScreen {
 
         }
     }
+
 }

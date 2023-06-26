@@ -60,7 +60,7 @@ fun TimerDisplay(
         val totalAnimateProcess = animateFloatAsState(
             targetValue = timerDisplayState.progressPercentage,
             animationSpec = tween(durationMillis = 100, easing = LinearEasing)
-        )
+        ).value
 
         Text(
             text = timerDisplayState.displaySeconds,
@@ -85,7 +85,7 @@ fun TimerDisplay(
             Column(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 12.dp)
                     .align(Alignment.CenterStart)
             ) {
                 Text(
@@ -98,7 +98,7 @@ fun TimerDisplay(
 
                 )
                 Text(
-                    text = "${timerDisplayState.getWaterWeightCurrentState()} g",
+                    text = "${timerDisplayState.recipe.coffeeWeight} g",
                     fontSize = 24.sp,
                     textAlign = TextAlign.Center,
                     fontStyle = FontStyle.Italic,
@@ -117,7 +117,7 @@ fun TimerDisplay(
             Column(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 12.dp)
                     .align(Alignment.CenterEnd)
             ) {
                 Text(
@@ -152,7 +152,7 @@ fun TimerDisplay(
             Column(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 12.dp)
                     .align(Alignment.CenterStart)
             ) {
                 Text(
@@ -184,7 +184,7 @@ fun TimerDisplay(
             Column(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 12.dp)
                     .align(Alignment.CenterEnd)
             ) {
                 Text(
@@ -227,7 +227,7 @@ fun TimerDisplay(
                     .padding(horizontal = 16.dp),
             )
             LinearProgressIndicator(
-                progress = 1 - totalAnimateProcess.value,
+                progress = 1 - totalAnimateProcess,
                 modifier = Modifier
                     .height(6.dp)
                     .padding(horizontal = 16.dp)

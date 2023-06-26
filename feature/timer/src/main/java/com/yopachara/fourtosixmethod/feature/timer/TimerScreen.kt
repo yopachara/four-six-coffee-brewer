@@ -45,10 +45,10 @@ internal fun TimerRoute(
         timerDisplayState = timerState,
         toggleStartPause = viewModel::toggleTime,
         onStop = viewModel::stopTime,
-        onWeightChanged = viewModel::setWeight,
-        onRatioChanged = viewModel::setRatio,
-        onBalanceChange = viewModel::setBalance,
-        onBodyChange = viewModel::setLevel,
+        onWeightChanged = viewModel::setCoffeeWeight,
+        onRatioChanged = viewModel::setCoffeeRatio,
+        onBalanceChange = viewModel::setCoffeeBalance,
+        onBodyChange = viewModel::setCoffeeLevel,
         modifier = modifier,
     )
 }

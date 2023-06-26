@@ -30,29 +30,20 @@ class TimerViewModel @Inject constructor(
 
     private var job: Job? = null
 
-    fun setWeight(value: Float) = setCoffeeWeight(value)
-    fun setRatio(value: Int) = setCoffeeRatio(value)
-    fun setBalance(value: Balance) = setCoffeeBalance(value)
-    fun setLevel(value: Level) = setCoffeeLevel(value)
-
-
     private var _timerDisplayStateFlow = MutableStateFlow(TimerDisplayState())
     val timerDisplayStateFlow: StateFlow<TimerDisplayState> = _timerDisplayStateFlow
-
 
     /**
      * The timer emits the total seconds immediately.
      * Each second after that, it will emit the next value.
      */
-    fun <DisplayState> initTimer(
+    private fun initTimer(
         totalSeconds: Int,
         continueTime: Int? = null,
-        onTick: (Int) -> DisplayState,
-    ): Flow<DisplayState> {
-        val startSecond = continueTime?.let {
-            totalSeconds?.minus(it)
-        } ?: totalSeconds
-        return (startSecond - 1 downTo 0).asFlow() // Emit total - 1 because the first was emitted onStart
+        onTick: (Int) -> TimerDisplayState,
+    ): Flow<TimerDisplayState> {
+        val second = totalSeconds.minus(continueTime ?: 0)
+        return (second - 1 downTo 0).asFlow() // Emit total - 1 because the first was emitted onStart
             .onEach { delay(100) } // Each second later emit a number
             .onStart {
                 if (continueTime == null) emit(totalSeconds)
@@ -92,11 +83,14 @@ class TimerViewModel @Inject constructor(
                         timerState = TimerState.Play
                     )
                 }.onStart {
-                    timerDisplayStateFlow.value.copy(
-                        timerState = TimerState.Play
+                    emit(
+                        _timerDisplayStateFlow.value.copy(
+                            timerState = TimerState.Play
+                        )
                     )
+
                 }.onCompletion {
-                    if (timerDisplayStateFlow.value.isComplete()) {
+                    if (_timerDisplayStateFlow.value.isComplete()) {
                         _timerDisplayStateFlow.emit(
                             _timerDisplayStateFlow.value.copy(
                                 secondsRemaining = null,
@@ -106,7 +100,7 @@ class TimerViewModel @Inject constructor(
 
                         )
                         timerScope.launch {
-                            insertRecipeUseCase(timerDisplayStateFlow.value.recipe)
+                            insertRecipeUseCase(_timerDisplayStateFlow.value.recipe)
                         }
                     } else {
                         _timerDisplayStateFlow.emit(

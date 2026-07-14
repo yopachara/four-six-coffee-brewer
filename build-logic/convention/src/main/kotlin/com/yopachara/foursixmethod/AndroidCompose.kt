@@ -13,17 +13,15 @@ import java.io.File
  * Configure Compose-specific options
  */
 internal fun Project.configureAndroidCompose(
-    commonExtension: CommonExtension<*, *, *, *>,
+    commonExtension: CommonExtension,
 ) {
+    pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
     commonExtension.apply {
-        buildFeatures {
+        buildFeatures.apply {
             compose = true
-        }
-
-        composeOptions {
-            kotlinCompilerExtensionVersion = libs.findVersion("androidxComposeCompiler").get().toString()
         }
 
         dependencies {
@@ -34,8 +32,8 @@ internal fun Project.configureAndroidCompose(
     }
 
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + buildComposeMetricsParameters()
+        compilerOptions {
+            freeCompilerArgs.addAll(buildComposeMetricsParameters())
         }
     }
 }

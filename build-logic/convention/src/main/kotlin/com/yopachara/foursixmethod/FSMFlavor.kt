@@ -21,20 +21,18 @@ enum class FSMFlavor(val dimension: FlavorDimension, val applicationIdSuffix: St
 }
 
 fun Project.configureFlavors(
-    commonExtension: CommonExtension<*, *, *, *>,
+    commonExtension: CommonExtension,
     flavorConfigurationBlock: ProductFlavor.(flavor: FSMFlavor) -> Unit = {}
 ) {
     commonExtension.apply {
         flavorDimensions += FlavorDimension.contentType.name
-        productFlavors {
-            FSMFlavor.values().forEach {
-                create(it.name) {
-                    dimension = it.dimension.name
-                    flavorConfigurationBlock(this, it)
-                    if (this@apply is ApplicationExtension && this is ApplicationProductFlavor) {
-                        if (it.applicationIdSuffix != null) {
-                            this.applicationIdSuffix = it.applicationIdSuffix
-                        }
+        FSMFlavor.values().forEach { fsmFlavor ->
+            productFlavors.create(fsmFlavor.name).apply {
+                dimension = fsmFlavor.dimension.name
+                flavorConfigurationBlock(this, fsmFlavor)
+                if (commonExtension is ApplicationExtension && this is ApplicationProductFlavor) {
+                    if (fsmFlavor.applicationIdSuffix != null) {
+                        this.applicationIdSuffix = fsmFlavor.applicationIdSuffix
                     }
                 }
             }

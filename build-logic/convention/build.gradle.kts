@@ -30,13 +30,14 @@ java {
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 
 dependencies {
     compileOnly(libs.android.gradlePlugin)
+    compileOnly(libs.compose.compiler.gradlePlugin)
     compileOnly(libs.firebase.crashlytics.gradle)
     compileOnly(libs.firebase.performance.gradle)
     compileOnly(libs.kotlin.gradlePlugin)

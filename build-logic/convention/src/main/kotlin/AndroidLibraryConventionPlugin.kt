@@ -14,8 +14,8 @@
  *   limitations under the License.
  */
 
+import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
-import com.android.build.gradle.LibraryExtension
 import com.yopachara.foursixmethod.configureFlavors
 import com.yopachara.foursixmethod.configureGradleManagedDevices
 import com.yopachara.foursixmethod.configureKotlinAndroid
@@ -34,12 +34,10 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.library")
-                apply("org.jetbrains.kotlin.android")
             }
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = 33
                 configureFlavors(this)
                 configureGradleManagedDevices(this)
             }
@@ -53,11 +51,16 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     force(libs.findLibrary("junit4").get())
                     // Temporary workaround for https://issuetracker.google.com/174733673
                     force("org.objenesis:objenesis:2.6")
+                    val lifecycleVersion = libs.findVersion("androidxLifecycle").get().toString()
+                    force("androidx.lifecycle:lifecycle-viewmodel:$lifecycleVersion")
+                    force("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
                 }
             }
             dependencies {
                 add("androidTestImplementation", kotlin("test"))
                 add("testImplementation", kotlin("test"))
+                add("testImplementation", libs.findLibrary("junit4").get())
+                add("androidTestImplementation", libs.findLibrary("androidx.test.ext").get())
             }
         }
     }

@@ -14,16 +14,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * Configure base Kotlin with Android options
  */
 internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *>,
+    commonExtension: CommonExtension,
 ) {
     commonExtension.apply {
-        compileSdk = 33
+        compileSdk = 37
 
-        defaultConfig {
-            minSdk = 21
+        defaultConfig.apply {
+            minSdk = 23
         }
 
-        compileOptions {
+        compileOptions.apply {
             // Up to Java 11 APIs are available through desugaring
             // https://developer.android.com/studio/write/java11-minimal-support-table
             sourceCompatibility = JavaVersion.VERSION_17
@@ -34,18 +34,17 @@ internal fun Project.configureKotlinAndroid(
 
     // Use withType to workaround https://youtrack.jetbrains.com/issue/KT-55947
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
+        compilerOptions {
             // Set JVM target to 17
-            jvmTarget = JavaVersion.VERSION_17.toString()
-            // Treat all Kotlin warnings as errors (disabled by default)
-            // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+
             val warningsAsErrors: String? by project
-            allWarningsAsErrors = warningsAsErrors.toBoolean()
-            freeCompilerArgs = freeCompilerArgs + listOf(
+            allWarningsAsErrors.set(warningsAsErrors.toBoolean())
+
+            freeCompilerArgs.addAll(
                 "-opt-in=kotlin.RequiresOptIn",
-                // Enable experimental coroutines APIs, including Flow
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
+                "-opt-in=kotlinx.coroutines.FlowPreview"
             )
         }
     }

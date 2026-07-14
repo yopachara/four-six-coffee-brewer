@@ -1,7 +1,6 @@
 plugins {
     id("foursixmethod.android.library")
     id("foursixmethod.android.hilt")
-    kotlin("kapt")
 }
 
 android {
@@ -16,6 +15,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.datetime)
 
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
 }

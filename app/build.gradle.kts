@@ -41,7 +41,7 @@ dependencies {
     implementation(project(":feature:history"))
     implementation(project(":feature:about"))
 
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)

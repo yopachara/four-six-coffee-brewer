@@ -10,3 +10,6 @@ enum class Level(
     Strong(0.15f, 0.15f, 0.15f, 0.15f),
     Week(0.3f, 0.3f)
 }
+
+val Level.displayName: String
+    get() = if (this == Level.Week) "Weak" else name

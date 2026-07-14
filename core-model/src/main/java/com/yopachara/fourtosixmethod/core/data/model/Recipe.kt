@@ -1,6 +1,6 @@
 package com.yopachara.fourtosixmethod.core.data.model
 
-import java.util.Date
+import java.time.LocalDate
 
 class Recipe(
     var id: Int = 0,
@@ -9,7 +9,7 @@ class Recipe(
     _balance: Balance = Balance.Basic,
     _level: Level = Level.Basic,
     var steps: List<Step> = getDefaultSteps(),
-    var createAt: Date = Date()
+    var createAt: LocalDate = LocalDate.now()
 ) {
 
     var ratio: Int = _ratio
@@ -35,6 +35,26 @@ class Recipe(
             field = value
             generateSteps()
         }
+
+    init {
+        generateSteps()
+    }
+
+    fun copy(
+        id: Int = this.id,
+        ratio: Int = this.ratio,
+        coffeeWeight: Float = this.coffeeWeight,
+        balance: Balance = this.balance,
+        level: Level = this.level,
+        createAt: LocalDate = this.createAt,
+    ): Recipe = Recipe(
+        id = id,
+        _ratio = ratio,
+        _coffeeWeight = coffeeWeight,
+        _balance = balance,
+        _level = level,
+        createAt = createAt
+    )
 
     fun getTotalWater(): Float {
         return (coffeeWeight.times(ratio))
@@ -110,7 +130,7 @@ class Recipe(
             }
 
             in 0..120 -> {
-                return when (level) {
+                when (level) {
                     Level.Basic -> when (secondsRemaining) {
                         in 0..30 -> State.Fifth
                         in 31..75 -> State.Forth
@@ -169,7 +189,7 @@ class Recipe(
             }
 
             in 91..225 -> {
-                return when (level) {
+                when (level) {
                     Level.Basic -> when (second) {
                         in 91..135 -> 90
                         in 136..180 -> 135
@@ -198,7 +218,29 @@ class Recipe(
     }
 
     override fun equals(other: Any?): Boolean {
-        return false
+        if (this === other) return true
+        if (other !is Recipe) return false
+
+        if (id != other.id) return false
+        if (ratio != other.ratio) return false
+        if (coffeeWeight != other.coffeeWeight) return false
+        if (balance != other.balance) return false
+        if (level != other.level) return false
+        if (steps != other.steps) return false
+        if (createAt != other.createAt) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + ratio
+        result = 31 * result + coffeeWeight.hashCode()
+        result = 31 * result + balance.hashCode()
+        result = 31 * result + level.hashCode()
+        result = 31 * result + steps.hashCode()
+        result = 31 * result + createAt.hashCode()
+        return result
     }
 }
 

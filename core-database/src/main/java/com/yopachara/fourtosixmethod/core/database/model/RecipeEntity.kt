@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
-import java.util.Date
+import java.time.LocalDate
 
 @Entity(tableName = "recipes")
 class RecipeEntity(
@@ -15,7 +15,7 @@ class RecipeEntity(
     @ColumnInfo(name = "steps")
     var steps: List<StepEntity>,
     @ColumnInfo(name = "createAt")
-    var createAt: Date = Date(),
+    var createAt: LocalDate = LocalDate.now(),
     @ColumnInfo(name = "ratio")
     var ratio: Int,
     @ColumnInfo(name = "coffee_weight")

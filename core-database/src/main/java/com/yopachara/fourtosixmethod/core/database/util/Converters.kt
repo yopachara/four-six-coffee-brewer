@@ -2,20 +2,20 @@ package com.yopachara.fourtosixmethod.core.database.util
 
 import androidx.room.TypeConverter
 import com.yopachara.fourtosixmethod.core.database.model.StepEntity
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.util.Date
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-class DateConverter {
+class LocalDateConverter {
     @TypeConverter
-    fun recipeToString(date: Date): Long {
-        return date.time
+    fun localDateToString(date: LocalDate): String {
+        return date.format(DateTimeFormatter.ISO_LOCAL_DATE)
     }
 
     @TypeConverter
-    fun stringToRecipe(value: Long): Date {
-        return Date(value)
+    fun stringToLocalDate(value: String): LocalDate {
+        return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE)
     }
 }
 

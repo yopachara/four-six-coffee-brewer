@@ -10,7 +10,7 @@ import com.yopachara.fourtosixmethod.core.network.FsmDispatchers
 import com.yopachara.fourtosixmethod.core.result.Result
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.time.LocalDate
 import javax.inject.Inject
 
 class OfflineRecipeRepository @Inject constructor(
@@ -30,7 +30,7 @@ class OfflineRecipeRepository @Inject constructor(
     override suspend fun saveRecipe(recipe: Recipe) = withContext(ioDispatcher) {
         return@withContext try {
             Result.Success(recipeDao.insertRecipe(recipe.apply {
-                createAt = Date()
+                createAt = LocalDate.now()
             }.asEntity()))
         } catch (e: Exception) {
             Result.Error(e)

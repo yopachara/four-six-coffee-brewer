@@ -1,4 +1,4 @@
-package com.yopachara.fourtosixmethod.feature.history
+package com.yopachara.fourtosixmethod.feature.history.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.yopachara.fourtosixmethod.core.data.model.Recipe

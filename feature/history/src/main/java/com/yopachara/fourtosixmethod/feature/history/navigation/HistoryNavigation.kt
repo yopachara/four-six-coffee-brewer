@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.yopachara.fourtosixmethod.feature.history.HistoryRoute
+import com.yopachara.fourtosixmethod.feature.history.screen.HistoryRoute
 
 const val historyRoute = "history_route"
 

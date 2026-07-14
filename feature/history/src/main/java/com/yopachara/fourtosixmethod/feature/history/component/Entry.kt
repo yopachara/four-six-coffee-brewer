@@ -1,4 +1,4 @@
-package com.yopachara.fourtosixmethod.feature.history
+package com.yopachara.fourtosixmethod.feature.history.component
 
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 

@@ -1,8 +1,8 @@
-package com.yopachara.fourtosixmethod.feature.history
+package com.yopachara.fourtosixmethod.feature.history.component
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
@@ -17,15 +17,13 @@ import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun HistoryChart(recipeList: List<Recipe>) {
 
     val frequencies = recipeList.groupingBy { recipe ->
-        val localDate = recipe.createAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-        localDate.dayOfYear
+        recipe.createAt.toEpochDay()
     }.eachCount()
 
     val value = frequencies.map { recipe ->
@@ -40,15 +38,7 @@ fun HistoryChart(recipeList: List<Recipe>) {
 
     val bottomAxisValueFormatter = AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _ ->
         if (x > 0) {
-            val localDate = LocalDate.ofYearDay(
-                LocalDate.now().year,
-                x.toInt()
-            )
-            if (localDate != null) {
-                localDate.format(DateTimeFormatter.ofPattern("dd/MM"))
-            } else {
-                ""
-            }
+            LocalDate.ofEpochDay(x.toLong()).format(DateTimeFormatter.ofPattern("dd/MM/yy"))
         } else ""
     }
 
@@ -72,7 +62,7 @@ fun HistoryChart(recipeList: List<Recipe>) {
         ),
         bottomAxis = bottomAxis(
             titleComponent = textComponent(
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 textSize = 12.sp,
             ),
             valueFormatter = bottomAxisValueFormatter, labelRotationDegrees = 45f,

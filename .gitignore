@@ -43,3 +43,6 @@ _sandbox
 
 # Android Studio captures folder
 captures/
+
+# Graphify local output and cache files
+graphify-out/

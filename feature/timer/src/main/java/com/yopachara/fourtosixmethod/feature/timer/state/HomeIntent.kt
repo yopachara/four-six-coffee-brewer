@@ -1,7 +1,4 @@
-package com.yopachara.fourtosixmethod.feature.timer
-
-import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
-
+package com.yopachara.fourtosixmethod.feature.timer.state
 
 sealed class HomeIntent {
 }

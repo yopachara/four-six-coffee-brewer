@@ -1,4 +1,4 @@
-package com.yopachara.fourtosixmethod.feature.timer
+package com.yopachara.fourtosixmethod.feature.timer.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.yopachara.fourtosixmethod.core.data.model.Balance
@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +30,7 @@ class TimerViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var job: Job? = null
+    private var isStopRequested = false
 
     private var _timerDisplayStateFlow = MutableStateFlow(TimerDisplayState())
     val timerDisplayStateFlow: StateFlow<TimerDisplayState> = _timerDisplayStateFlow
@@ -44,7 +46,7 @@ class TimerViewModel @Inject constructor(
     ): Flow<TimerDisplayState> {
         val second = totalSeconds.minus(continueTime ?: 0)
         return (second - 1 downTo 0).asFlow() // Emit total - 1 because the first was emitted onStart
-            .onEach { delay(100) } // Each second later emit a number
+            .onEach { delay(1000) } // Each second later emit a number
             .onStart {
                 if (continueTime == null) emit(totalSeconds)
             } // Emit total seconds immediately
@@ -55,22 +57,22 @@ class TimerViewModel @Inject constructor(
     }
 
     fun stopTime() {
+        isStopRequested = true
         job?.cancel()
         job = null
-        timerScope.launch {
-            _timerDisplayStateFlow.emit(
-                TimerDisplayState(
-                    secondsRemaining = null,
-                    seconds = null,
-                    timerState = TimerState.Stop
-                )
+        _timerDisplayStateFlow.update { currentState ->
+            TimerDisplayState(
+                secondsRemaining = null,
+                seconds = null,
+                timerState = TimerState.Stop,
+                recipe = currentState.recipe // Retain current recipe selection on stop
             )
-
         }
     }
 
     fun toggleTime() {
         job = if (job == null || job?.isCompleted == true) {
+            isStopRequested = false
             timerScope.launch {
                 initTimer(
                     _timerDisplayStateFlow.value.recipe.getTotalTime(),
@@ -83,32 +85,29 @@ class TimerViewModel @Inject constructor(
                         timerState = TimerState.Play
                     )
                 }.onStart {
-                    emit(
-                        _timerDisplayStateFlow.value.copy(
-                            timerState = TimerState.Play
-                        )
-                    )
-
+                    _timerDisplayStateFlow.update {
+                        it.copy(timerState = TimerState.Play)
+                    }
                 }.onCompletion {
+                    if (isStopRequested) return@onCompletion
                     if (_timerDisplayStateFlow.value.isComplete()) {
-                        _timerDisplayStateFlow.emit(
-                            _timerDisplayStateFlow.value.copy(
+                        _timerDisplayStateFlow.update {
+                            it.copy(
                                 secondsRemaining = null,
                                 seconds = null,
                                 timerState = TimerState.Stop
                             )
-
-                        )
+                        }
                         timerScope.launch {
                             insertRecipeUseCase(_timerDisplayStateFlow.value.recipe)
                         }
                     } else {
-                        _timerDisplayStateFlow.emit(
-                            _timerDisplayStateFlow.value.copy(timerState = TimerState.Pause)
-                        )
+                        _timerDisplayStateFlow.update {
+                            it.copy(timerState = TimerState.Pause)
+                        }
                     }
-                }.collect {
-                    _timerDisplayStateFlow.emit(it)
+                }.collect { tickedState ->
+                    _timerDisplayStateFlow.update { tickedState }
                 }
             }
         } else {
@@ -118,31 +117,27 @@ class TimerViewModel @Inject constructor(
     }
 
     fun setCoffeeWeight(value: Float) {
-        _timerDisplayStateFlow.value = _timerDisplayStateFlow.value.copy(
-            recipe = _timerDisplayStateFlow.value.recipe.apply {
-                coffeeWeight = value
-            }
-        )
+        _timerDisplayStateFlow.update { state ->
+            state.copy(recipe = state.recipe.copy(coffeeWeight = value))
+        }
     }
 
     fun setCoffeeRatio(value: Int) {
-        _timerDisplayStateFlow.value = _timerDisplayStateFlow.value.copy().apply {
-            recipe.ratio = value
+        _timerDisplayStateFlow.update { state ->
+            state.copy(recipe = state.recipe.copy(ratio = value))
         }
     }
 
     fun setCoffeeBalance(value: Balance) {
-        _timerDisplayStateFlow.value = _timerDisplayStateFlow.value.copy().apply {
-            recipe.balance = value
+        _timerDisplayStateFlow.update { state ->
+            state.copy(recipe = state.recipe.copy(balance = value))
         }
     }
 
     fun setCoffeeLevel(value: Level) {
-        _timerDisplayStateFlow.value = _timerDisplayStateFlow.value.copy(
-            recipe = _timerDisplayStateFlow.value.recipe.apply {
-                level = value
-            }
-        )
+        _timerDisplayStateFlow.update { state ->
+            state.copy(recipe = state.recipe.copy(level = value))
+        }
     }
 
 }

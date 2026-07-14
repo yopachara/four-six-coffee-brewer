@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.yopachara.flowsixmethod.feature.about.navigation.aboutScreen
 import com.yopachara.fourtosixmethod.feature.history.navigation.historyScreen
-import com.yopachara.fourtosixmethod.feature.timer.navigation.navigateToTimer
 import com.yopachara.fourtosixmethod.feature.timer.navigation.timerRoute
 import com.yopachara.fourtosixmethod.feature.timer.navigation.timerScreen
 import com.yopachara.fourtosixmethod.ui.FlowSixAppState
@@ -23,11 +22,7 @@ fun NavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        timerScreen(
-            onTopicClick = {
-                navController.navigateToTimer()
-            },
-        )
+        timerScreen()
         historyScreen {
 
         }

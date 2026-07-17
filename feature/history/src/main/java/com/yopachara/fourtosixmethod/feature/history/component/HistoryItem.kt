@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material.icons.filled.Opacity
@@ -125,6 +126,34 @@ fun HistoryItem(recipe: Recipe) {
                     )
                 }
 
+
+                // Iced drip split badge
+                if (recipe.isIcedDrip) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f))
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AcUnit,
+                            contentDescription = "Iced Drip",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "${
+                                recipe.getHotWaterWeight().toInt()
+                            }g hot / ${recipe.getIceWeight().toInt()}g ice",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+
                 // Balance taste tag
                 Box(
                     modifier = Modifier
@@ -163,5 +192,10 @@ fun HistoryItem(recipe: Recipe) {
 @Preview
 @Composable
 private fun PreviewHistoryItem() {
-    HistoryItem(recipe = previewRecipes().first())
+    Column() {
+        previewRecipes().forEach { recipe ->
+            HistoryItem(recipe = recipe)
+            Spacer(modifier = Modifier.size(8.dp)) // Add spacing between items
+        }
+    }
 }

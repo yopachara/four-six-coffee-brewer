@@ -37,6 +37,7 @@ import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
 import com.yopachara.fourtosixmethod.feature.timer.component.BalanceDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.BodyDisplay
+import com.yopachara.fourtosixmethod.feature.timer.component.IcedDripDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.RatioDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.StepsDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.TimerDisplay
@@ -72,6 +73,8 @@ internal fun TimerRoute(
         onBalanceChange = viewModel::setCoffeeBalance,
         onBodyChange = viewModel::setCoffeeLevel,
         modifier = modifier,
+        onIcedDripToggle = viewModel::setIcedDrip,
+        onHotRatioChange = viewModel::setHotRatio,
     )
 }
 
@@ -86,6 +89,8 @@ internal fun TimerScreen(
     onBalanceChange: (Balance) -> Unit,
     onBodyChange: (Level) -> Unit,
     modifier: Modifier = Modifier,
+    onIcedDripToggle: (Boolean) -> Unit,
+    onHotRatioChange: (Int) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -137,6 +142,12 @@ internal fun TimerScreen(
                     WeightDisplay(timerDisplayState, onWeightChanged)
                     Spacer(modifier = Modifier.height(12.dp))
                     RatioDisplay(timerDisplayState, onRatioChanged)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    IcedDripDisplay(
+                        timerDisplayState = timerDisplayState,
+                        onIcedDripToggle = onIcedDripToggle,
+                        onHotRatioChange = onHotRatioChange
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
                     BalanceDisplay(
                         timerDisplayState = timerDisplayState,

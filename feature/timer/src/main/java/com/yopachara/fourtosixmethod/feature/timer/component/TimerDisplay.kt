@@ -321,6 +321,13 @@ private fun TimerParameterGrid(
             modifier = Modifier.weight(1f)
         )
     }
+    if (recipe.isIcedDrip) {
+        ParameterCard(
+            title = "Iced Drip Split",
+            value = "${recipe.getHotWaterWeight().toInt()}g hot / ${recipe.getIceWeight().toInt()}g ice",
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }
 
 @Composable

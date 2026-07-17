@@ -35,4 +35,7 @@ class TimerViewModel @Inject constructor(
 
     fun setCoffeeLevel(value: Level) = updateRecipe { it.copy(level = value) }
 
+    fun setIcedDrip(value: Boolean) = updateRecipe { it.copy(isIcedDrip = value) }
+
+    fun setHotRatio(value: Int) = updateRecipe { it.copy(hotRatio = value) }
 }

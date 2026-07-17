@@ -23,7 +23,11 @@ class RecipeEntity(
     @ColumnInfo(name = "balance")
     var balance: Balance,
     @ColumnInfo(name = "level")
-    var level: Level
+    var level: Level,
+    @ColumnInfo(name = "is_iced_drip")
+    var isIcedDrip: Boolean = false,
+    @ColumnInfo(name = "hot_ratio")
+    var hotRatio: Int = 10
 )
 
 fun RecipeEntity.asExternalModel() = Recipe(
@@ -33,4 +37,6 @@ fun RecipeEntity.asExternalModel() = Recipe(
     _coffeeWeight = coffeeWeight,
     _balance = balance,
     _level = level,
+    _isIcedDrip = isIcedDrip,
+    _hotRatio = hotRatio,
 )

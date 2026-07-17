@@ -11,6 +11,8 @@ fun Recipe.asEntity(): RecipeEntity {
         ratio = ratio,
         coffeeWeight = coffeeWeight,
         balance = balance,
-        level = level
+        level = level,
+        isIcedDrip = isIcedDrip,
+        hotRatio = hotRatio
     )
 }

@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -18,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +43,7 @@ fun IcedDripDisplay(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .padding(vertical = 12.dp, horizontal = 4.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -48,20 +51,26 @@ fun IcedDripDisplay(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Iced Drip Mode",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    text = "Iced Drip",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "Brew concentrated over ice — hot water + ice equals the full yield",
+                    text = "Hot water + ice equal the full yield",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 2.dp)
                 )
             }
             Switch(
                 checked = recipe.isIcedDrip,
-                onCheckedChange = onIcedDripToggle
+                onCheckedChange = onIcedDripToggle,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.surface,
+                    checkedTrackColor = MaterialTheme.colorScheme.tertiary,
+                    checkedBorderColor = MaterialTheme.colorScheme.tertiary
+                )
             )
         }
 
@@ -69,17 +78,18 @@ fun IcedDripDisplay(
             var sliderPosition by remember<MutableState<Int>> { mutableStateOf(recipe.hotRatio) }
 
             Text(
-                text = "1:${recipe.getEffectiveHotRatio()}",
-                style = MaterialTheme.typography.headlineLarge,
+                text = "1:${recipe.getEffectiveHotRatio()} hot ratio",
+                fontFamily = FontFamily.Monospace,
+                style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.ExtraBold,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(top = 12.dp)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Slider(
                 value = sliderPosition.toFloat(),
@@ -90,13 +100,18 @@ fun IcedDripDisplay(
                     sliderPosition = it.roundToInt()
                     onHotRatioChange(sliderPosition)
                 },
+                colors = SliderDefaults.colors(
+                    thumbColor = MaterialTheme.colorScheme.tertiary,
+                    activeTrackColor = MaterialTheme.colorScheme.tertiary,
+                    inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -107,14 +122,17 @@ fun IcedDripDisplay(
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = "${recipe.getHotWaterWeight().toInt()} g",
+                    text = "${recipe.getHotWaterWeight().toInt()}g",
+                    fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 2.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -125,17 +143,16 @@ fun IcedDripDisplay(
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = "${recipe.getIceWeight().toInt()} g",
+                    text = "${recipe.getIceWeight().toInt()}g",
+                    fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
             }
         }
     }
-
 }
-
 
 @Preview(showBackground = true)
 @Composable

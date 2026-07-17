@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yopachara.fourtosixmethod.core.data.model.Level
@@ -20,37 +21,39 @@ fun BodyDisplay(
     changeBodyLevel: (Level) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .padding(vertical = 12.dp, horizontal = 4.dp)
     ) {
         Text(
             text = "Body Strength",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Set the extraction strength & mouthfeel",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.ExtraBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 12.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
-        SelectableOptionCardGroup(
+        SegmentedOptionGroup(
             options = Level.values().toList(),
             selected = timerDisplayState.recipe.level,
             onSelect = changeBodyLevel,
-            label = { it.displayName },
-            description = { levelOption ->
-                when (levelOption) {
-                    Level.Basic -> "Standard strength, clean & defined"
-                    Level.Week -> "Lighter strength, smooth & gentle"
-                    Level.Strong -> "Higher strength, rich, bold & intense"
-                }
-            }
+            label = { it.displayName }
+        )
+
+        Text(
+            text = when (timerDisplayState.recipe.level) {
+                Level.Basic -> "Standard strength, clean & defined"
+                Level.Week -> "Lighter strength, smooth & gentle"
+                Level.Strong -> "Higher strength, rich, bold & intense"
+            },
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
     }
 }

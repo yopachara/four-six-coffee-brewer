@@ -3,435 +3,194 @@ package com.yopachara.fourtosixmethod.feature.timer.component
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yopachara.fourtosixmethod.core.data.model.Recipe
-import com.yopachara.fourtosixmethod.core.data.model.displayName
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 
 @Composable
 fun TimerDisplay(
     timerDisplayState: TimerDisplayState,
     toggleStartPause: () -> Unit,
-    onStop: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isTimerRunning = timerDisplayState.secondsRemaining != null
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = 20.dp, vertical = 8.dp),
     ) {
-        TimerStateMessageCard(
+        TimerRing(
             timerDisplayState = timerDisplayState,
-            isTimerRunning = isTimerRunning
-        )
-
-        TimerReadout(
-            timerDisplayState = timerDisplayState,
-            onToggle = toggleStartPause
-        )
-
-        TimerProgressCard(
-            timerDisplayState = timerDisplayState,
-            isTimerRunning = isTimerRunning
-        )
-
-        TimerParameterGrid(recipe = timerDisplayState.recipe)
-
-        TimerActionButtons(
-            isPlaying = timerDisplayState.isPlaying(),
-            isStopEnabled = isTimerRunning,
             onToggle = toggleStartPause,
-            onStop = onStop
+            modifier = Modifier.padding(top = 8.dp)
+        )
+
+        StepProgressBar(
+            timerDisplayState = timerDisplayState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)
         )
     }
 }
 
 @Composable
-private fun TimerStateMessageCard(
-    timerDisplayState: TimerDisplayState,
-    isTimerRunning: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(
-                if (isTimerRunning) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
-                else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-            )
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        val stateText = when {
-            !isTimerRunning -> "Ready to brew? Press play below to start."
-            timerDisplayState.isPlaying() -> {
-                val currentIndex = timerDisplayState.getCurrentStateIndex()
-                val targetWater = timerDisplayState.getWaterWeightCurrentState()
-                when (currentIndex) {
-                    0 -> "Step 1: Pour $targetWater g water to Bloom 🌸"
-                    1 -> "Step 2: Pour $targetWater g water for sweetness & acidity ⚖️"
-                    else -> "Step ${currentIndex + 1}: Pour $targetWater g water for strength 💪"
-                }
-            }
-            else -> "Brewing is Paused..."
-        }
-        Text(
-            text = stateText,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-private fun TimerReadout(
+private fun TimerRing(
     timerDisplayState: TimerDisplayState,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(24.dp))
-            .clickable { onToggle() }
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
-            .padding(vertical = 28.dp, horizontal = 16.dp)
-    ) {
-        Text(
-            text = timerDisplayState.displaySeconds,
-            fontSize = 76.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.ExtraBold,
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center
-        )
+    val progress by animateFloatAsState(
+        targetValue = timerDisplayState.progressPercentage,
+        animationSpec = tween(durationMillis = 900, easing = LinearEasing),
+        label = "ringProgress"
+    )
+    val trackColor = MaterialTheme.colorScheme.surfaceVariant
+    val progressColor = MaterialTheme.colorScheme.primary
 
-        Text(
-            text = if (timerDisplayState.isPlaying()) "TAP TO PAUSE" else "TAP TO START",
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.5.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-            modifier = Modifier.padding(top = 8.dp)
-        )
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(220.dp)
+            .clip(CircleShape)
+            .clickable { onToggle() }
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokeWidth = 10.dp.toPx()
+            val diameter = size.minDimension - strokeWidth
+            val topLeft = Offset(
+                (size.width - diameter) / 2f,
+                (size.height - diameter) / 2f
+            )
+            val arcSize = Size(diameter, diameter)
+
+            drawArc(
+                color = trackColor,
+                startAngle = -90f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+            )
+            drawArc(
+                color = progressColor,
+                startAngle = -90f,
+                sweepAngle = 360f * (1f - progress),
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+            )
+        }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = timerDisplayState.displaySeconds,
+                fontSize = 52.sp,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = if (timerDisplayState.isPlaying()) "TAP TO PAUSE" else "TAP TO START",
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.2.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+        }
     }
 }
 
 @Composable
-private fun ProgressRow(
-    label: String,
-    valueLabel: String,
-    valueColor: androidx.compose.ui.graphics.Color,
-    progress: Float,
-    progressColor: androidx.compose.ui.graphics.Color,
+private fun StepProgressBar(
+    timerDisplayState: TimerDisplayState,
+    modifier: Modifier = Modifier
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    val stateProgress by animateFloatAsState(
+        targetValue = if (timerDisplayState.isRunning()) timerDisplayState.statePercentage else 0f,
+        animationSpec = tween(durationMillis = 900, easing = LinearEasing),
+        label = "stateProgress"
+    )
+
+    Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = label,
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = valueLabel,
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold,
-                color = valueColor
-            )
-        }
-        LinearProgressIndicator(
-            progress = progress,
-            modifier = Modifier
-                .height(8.dp)
-                .fillMaxWidth(),
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-            color = progressColor,
-            strokeCap = StrokeCap.Round
-        )
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun TimerProgressCard(
-    timerDisplayState: TimerDisplayState,
-    isTimerRunning: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val totalAnimateProgress = animateFloatAsState(
-        targetValue = timerDisplayState.progressPercentage,
-        animationSpec = tween(durationMillis = 1000, easing = LinearEasing),
-        label = "totalAnimateProgress"
-    ).value
-
-    val stateAnimateProgress = animateFloatAsState(
-        targetValue = timerDisplayState.statePercentage,
-        animationSpec = tween(durationMillis = 1000, easing = LinearEasing),
-        label = "stateAnimateProgress"
-    ).value
-
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            ProgressRow(
-                label = "Step progress",
-                valueLabel = "${timerDisplayState.getCurrentStateMaxTime()} s limit",
-                valueColor = MaterialTheme.colorScheme.secondary,
-                progress = if (isTimerRunning) stateAnimateProgress else 0.0f,
-                progressColor = MaterialTheme.colorScheme.secondary
-            )
-
-            ProgressRow(
-                label = "Overall progress",
-                valueLabel = "${timerDisplayState.totalSeconds} s total",
-                valueColor = MaterialTheme.colorScheme.primary,
-                progress = if (isTimerRunning) (1 - totalAnimateProgress) else 0.0f,
-                progressColor = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
-
-@Composable
-private fun ParameterCard(
-    title: String,
-    value: String,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
-        ),
-        modifier = modifier
-            .requiredHeight(80.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleMedium,
+                text = timerDisplayState.stateMessage(),
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun TimerParameterGrid(
-    recipe: Recipe,
-    modifier: Modifier = Modifier
-) {
-    FlowRow(
-        modifier = modifier.fillMaxWidth(),
-        maxItemsInEachRow = 2,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        ParameterCard(
-            title = "Coffee weight",
-            value = "${recipe.coffeeWeight} g",
-            modifier = Modifier.weight(1f)
-        )
-        ParameterCard(
-            title = "Ratio (yield)",
-            value = "1:${recipe.ratio} (${recipe.getTotalWater()}g)",
-            modifier = Modifier.weight(1f)
-        )
-        ParameterCard(
-            title = "Balance Profile",
-            value = recipe.balance.name,
-            modifier = Modifier.weight(1f)
-        )
-        ParameterCard(
-            title = "Mouthfeel Strength",
-            value = recipe.level.displayName,
-            modifier = Modifier.weight(1f)
-        )
-    }
-    if (recipe.isIcedDrip) {
-        ParameterCard(
-            title = "Iced Drip Split",
-            value = "${recipe.getHotWaterWeight().toInt()}g hot / ${recipe.getIceWeight().toInt()}g ice",
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-@Composable
-private fun TimerActionButtons(
-    isPlaying: Boolean,
-    isStopEnabled: Boolean,
-    onToggle: () -> Unit,
-    onStop: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        FilledIconButton(
-            onClick = onToggle,
-            modifier = Modifier
-                .size(64.dp)
-                .clip(CircleShape)
-        ) {
-            if (isPlaying) {
-                Icon(
-                    imageVector = Icons.Default.Pause,
-                    contentDescription = "Pause brew",
-                    modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "Start brew",
-                    modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.width(24.dp))
-
-        FilledIconButton(
-            onClick = onStop,
-            enabled = isStopEnabled,
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape),
-            colors = IconButtonDefaults.filledIconButtonColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
-            )
-        ) {
-            Icon(
-                imageVector = Icons.Default.Stop,
-                contentDescription = "Stop brew",
-                modifier = Modifier.size(24.dp)
+            Text(
+                text = timerDisplayState.stepTimeRemainingLabel(),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+        LinearProgressIndicator(
+            progress = { stateProgress },
+            modifier = Modifier
+                .padding(top = 6.dp)
+                .fillMaxWidth()
+                .height(6.dp)
+                .clip(RoundedCornerShape(3.dp)),
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            strokeCap = StrokeCap.Round
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewTimerDisplay() {
-    TimerDisplay(timerDisplayState = TimerDisplayState(60), {}, {})
+    TimerDisplay(timerDisplayState = TimerDisplayState(60), toggleStartPause = {})
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewTimerStateMessageCard() {
-    TimerStateMessageCard(
-        timerDisplayState = TimerDisplayState(60),
-        isTimerRunning = true
-    )
+private fun PreviewTimerRing() {
+    TimerRing(timerDisplayState = TimerDisplayState(60), onToggle = {})
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewTimerReadout() {
-    TimerReadout(timerDisplayState = TimerDisplayState(60), onToggle = {})
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewTimerProgressCard() {
-    TimerProgressCard(timerDisplayState = TimerDisplayState(60), isTimerRunning = true)
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewTimerParameterGrid() {
-    TimerParameterGrid(recipe = Recipe())
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewTimerActionButtons() {
-    TimerActionButtons(
-        isPlaying = false,
-        isStopEnabled = true,
-        onToggle = {},
-        onStop = {}
-    )
+private fun PreviewStepProgressBar() {
+    StepProgressBar(timerDisplayState = TimerDisplayState(60))
 }

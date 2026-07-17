@@ -5,19 +5,32 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,14 +40,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
+import com.yopachara.fourtosixmethod.core.data.model.Recipe
 import com.yopachara.fourtosixmethod.feature.timer.component.BalanceDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.BodyDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.IcedDripDisplay
@@ -72,9 +91,9 @@ internal fun TimerRoute(
         onRatioChanged = viewModel::setCoffeeRatio,
         onBalanceChange = viewModel::setCoffeeBalance,
         onBodyChange = viewModel::setCoffeeLevel,
-        modifier = modifier,
         onIcedDripToggle = viewModel::setIcedDrip,
         onHotRatioChange = viewModel::setHotRatio,
+        modifier = modifier,
     )
 }
 
@@ -88,10 +107,13 @@ internal fun TimerScreen(
     onRatioChanged: (Int) -> Unit,
     onBalanceChange: (Balance) -> Unit,
     onBodyChange: (Level) -> Unit,
-    modifier: Modifier = Modifier,
     onIcedDripToggle: (Boolean) -> Unit,
     onHotRatioChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    val recipe = timerDisplayState.recipe
+    val isRunning = timerDisplayState.isRunning()
+
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -99,14 +121,11 @@ internal fun TimerScreen(
 
     Scaffold(
         modifier = modifier,
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                shape = RoundedCornerShape(16.dp),
-                text = { Text("Recipe Settings") },
-                icon = { Icon(Icons.Filled.Settings, contentDescription = "Recipe Settings") },
-                onClick = {
-                    showBottomSheet = true
-                },
+        bottomBar = {
+            TimerBottomBar(
+                timerDisplayState = timerDisplayState,
+                onToggle = toggleStartPause,
+                onStop = onStop
             )
         }
     ) { contentPadding ->
@@ -115,15 +134,23 @@ internal fun TimerScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(contentPadding)
         ) {
+            TimerHeader(
+                recipe = recipe,
+                onOpenSettings = { showBottomSheet = true }
+            )
+
+            if (recipe.isIcedDrip && !isRunning) {
+                IcePrepBanner(recipe = recipe)
+            }
+
             TimerDisplay(
                 timerDisplayState = timerDisplayState,
-                toggleStartPause = toggleStartPause,
-                onStop = onStop
+                toggleStartPause = toggleStartPause
             )
 
             StepsDisplay(timerDisplayState = timerDisplayState)
 
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
         if (showBottomSheet) {
@@ -137,23 +164,19 @@ internal fun TimerScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
-                        .padding(start = 12.dp, end = 12.dp, bottom = 48.dp)
+                        .padding(start = 20.dp, end = 20.dp, bottom = 48.dp)
                 ) {
                     WeightDisplay(timerDisplayState, onWeightChanged)
-                    Spacer(modifier = Modifier.height(12.dp))
                     RatioDisplay(timerDisplayState, onRatioChanged)
-                    Spacer(modifier = Modifier.height(12.dp))
                     IcedDripDisplay(
                         timerDisplayState = timerDisplayState,
                         onIcedDripToggle = onIcedDripToggle,
                         onHotRatioChange = onHotRatioChange
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
                     BalanceDisplay(
                         timerDisplayState = timerDisplayState,
                         changeBalanceLevel = onBalanceChange
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
                     BodyDisplay(
                         timerDisplayState = timerDisplayState,
                         changeBodyLevel = onBodyChange
@@ -164,3 +187,176 @@ internal fun TimerScreen(
     }
 }
 
+@Composable
+private fun TimerHeader(
+    recipe: Recipe,
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = "4:6 METHOD",
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 1.5.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "${recipe.coffeeWeight}g · 1:${recipe.ratio} · ${recipe.getTotalWater().toInt()}g water",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+        }
+
+        if (recipe.isIcedDrip) {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(100.dp))
+                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                    .padding(end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AcUnit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    text = "${recipe.getIceWeight().toInt()}g ice",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .clickable { onOpenSettings() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Tune,
+                contentDescription = "Recipe settings",
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+private fun IcePrepBanner(
+    recipe: Recipe,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(MaterialTheme.colorScheme.tertiaryContainer)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.AcUnit,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = "Add ${recipe.getIceWeight().toInt()}g ice to the server before you start",
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    }
+}
+
+@Composable
+private fun TimerBottomBar(
+    timerDisplayState: TimerDisplayState,
+    onToggle: () -> Unit,
+    onStop: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isRunning = timerDisplayState.isRunning()
+    val isPlaying = timerDisplayState.isPlaying()
+
+    Column(modifier = modifier) {
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        if (isRunning) MaterialTheme.colorScheme.errorContainer
+                        else MaterialTheme.colorScheme.surfaceVariant
+                    )
+                    .clickable(enabled = isRunning) { onStop() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Stop,
+                    contentDescription = "Stop brew",
+                    tint = if (isRunning) MaterialTheme.colorScheme.onErrorContainer
+                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.primary)
+                    .clickable { onToggle() },
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = when {
+                        isPlaying -> "Pause"
+                        isRunning -> "Resume"
+                        else -> "Start brewing"
+                    },
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Default,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+        }
+    }
+}

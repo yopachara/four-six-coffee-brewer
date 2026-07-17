@@ -52,6 +52,27 @@ data class TimerDisplayState(
         return recipe.getCurrentStatePosition(secondsRemaining)?.ordinal ?: 0
     }
 
+    fun isRunning() = secondsRemaining != null
+
+    fun stateMessage(): String {
+        if (!isRunning()) return "Ready to brew"
+        if (!isPlaying()) return "Paused"
+        return when (getCurrentStateIndex()) {
+            0 -> "Pour to bloom"
+            1 -> "Balancing sweetness & acidity"
+            else -> "Building body"
+        }
+    }
+
+    fun stepTimeRemainingLabel(): String {
+        val maxTime = getCurrentStateMaxTime()
+        return if (isRunning()) {
+            val elapsed = recipe.getCurrentStateTime(seconds)
+            "${(maxTime - elapsed).coerceAtLeast(0)}s left"
+        } else {
+            "${maxTime}s pour"
+        }
+    }
 
     override fun toString(): String =
         "Seconds Remaining $secondsRemaining, totalSeconds: $totalSeconds, progress: $progressPercentage, state percentage: $statePercentage,  second $seconds"

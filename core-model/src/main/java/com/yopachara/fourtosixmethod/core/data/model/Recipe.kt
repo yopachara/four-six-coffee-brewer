@@ -2,12 +2,16 @@ package com.yopachara.fourtosixmethod.core.data.model
 
 import java.time.LocalDate
 
+private const val MIN_HOT_RATIO = 6
+
 class Recipe(
     var id: Int = 0,
     _ratio: Int = 12,
     _coffeeWeight: Float = 15f,
     _balance: Balance = Balance.Basic,
     _level: Level = Level.Basic,
+    _isIcedDrip: Boolean = false,
+    _hotRatio: Int = 10,
     var steps: List<Step> = getDefaultSteps(),
     var createAt: LocalDate = LocalDate.now()
 ) {
@@ -36,6 +40,18 @@ class Recipe(
             generateSteps()
         }
 
+    var isIcedDrip: Boolean = _isIcedDrip
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    var hotRatio: Int = _hotRatio
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
     init {
         generateSteps()
     }
@@ -46,6 +62,8 @@ class Recipe(
         coffeeWeight: Float = this.coffeeWeight,
         balance: Balance = this.balance,
         level: Level = this.level,
+        isIcedDrip: Boolean = this.isIcedDrip,
+        hotRatio: Int = this.hotRatio,
         createAt: LocalDate = this.createAt,
     ): Recipe = Recipe(
         id = id,
@@ -53,11 +71,29 @@ class Recipe(
         _coffeeWeight = coffeeWeight,
         _balance = balance,
         _level = level,
+        _isIcedDrip = isIcedDrip,
+        _hotRatio = hotRatio,
         createAt = createAt
     )
 
     fun getTotalWater(): Float {
         return (coffeeWeight.times(ratio))
+    }
+
+    fun getEffectiveHotRatio(): Int {
+        return hotRatio.coerceIn(MIN_HOT_RATIO, (ratio - 1).coerceAtLeast(MIN_HOT_RATIO))
+    }
+
+    fun getHotWaterWeight(): Float {
+        return coffeeWeight * getEffectiveHotRatio()
+    }
+
+    fun getIceWeight(): Float {
+        return getTotalWater() - getHotWaterWeight()
+    }
+
+    private fun getPourWaterWeight(): Float {
+        return if (isIcedDrip) getHotWaterWeight() else getTotalWater()
     }
 
     fun getTotalState(): Int {
@@ -167,7 +203,7 @@ class Recipe(
                         state = i.intToState(),
                         level = level,
                         balance = balance,
-                        weight = getTotalWater()
+                        weight =  getPourWaterWeight()
                     )
                 )
             }
@@ -227,6 +263,8 @@ class Recipe(
         if (balance != other.balance) return false
         if (level != other.level) return false
         if (steps != other.steps) return false
+        if (isIcedDrip != other.isIcedDrip) return false
+        if (hotRatio != other.hotRatio) return false
         if (createAt != other.createAt) return false
 
         return true
@@ -238,6 +276,8 @@ class Recipe(
         result = 31 * result + coffeeWeight.hashCode()
         result = 31 * result + balance.hashCode()
         result = 31 * result + level.hashCode()
+        result = 31 * result + isIcedDrip.hashCode()
+        result = 31 * result + hotRatio
         result = 31 * result + steps.hashCode()
         result = 31 * result + createAt.hashCode()
         return result

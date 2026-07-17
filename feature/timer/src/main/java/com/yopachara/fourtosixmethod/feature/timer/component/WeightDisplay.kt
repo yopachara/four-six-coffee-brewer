@@ -14,6 +14,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,18 +40,12 @@ fun WeightDisplay(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .padding(vertical = 12.dp, horizontal = 4.dp)
     ) {
         Text(
             text = "Coffee Weight",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Bold
-        )
-
-        Text(
-            text = "Adjust the starting weight of your coffee beans",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.ExtraBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 12.dp)
         )
@@ -74,8 +70,7 @@ fun WeightDisplay(
                         updateWeight(timerDisplayState.recipe.coffeeWeight.minus(0.1f).roundTo(1))
                     }
                 },
-                enabled = timerDisplayState.recipe.coffeeWeight > 10,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                enabled = timerDisplayState.recipe.coffeeWeight > 10
             ) {
                 Icon(
                     imageVector = Icons.Default.Remove,
@@ -84,10 +79,11 @@ fun WeightDisplay(
             }
 
             Text(
-                text = "${timerDisplayState.recipe.coffeeWeight} g",
-                style = MaterialTheme.typography.headlineLarge,
+                text = "${timerDisplayState.recipe.coffeeWeight}g",
+                fontFamily = FontFamily.Monospace,
+                style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.ExtraBold,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
             )
@@ -98,8 +94,7 @@ fun WeightDisplay(
                         updateWeight(timerDisplayState.recipe.coffeeWeight.plus(0.1f).roundTo(1))
                     }
                 },
-                enabled = timerDisplayState.recipe.coffeeWeight < 55,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                enabled = timerDisplayState.recipe.coffeeWeight < 55
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -118,10 +113,14 @@ fun WeightDisplay(
                 sliderPosition = it
                 setWeight(sliderPosition.div(10f).roundTo(1))
             },
+            colors = SliderDefaults.colors(
+                thumbColor = MaterialTheme.colorScheme.primary,
+                activeTrackColor = MaterialTheme.colorScheme.primary,
+                inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
             modifier = Modifier.fillMaxWidth()
         )
     }
-
 }
 
 @Preview(showBackground = true)

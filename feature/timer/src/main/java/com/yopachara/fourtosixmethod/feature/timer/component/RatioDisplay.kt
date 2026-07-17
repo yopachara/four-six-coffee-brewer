@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -16,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
@@ -28,35 +28,21 @@ fun RatioDisplay(
     setRatioChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val recipe = timerDisplayState.recipe
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .padding(vertical = 12.dp, horizontal = 4.dp)
     ) {
-        var sliderPosition by remember<MutableState<Int>> { mutableStateOf(timerDisplayState.recipe.ratio) }
+        var sliderPosition by remember<MutableState<Int>> { mutableStateOf(recipe.ratio) }
 
         Text(
-            text = "Brew Ratio",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Bold
-        )
-
-        Text(
-            text = "Adjust the ratio of coffee to water (1:X)",
-            style = MaterialTheme.typography.bodySmall,
+            text = "Brew Ratio · 1:${recipe.ratio} (${recipe.getTotalWater().toInt()}g)",
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.ExtraBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 12.dp)
-        )
-
-        Text(
-            text = "1:${timerDisplayState.recipe.ratio}",
-            style = MaterialTheme.typography.headlineLarge,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.ExtraBold,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -69,9 +55,13 @@ fun RatioDisplay(
                 sliderPosition = it.roundToInt()
                 setRatioChange(sliderPosition)
             },
+            colors = SliderDefaults.colors(
+                thumbColor = MaterialTheme.colorScheme.primary,
+                activeTrackColor = MaterialTheme.colorScheme.primary,
+                inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
             modifier = Modifier.fillMaxWidth()
         )
-
     }
 }
 

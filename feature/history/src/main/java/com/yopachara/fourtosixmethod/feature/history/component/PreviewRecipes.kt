@@ -45,5 +45,15 @@ internal fun previewRecipes(): List<Recipe> = listOf(
         _balance = Balance.Acid,
         _level = Level.Strong,
         createAt = LocalDate.of(2026, 1, 18)
+    ),
+    Recipe(
+        id = 4,
+        _ratio = 15,
+        _coffeeWeight = 20f,
+        _balance = Balance.Basic,
+        _level = Level.Basic,
+        _isIcedDrip = true,
+        _hotRatio = 10,
+        createAt = LocalDate.of(2026, 1, 19)
     )
 )

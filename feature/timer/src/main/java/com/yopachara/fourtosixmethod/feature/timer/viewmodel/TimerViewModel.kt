@@ -44,7 +44,7 @@ class TimerViewModel @Inject constructor(
         if (continueFrom == null) emit(totalSeconds)
         val firstTick = totalSeconds - (continueFrom ?: 0) - 1
         for (remaining in firstTick downTo 0) {
-            delay(10)
+            delay(1000)
             emit(remaining)
         }
     }.conflate()

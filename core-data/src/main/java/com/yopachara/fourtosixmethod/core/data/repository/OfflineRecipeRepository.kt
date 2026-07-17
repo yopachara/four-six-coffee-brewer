@@ -9,6 +9,9 @@ import com.yopachara.fourtosixmethod.core.network.Dispatcher
 import com.yopachara.fourtosixmethod.core.network.FsmDispatchers
 import com.yopachara.fourtosixmethod.core.result.Result
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import javax.inject.Inject
@@ -17,15 +20,12 @@ class OfflineRecipeRepository @Inject constructor(
     private val recipeDao: RecipeDao,
     @Dispatcher(FsmDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : RecipeRepository {
-    override suspend fun getListRecipe(): Result<List<Recipe>> = withContext(ioDispatcher) {
-        return@withContext try {
-            Result.Success(recipeDao.getRecipeList().map<RecipeEntity, Recipe> {
-                it.asExternalModel()
-            }.sortedByDescending { it.createAt })
-        } catch (e: Exception) {
-            Result.Error(e)
+    override fun getListRecipe(): Flow<List<Recipe>> = recipeDao.getRecipeList()
+        .map { entities ->
+            entities.map<RecipeEntity, Recipe> { it.asExternalModel() }
+                .sortedByDescending { it.createAt }
         }
-    }
+        .flowOn(ioDispatcher)
 
     override suspend fun saveRecipe(recipe: Recipe) = withContext(ioDispatcher) {
         return@withContext try {

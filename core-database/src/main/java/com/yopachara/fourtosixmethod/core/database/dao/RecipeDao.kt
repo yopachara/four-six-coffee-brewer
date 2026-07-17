@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.yopachara.fourtosixmethod.core.database.model.RecipeEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecipeDao {
@@ -12,5 +13,5 @@ interface RecipeDao {
     suspend fun insertRecipe(recipe: RecipeEntity)
 
     @Query(value = "SELECT * FROM recipes")
-    fun getRecipeList(): List<RecipeEntity>
+    fun getRecipeList(): Flow<List<RecipeEntity>>
 }

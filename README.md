@@ -1,4 +1,3 @@
-
 # 4:6 Method Brewer Scale ☕
 
 Android app implementing Tetsu Kasuya's 4:6 coffee brewing method — a step-by-step pour-over timer.
@@ -32,10 +31,11 @@ respect to Tetsu Kasuya
 
 <table style="padding:10px">
   <tr>
-    <td><img src="https://github.com/user-attachments/assets/21ff4b01-4a23-42a5-8ed9-1f2e982dfb4c" alt="1" width = 260px> </td>
+    <td><img src="https://github.com/user-attachments/assets/21ff4b01-4a23-42a5-8ed9-1f2e982dfb4c" alt="1" width = 260px ></td>
     <td><img src="https://github.com/user-attachments/assets/cc866f9c-4f00-4f53-84ac-e661f0a10809" alt="4" width = 260px ></td>   
-    <td><img src="https://github.com/user-attachments/assets/b5722f1e-fb56-4e53-b739-8f6c358e2e26" alt="2" width = 260px></td>
+    <td><img src="https://github.com/user-attachments/assets/b5722f1e-fb56-4e53-b739-8f6c358e2e26" alt="2" width = 260px ></td>
     <td><img src="https://github.com/user-attachments/assets/06a0703b-8fda-455e-a5dd-724702f5c940" alt="3" width = 260px ></td>   
+    <td><img src="https://github.com/user-attachments/assets/4935b1b6-3a94-4a91-b016-278e12066b62" alt="5" width = 260px ></td>
 
   </tr>
 </table>

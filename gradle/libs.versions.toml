@@ -26,7 +26,7 @@ androidxTestRunner = "1.5.1"
 androidxTracing = "1.1.0"
 androidxUiAutomator = "2.2.0"
 androidxWindowManager = "1.0.0"
-androidxWork = "2.7.1"
+androidxWork = "2.11.2"
 coil = "2.2.2"
 constraintlayoutCompose = "1.1.1"
 firebaseBom = "31.2.0"
@@ -34,7 +34,7 @@ firebaseCrashlyticsPlugin = "2.9.2"
 firebasePerfPlugin = "1.4.2"
 gmsPlugin = "4.3.14"
 hilt = "2.60.1"
-hiltExt = "1.0.0"
+hiltExt = "1.2.0"
 jacoco = "0.8.7"
 junit4 = "4.13.2"
 kotlin = "2.3.0"
@@ -82,6 +82,7 @@ androidx-dataStore-preferences = { group = "androidx.datastore", name = "datasto
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
+androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-metrics = { group = "androidx.metrics", name = "metrics-performance", version.ref = "androidxMetrics" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }

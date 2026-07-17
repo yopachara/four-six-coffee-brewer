@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">FourtoSixMethod</string>
+    <string name="timer_notification_channel_name">Brew timer</string>
+    <string name="timer_notification_title">4:6 Coffee Timer</string>
+    <string name="timer_notification_text_playing">Brew time %1$s</string>
+    <string name="timer_notification_text_paused">Paused — %1$s left</string>
+    <string name="timer_notification_action_play">Play</string>
+    <string name="timer_notification_action_pause">Pause</string>
+    <string name="timer_notification_action_stop">Stop</string>
 </resources>

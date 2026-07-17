@@ -1,5 +1,10 @@
 package com.yopachara.fourtosixmethod.feature.timer.screen
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +28,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yopachara.fourtosixmethod.core.data.model.Balance
@@ -43,10 +50,22 @@ internal fun TimerRoute(
     viewModel: TimerViewModel = hiltViewModel(),
 ) {
     val timerState by viewModel.timerDisplayStateFlow.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* no-op: timer still runs, notification just won't show without this */ }
 
     TimerScreen(
         timerDisplayState = timerState,
-        toggleStartPause = viewModel::toggleTime,
+        toggleStartPause = {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            viewModel.toggleTime()
+        },
         onStop = viewModel::stopTime,
         onWeightChanged = viewModel::setCoffeeWeight,
         onRatioChanged = viewModel::setCoffeeRatio,

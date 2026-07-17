@@ -21,7 +21,7 @@ object PersistenceModule {
                 context,
                 AppDatabase::class.java,
                 "recipe-database"
-            ).fallbackToDestructiveMigration()
+            ).fallbackToDestructiveMigration(true)
             .build()
     }
 }

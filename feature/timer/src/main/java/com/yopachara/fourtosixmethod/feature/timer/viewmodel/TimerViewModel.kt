@@ -1,24 +1,24 @@
 package com.yopachara.fourtosixmethod.feature.timer.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
+import com.yopachara.fourtosixmethod.core.data.model.Recipe
 import com.yopachara.fourtosixmethod.core.domain.InsertRecipeUseCase
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,118 +26,93 @@ import javax.inject.Inject
 @HiltViewModel
 class TimerViewModel @Inject constructor(
     private val insertRecipeUseCase: InsertRecipeUseCase,
-    private val timerScope: CoroutineScope,
 ) : ViewModel() {
 
     private var job: Job? = null
     private var isStopRequested = false
+    private var currentGeneration = 0
 
-    private var _timerDisplayStateFlow = MutableStateFlow(TimerDisplayState())
+    private val _timerDisplayStateFlow = MutableStateFlow(TimerDisplayState())
     val timerDisplayStateFlow: StateFlow<TimerDisplayState> = _timerDisplayStateFlow
 
     /**
-     * The timer emits the total seconds immediately.
-     * Each second after that, it will emit the next value.
+     * Emits [totalSeconds] (or the resume point, if [continueFrom] is set) immediately,
+     * then one value per second down to 0. Conflated so a slow collector never delays
+     * the next tick.
      */
-    private fun initTimer(
-        totalSeconds: Int,
-        continueTime: Int? = null,
-        onTick: (Int) -> TimerDisplayState,
-    ): Flow<TimerDisplayState> {
-        val second = totalSeconds.minus(continueTime ?: 0)
-        return (second - 1 downTo 0).asFlow() // Emit total - 1 because the first was emitted onStart
-            .onEach { delay(1000) } // Each second later emit a number
-            .onStart {
-                if (continueTime == null) emit(totalSeconds)
-            } // Emit total seconds immediately
-            .conflate() // In case the operation onTick takes some time, conflate keeps the time ticking separately
-            .transform { remainingSeconds: Int ->
-                emit(onTick(remainingSeconds))
-            }
-    }
+    private fun tickerFlow(totalSeconds: Int, continueFrom: Int? = null): Flow<Int> = flow {
+        if (continueFrom == null) emit(totalSeconds)
+        val firstTick = totalSeconds - (continueFrom ?: 0) - 1
+        for (remaining in firstTick downTo 0) {
+            delay(10)
+            emit(remaining)
+        }
+    }.conflate()
 
     fun stopTime() {
         isStopRequested = true
         job?.cancel()
         job = null
-        _timerDisplayStateFlow.update { currentState ->
-            TimerDisplayState(
-                secondsRemaining = null,
-                seconds = null,
-                timerState = TimerState.Stop,
-                recipe = currentState.recipe // Retain current recipe selection on stop
-            )
+        _timerDisplayStateFlow.update {
+            it.copy(secondsRemaining = null, seconds = null, timerState = TimerState.Stop)
         }
     }
 
     fun toggleTime() {
-        job = if (job == null || job?.isCompleted == true) {
-            isStopRequested = false
-            timerScope.launch {
-                initTimer(
-                    _timerDisplayStateFlow.value.recipe.getTotalTime(),
-                    _timerDisplayStateFlow.value.seconds
-                ) { remainingTime ->
-                    val second = _timerDisplayStateFlow.value.recipe.getTotalTime() - remainingTime
+        if (job?.isActive == true) {
+            job?.cancel()
+            job = null
+            return
+        }
+
+        isStopRequested = false
+        val generation = ++currentGeneration
+        job = viewModelScope.launch {
+            val totalTime = _timerDisplayStateFlow.value.recipe.getTotalTime()
+            val continueFrom = _timerDisplayStateFlow.value.seconds
+
+            tickerFlow(totalTime, continueFrom)
+                .map { remainingTime ->
                     _timerDisplayStateFlow.value.copy(
                         secondsRemaining = remainingTime,
-                        seconds = second,
-                        timerState = TimerState.Play
+                        seconds = totalTime - remainingTime,
+                        totalSeconds = totalTime,
+                        timerState = TimerState.Play,
                     )
-                }.onStart {
-                    _timerDisplayStateFlow.update {
-                        it.copy(timerState = TimerState.Play)
-                    }
-                }.onCompletion {
-                    if (isStopRequested) return@onCompletion
+                }
+                .onStart {
+                    _timerDisplayStateFlow.update { it.copy(timerState = TimerState.Play) }
+                }
+                .onCompletion {
+                    if (isStopRequested || generation != currentGeneration) return@onCompletion
                     if (_timerDisplayStateFlow.value.isComplete()) {
                         _timerDisplayStateFlow.update {
-                            it.copy(
-                                secondsRemaining = null,
-                                seconds = null,
-                                timerState = TimerState.Stop
-                            )
+                            it.copy(secondsRemaining = null, seconds = null, timerState = TimerState.Stop)
                         }
-                        timerScope.launch {
+                        viewModelScope.launch {
                             insertRecipeUseCase(_timerDisplayStateFlow.value.recipe)
                         }
                     } else {
-                        _timerDisplayStateFlow.update {
-                            it.copy(timerState = TimerState.Pause)
-                        }
+                        _timerDisplayStateFlow.update { it.copy(timerState = TimerState.Pause) }
                     }
-                }.collect { tickedState ->
+                }
+                .collect { tickedState ->
+                    if (generation != currentGeneration) return@collect
                     _timerDisplayStateFlow.update { tickedState }
                 }
-            }
-        } else {
-            job?.cancel()
-            null
         }
     }
 
-    fun setCoffeeWeight(value: Float) {
-        _timerDisplayStateFlow.update { state ->
-            state.copy(recipe = state.recipe.copy(coffeeWeight = value))
-        }
+    private inline fun updateRecipe(transform: (Recipe) -> Recipe) {
+        _timerDisplayStateFlow.update { it.copy(recipe = transform(it.recipe)) }
     }
 
-    fun setCoffeeRatio(value: Int) {
-        _timerDisplayStateFlow.update { state ->
-            state.copy(recipe = state.recipe.copy(ratio = value))
-        }
-    }
+    fun setCoffeeWeight(value: Float) = updateRecipe { it.copy(coffeeWeight = value) }
 
-    fun setCoffeeBalance(value: Balance) {
-        _timerDisplayStateFlow.update { state ->
-            state.copy(recipe = state.recipe.copy(balance = value))
-        }
-    }
+    fun setCoffeeRatio(value: Int) = updateRecipe { it.copy(ratio = value) }
 
-    fun setCoffeeLevel(value: Level) {
-        _timerDisplayStateFlow.update { state ->
-            state.copy(recipe = state.recipe.copy(level = value))
-        }
-    }
+    fun setCoffeeBalance(value: Balance) = updateRecipe { it.copy(balance = value) }
+
+    fun setCoffeeLevel(value: Level) = updateRecipe { it.copy(level = value) }
 
 }

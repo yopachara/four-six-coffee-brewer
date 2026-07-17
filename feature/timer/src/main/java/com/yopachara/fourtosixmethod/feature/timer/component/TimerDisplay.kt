@@ -164,7 +164,7 @@ private fun StepProgressBar(
             )
         }
         LinearProgressIndicator(
-            progress = stateProgress,
+            progress = { stateProgress },
             modifier = Modifier
                 .padding(top = 6.dp)
                 .fillMaxWidth()

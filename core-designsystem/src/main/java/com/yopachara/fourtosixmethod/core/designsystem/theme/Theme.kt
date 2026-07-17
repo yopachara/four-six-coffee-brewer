@@ -89,7 +89,7 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun FourSixMethodTheme(
-    darkTheme: Boolean = false,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
     val colors = if (darkTheme) {

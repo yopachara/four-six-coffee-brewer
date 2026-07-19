@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.yopachara.flowsixmethod.feature.about.navigation.navigateToAbout
 import com.yopachara.fourtosixmethod.feature.history.navigation.navigateToHistory
+import com.yopachara.fourtosixmethod.feature.settings.navigation.navigateToSettings
 import com.yopachara.fourtosixmethod.feature.timer.navigation.navigateToTimer
 import com.yopachara.fourtosixmethod.feature.timer.navigation.timerRoute
 import com.yopachara.fourtosixmethod.navigation.TopLevelDestination
@@ -84,6 +85,7 @@ class FlowSixAppState(
             TopLevelDestination.TIMER -> navController.navigateToTimer(topLevelNavOptions)
             TopLevelDestination.HISTORY -> navController.navigateToHistory(topLevelNavOptions)
             TopLevelDestination.ABOUT -> navController.navigateToAbout(topLevelNavOptions)
+            TopLevelDestination.SETTINGS -> navController.navigateToSettings(topLevelNavOptions)
         }
     }
 

@@ -13,5 +13,6 @@ dependencies {
     implementation(project(":core-common"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.dataStore.preferences)
     implementation(libs.kotlinx.coroutines.android)
 }

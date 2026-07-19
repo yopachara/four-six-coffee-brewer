@@ -3,4 +3,5 @@
     <string name="history">History</string>
     <string name="timer">Timer</string>
     <string name="about" tools:ignore="ExtraTranslation">About</string>
+    <string name="settings">Settings</string>
 </resources>

@@ -21,9 +21,7 @@ fun BalanceDisplay(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 4.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(
             text = "Balance Profile",

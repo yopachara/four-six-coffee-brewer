@@ -4,6 +4,7 @@ import com.yopachara.fourtosixmethod.R
 import com.yopachara.fourtosixmethod.core.designsystem.icon.FlowSixIcons
 import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon
 import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon.DrawableResourceIcon
+import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon.ImageVectorIcon
 
 /**
  * Type for the top level destinations in the application. Each of these destinations
@@ -11,7 +12,7 @@ import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon.DrawableResourc
  * next within a single destination will be handled directly in composables.
  */
 enum class TopLevelDestination(
-    val selectedIcon: DrawableResourceIcon,
+    val selectedIcon: Icon,
     val unselectedIcon: Icon,
     val iconTextId: Int,
     val titleTextId: Int,
@@ -45,5 +46,15 @@ enum class TopLevelDestination(
         ),
         iconTextId = R.string.about,
         titleTextId = R.string.about,
+    ),
+    SETTINGS(
+        selectedIcon = ImageVectorIcon(
+            FlowSixIcons.Settings
+        ),
+        unselectedIcon = ImageVectorIcon(
+            FlowSixIcons.SettingsOutlined
+        ),
+        iconTextId = R.string.settings,
+        titleTextId = R.string.settings,
     ),
 }

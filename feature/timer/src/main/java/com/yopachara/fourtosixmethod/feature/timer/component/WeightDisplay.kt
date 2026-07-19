@@ -38,12 +38,10 @@ fun WeightDisplay(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 4.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Coffee Weight",
+            text = "Coffee Dose",
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.ExtraBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

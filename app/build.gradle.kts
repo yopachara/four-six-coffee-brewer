@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":feature:timer"))
     implementation(project(":feature:history"))
     implementation(project(":feature:about"))
+    implementation(project(":feature:settings"))
 
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.activity.compose)
@@ -49,6 +50,7 @@ dependencies {
     implementation(libs.hilt.ext.work)
     implementation(libs.coil.kt)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.navigation.compose)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)

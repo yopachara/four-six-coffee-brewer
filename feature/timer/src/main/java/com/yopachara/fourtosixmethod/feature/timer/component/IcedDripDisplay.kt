@@ -41,9 +41,7 @@ fun IcedDripDisplay(
     val recipe = timerDisplayState.recipe
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 4.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -82,7 +80,7 @@ fun IcedDripDisplay(
                 fontFamily = FontFamily.Monospace,
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .fillMaxWidth()

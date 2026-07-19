@@ -46,13 +46,14 @@ import java.math.RoundingMode
 @Composable
 fun StepsDisplay(
     timerDisplayState: TimerDisplayState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    defaultExpanded: Boolean = false
 ) {
     val isRunning = timerDisplayState.isRunning()
     val currentIndex = timerDisplayState.getCurrentStateIndex()
     val steps = timerDisplayState.recipe.steps
     val hasNextStep = currentIndex + 1 < steps.size
-    var stepsExpanded by remember { mutableStateOf(false) }
+    var stepsExpanded by remember(defaultExpanded) { mutableStateOf(defaultExpanded) }
 
     Column(
         modifier = modifier

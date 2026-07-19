@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -54,10 +56,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
+import com.yopachara.fourtosixmethod.core.designsystem.component.GlassCard
 import com.yopachara.fourtosixmethod.feature.timer.component.BalanceDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.BodyDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.IcedDripDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.RatioDisplay
+import com.yopachara.fourtosixmethod.feature.timer.component.RecipeSettingBottomSheet
 import com.yopachara.fourtosixmethod.feature.timer.component.StepsDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.TimerDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.WeightDisplay
@@ -70,6 +74,7 @@ internal fun TimerRoute(
     viewModel: TimerViewModel = hiltViewModel(),
 ) {
     val timerState by viewModel.timerDisplayStateFlow.collectAsStateWithLifecycle()
+    val stepsDefaultExpanded by viewModel.stepsDefaultExpanded.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -93,6 +98,7 @@ internal fun TimerRoute(
         onBodyChange = viewModel::setCoffeeLevel,
         onIcedDripToggle = viewModel::setIcedDrip,
         onHotRatioChange = viewModel::setHotRatio,
+        stepsDefaultExpanded = stepsDefaultExpanded,
         modifier = modifier,
     )
 }
@@ -109,6 +115,7 @@ internal fun TimerScreen(
     onBodyChange: (Level) -> Unit,
     onIcedDripToggle: (Boolean) -> Unit,
     onHotRatioChange: (Int) -> Unit,
+    stepsDefaultExpanded: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val recipe = timerDisplayState.recipe
@@ -125,7 +132,7 @@ internal fun TimerScreen(
             TimerBottomBar(
                 timerDisplayState = timerDisplayState,
                 onToggle = toggleStartPause,
-                onStop = onStop
+                onStop = onStop,
             )
         }
     ) { contentPadding ->
@@ -148,41 +155,26 @@ internal fun TimerScreen(
                 toggleStartPause = toggleStartPause
             )
 
-            StepsDisplay(timerDisplayState = timerDisplayState)
+            StepsDisplay(
+                timerDisplayState = timerDisplayState,
+                defaultExpanded = stepsDefaultExpanded
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
         }
 
         if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(start = 20.dp, end = 20.dp, bottom = 48.dp)
-                ) {
-                    WeightDisplay(timerDisplayState, onWeightChanged)
-                    RatioDisplay(timerDisplayState, onRatioChanged)
-                    IcedDripDisplay(
-                        timerDisplayState = timerDisplayState,
-                        onIcedDripToggle = onIcedDripToggle,
-                        onHotRatioChange = onHotRatioChange
-                    )
-                    BalanceDisplay(
-                        timerDisplayState = timerDisplayState,
-                        changeBalanceLevel = onBalanceChange
-                    )
-                    BodyDisplay(
-                        timerDisplayState = timerDisplayState,
-                        changeBodyLevel = onBodyChange
-                    )
-                }
-            }
+            RecipeSettingBottomSheet(
+                timerDisplayState = timerDisplayState,
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState,
+                onWeightChanged = onWeightChanged,
+                onRatioChanged = onRatioChanged,
+                onIcedDripToggle = onIcedDripToggle,
+                onHotRatioChange = onHotRatioChange,
+                onBalanceChange = onBalanceChange,
+                onBodyChange = onBodyChange
+            )
         }
     }
 }
@@ -208,7 +200,9 @@ private fun TimerHeader(
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = "${recipe.coffeeWeight}g · 1:${recipe.ratio} · ${recipe.getTotalWater().toInt()}g water",
+                text = "${recipe.coffeeWeight}g · 1:${recipe.ratio} · ${
+                    recipe.getTotalWater().toInt()
+                }g water",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -299,64 +293,69 @@ private fun TimerBottomBar(
     val isRunning = timerDisplayState.isRunning()
     val isPlaying = timerDisplayState.isPlaying()
 
-    Column(modifier = modifier) {
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        if (isRunning) MaterialTheme.colorScheme.errorContainer
-                        else MaterialTheme.colorScheme.surfaceVariant
-                    )
-                    .clickable(enabled = isRunning) { onStop() }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Stop,
-                    contentDescription = "Stop brew",
-                    tint = if (isRunning) MaterialTheme.colorScheme.onErrorContainer
-                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
-                )
-            }
-
+    GlassCard(
+        blur = 8.dp,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column {
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primary)
-                    .clickable { onToggle() },
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Icon(
-                    imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(20.dp)
-                )
-                Text(
-                    text = when {
-                        isPlaying -> "Pause"
-                        isRunning -> "Resume"
-                        else -> "Start brewing"
-                    },
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Default,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(
+                            if (isRunning) MaterialTheme.colorScheme.errorContainer
+                            else MaterialTheme.colorScheme.surfaceVariant
+                        )
+                        .clickable(enabled = isRunning) { onStop() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Stop,
+                        contentDescription = "Stop brew",
+                        tint = if (isRunning) MaterialTheme.colorScheme.onErrorContainer
+                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .clickable { onToggle() },
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        text = when {
+                            isPlaying -> "Pause"
+                            isRunning -> "Resume"
+                            else -> "Start brewing"
+                        },
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Default,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
             }
         }
     }
+
 }

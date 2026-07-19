@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 
 
 private val LightColors = lightColorScheme(
@@ -90,12 +92,32 @@ private val DarkColors = darkColorScheme(
 @Composable
 fun FourSixMethodTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    accentColor: Color? = null,
     content: @Composable() () -> Unit
 ) {
-    val colors = if (darkTheme) {
+    val baseColors = if (darkTheme) {
         DarkColors
     } else {
         LightColors
+    }
+    val colors = if (accentColor == null) {
+        baseColors
+    } else {
+        baseColors.copy(
+            primary = accentColor,
+            onPrimary = Color.White,
+            primaryContainer = lerp(
+                baseColors.background,
+                accentColor,
+                if (darkTheme) 0.24f else 0.14f
+            ),
+            onPrimaryContainer = if (darkTheme) {
+                lerp(accentColor, Color.White, 0.3f)
+            } else {
+                lerp(accentColor, Color.Black, 0.35f)
+            },
+            surfaceTint = accentColor,
+        )
     }
 
     MaterialTheme(

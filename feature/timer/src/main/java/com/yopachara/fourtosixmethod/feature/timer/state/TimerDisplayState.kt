@@ -12,6 +12,7 @@ data class TimerDisplayState(
     var timerState: TimerState = TimerState.Stop,
 ) {
     val displaySeconds: String = (getTimeDisplay(seconds))
+    val displayTotalSeconds: String = getTimeDisplay(totalSeconds)
 
     fun isPlaying() = timerState == TimerState.Play
     fun isComplete() = totalSeconds == seconds

@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Settings as OutlinedSettings
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
@@ -41,6 +42,7 @@ object FlowSixIcons {
     val PlayArrow = Icons.Rounded.PlayArrow
     val Search = Icons.Rounded.Search
     val Settings = Icons.Rounded.Settings
+    val SettingsOutlined = Icons.Outlined.OutlinedSettings
     val ShortText = Icons.Rounded.ShortText
     val Tag = Icons.Rounded.Tag
     val ViewDay = Icons.Rounded.ViewDay

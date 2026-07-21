@@ -59,13 +59,14 @@ fun TimerDisplay(
     }
 }
 
-private val loopDotsFrames = listOf('․', '‥', '…', '⁖', '⁘', '⁙', '⁚', '⁛')
+private val loopDotsFrames =
+    listOf('․', '‥', '⁚', '…', '⁖', '⁘', '⁙', '⁛', '⁙', '⁘', '⁖', '…', '⁚', '‥')
 
 @Composable
 private fun LoopingDotsIndicator(
     isPlaying: Boolean,
     modifier: Modifier = Modifier,
-    frameDurationMillis: Long = 220L
+    frameDurationMillis: Long = 300L
 ) {
     var frameIndex by remember { mutableIntStateOf(0) }
 
@@ -146,8 +147,7 @@ private fun StepProgressBar(
             LoopingDotsIndicator(
                 isPlaying = timerDisplayState.isPlaying(),
                 modifier = Modifier
-                    .width(24.dp)
-                    .padding(2.dp)
+                    .width(20.dp)
             )
 
             Row(

@@ -1,19 +1,15 @@
 package com.yopachara.fourtosixmethod.feature.timer.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
-import com.yopachara.fourtosixmethod.feature.timer.screen.TimerRoute
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import com.yopachara.fourtosixmethod.feature.timer.screen.TimerRoute as TimerScreen
+import kotlinx.serialization.Serializable
 
-const val timerRoute = "timer_route"
+@Serializable
+data object TimerRoute : NavKey
 
-fun NavController.navigateToTimer(navOptions: NavOptions? = null) {
-    this.navigate(timerRoute, navOptions)
-}
-
-fun NavGraphBuilder.timerScreen() {
-    composable(route = timerRoute) {
-        TimerRoute()
+fun EntryProviderScope<NavKey>.timerScreen() {
+    entry<TimerRoute> {
+        TimerScreen()
     }
 }

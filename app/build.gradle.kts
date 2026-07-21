@@ -3,6 +3,7 @@ plugins {
     id("foursixmethod.android.application.compose")
     id("foursixmethod.android.application.flavors")
     id("foursixmethod.android.hilt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -51,7 +52,9 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.kotlinx.serialization.json)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
 

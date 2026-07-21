@@ -29,6 +29,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             pluginManager.apply {
                 apply("foursixmethod.android.library")
                 apply("foursixmethod.android.hilt")
+                apply("org.jetbrains.kotlin.plugin.serialization")
             }
             extensions.configure<LibraryExtension> {
                 configureGradleManagedDevices(this)
@@ -57,6 +58,9 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx.hilt.navigation.compose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
+
+                add("implementation", libs.findLibrary("androidx.navigation3.runtime").get())
+                add("implementation", libs.findLibrary("kotlinx.serialization.json").get())
 
                 add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
             }

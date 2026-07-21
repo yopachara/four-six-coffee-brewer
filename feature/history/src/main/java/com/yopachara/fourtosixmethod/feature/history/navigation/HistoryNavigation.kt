@@ -1,19 +1,15 @@
 package com.yopachara.fourtosixmethod.feature.history.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
-import com.yopachara.fourtosixmethod.feature.history.screen.HistoryRoute
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import com.yopachara.fourtosixmethod.feature.history.screen.HistoryRoute as HistoryScreen
+import kotlinx.serialization.Serializable
 
-const val historyRoute = "history_route"
+@Serializable
+data object HistoryRoute : NavKey
 
-fun NavController.navigateToHistory(navOptions: NavOptions? = null) {
-    this.navigate(historyRoute, navOptions)
-}
-
-fun NavGraphBuilder.historyScreen(onTopicClick: (String) -> Unit) {
-    composable(route = historyRoute) {
-        HistoryRoute(onTopicClick)
+fun EntryProviderScope<NavKey>.historyScreen(onTopicClick: (String) -> Unit) {
+    entry<HistoryRoute> {
+        HistoryScreen(onTopicClick)
     }
 }

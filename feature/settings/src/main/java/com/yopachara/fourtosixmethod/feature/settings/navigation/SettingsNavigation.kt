@@ -1,19 +1,15 @@
 package com.yopachara.fourtosixmethod.feature.settings.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
-import com.yopachara.fourtosixmethod.feature.settings.SettingsRoute
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import com.yopachara.fourtosixmethod.feature.settings.SettingsRoute as SettingsScreen
+import kotlinx.serialization.Serializable
 
-const val settingsRoute = "settings_route"
+@Serializable
+data object SettingsRoute : NavKey
 
-fun NavController.navigateToSettings(navOptions: NavOptions? = null) {
-    this.navigate(settingsRoute, navOptions)
-}
-
-fun NavGraphBuilder.settingsScreen() {
-    composable(route = settingsRoute) {
-        SettingsRoute()
+fun EntryProviderScope<NavKey>.settingsScreen() {
+    entry<SettingsRoute> {
+        SettingsScreen()
     }
 }

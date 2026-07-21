@@ -20,8 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation3.runtime.NavKey
 import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon
 import com.yopachara.fourtosixmethod.navigation.NavHost
 import com.yopachara.fourtosixmethod.navigation.TopLevelDestination
@@ -37,7 +36,7 @@ fun FlowSixApp(appState: FlowSixAppState = rememberFlowSixAppState()) {
             FlowSixBottomBar(
                 destinations = appState.topLevelDestinations,
                 onNavigateToDestination = appState::navigateToTopLevelDestination,
-                currentDestination = appState.currentDestination,
+                currentTopLevelRoute = appState.navigationState.topLevelRoute,
                 modifier = Modifier.fillMaxWidth(),
             )
         },
@@ -62,14 +61,14 @@ fun FlowSixApp(appState: FlowSixAppState = rememberFlowSixAppState()) {
 private fun FlowSixBottomBar(
     destinations: List<TopLevelDestination>,
     onNavigateToDestination: (TopLevelDestination) -> Unit,
-    currentDestination: NavDestination?,
+    currentTopLevelRoute: NavKey,
     modifier: Modifier = Modifier,
 ) {
     NavigationBar(
         modifier = modifier,
     ) {
         destinations.forEach { destination ->
-            val selected = currentDestination.isTopLevelDestinationInHierarchy(destination)
+            val selected = destination.route == currentTopLevelRoute
             NavigationBarItem(
                 selected = selected,
                 onClick = { onNavigateToDestination(destination) },
@@ -96,8 +95,3 @@ private fun FlowSixBottomBar(
         }
     }
 }
-
-private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: TopLevelDestination) =
-    this?.hierarchy?.any {
-        it.route?.contains(destination.name, true) ?: false
-    } ?: false

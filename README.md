@@ -22,20 +22,21 @@ respect to Tetsu Kasuya
 ## Modules
 
 - `app` — application entry point, navigation host, bottom nav
-- `feature:timer`, `feature:history`, `feature:about` — one module per screen
+- `feature:timer`, `feature:history`, `feature:about` , `feature:settings` — one module per screen
 - `core-model` — pure Kotlin domain types (`Recipe`, `Step`, `Level`, `Balance`)
 - `core-data` / `core-database` — repository + Room persistence
 - `core-domain` — use cases between features and data
 - `core-common` — dispatchers, shared utils
 - `core-designsystem` — theme, icons
 
+
 <table style="padding:10px">
   <tr>
-    <td><img src="https://github.com/user-attachments/assets/21ff4b01-4a23-42a5-8ed9-1f2e982dfb4c" alt="1" width = 260px ></td>
-    <td><img src="https://github.com/user-attachments/assets/cc866f9c-4f00-4f53-84ac-e661f0a10809" alt="4" width = 260px ></td>   
-    <td><img src="https://github.com/user-attachments/assets/b5722f1e-fb56-4e53-b739-8f6c358e2e26" alt="2" width = 260px ></td>
-    <td><img src="https://github.com/user-attachments/assets/06a0703b-8fda-455e-a5dd-724702f5c940" alt="3" width = 260px ></td>   
-    <td><img src="https://github.com/user-attachments/assets/4935b1b6-3a94-4a91-b016-278e12066b62" alt="5" width = 260px ></td>
-
+    <td><img width="260px" alt="Screenshot_20260721_094856" src="https://github.com/user-attachments/assets/0c1a24d7-5ac1-4f72-aaec-1e529de184a4" /></td>
+    <td><img width="260px" alt="Screenshot_20260721_094907" src="https://github.com/user-attachments/assets/0079162d-d1f2-4826-8c64-da24200a1555"/></td>
+    <td><img width="260px" alt="Screenshot_20260721_094914" src="https://github.com/user-attachments/assets/456fa2e7-efdf-4006-b423-53cb29ff0bac" /></td>
+    <td><img width="260px" alt="Screenshot_20260721_094924" src="https://github.com/user-attachments/assets/f88125a2-65a8-4fdc-a8a8-e5df1d46cb6b" /></td>
+    <td><img width="260px" alt="Screenshot_20260721_094931" src="https://github.com/user-attachments/assets/f23125ea-3fe1-42d7-a424-836adac0af6c" /></td>
+    <td><img width="260px" alt="Screenshot_20260721_094942" src="https://github.com/user-attachments/assets/5512e92e-0972-403c-8506-3aaea4fcada6" /></td>
   </tr>
 </table>

@@ -1,4 +1,4 @@
-# 4:6 Method Brewer Scale ☕
+# 4:6 Coffee Brew Timer ☕
 
 Android app implementing Tetsu Kasuya's 4:6 coffee brewing method — a step-by-step pour-over timer.
 Set weight, ratio, and taste balance (Body/Sweet/Acidity, Basic/Strong/Weak), then follow a generated

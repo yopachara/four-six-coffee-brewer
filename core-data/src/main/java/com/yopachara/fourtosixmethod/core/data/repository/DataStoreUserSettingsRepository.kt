@@ -3,9 +3,14 @@ package com.yopachara.fourtosixmethod.core.data.repository
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.yopachara.fourtosixmethod.core.data.model.AccentColor
+import com.yopachara.fourtosixmethod.core.data.model.Balance
+import com.yopachara.fourtosixmethod.core.data.model.Level
+import com.yopachara.fourtosixmethod.core.data.model.RecipeSnapshot
 import com.yopachara.fourtosixmethod.core.data.model.ThemeConfig
 import com.yopachara.fourtosixmethod.core.data.model.UserSettings
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,10 +30,17 @@ class DataStoreUserSettingsRepository @Inject constructor(
         val THEME_CONFIG = stringPreferencesKey("theme_config")
         val ACCENT_COLOR = stringPreferencesKey("accent_color")
         val STEPS_DEFAULT_EXPANDED = booleanPreferencesKey("steps_default_expanded")
+        val LAST_RECIPE_RATIO = intPreferencesKey("last_recipe_ratio")
+        val LAST_RECIPE_COFFEE_WEIGHT = floatPreferencesKey("last_recipe_coffee_weight")
+        val LAST_RECIPE_BALANCE = stringPreferencesKey("last_recipe_balance")
+        val LAST_RECIPE_LEVEL = stringPreferencesKey("last_recipe_level")
+        val LAST_RECIPE_IS_ICED_DRIP = booleanPreferencesKey("last_recipe_is_iced_drip")
+        val LAST_RECIPE_HOT_RATIO = intPreferencesKey("last_recipe_hot_ratio")
     }
 
     override val userSettings: Flow<UserSettings> =
         context.userSettingsDataStore.data.map { preferences ->
+            val defaultRecipe = RecipeSnapshot()
             UserSettings(
                 themeConfig = preferences[Keys.THEME_CONFIG]
                     ?.let { name -> ThemeConfig.entries.find { it.name == name } }
@@ -37,6 +49,18 @@ class DataStoreUserSettingsRepository @Inject constructor(
                     ?.let { name -> AccentColor.entries.find { it.name == name } }
                     ?: AccentColor.CLAY,
                 stepsDefaultExpanded = preferences[Keys.STEPS_DEFAULT_EXPANDED] ?: false,
+                lastRecipe = RecipeSnapshot(
+                    ratio = preferences[Keys.LAST_RECIPE_RATIO] ?: defaultRecipe.ratio,
+                    coffeeWeight = preferences[Keys.LAST_RECIPE_COFFEE_WEIGHT] ?: defaultRecipe.coffeeWeight,
+                    balance = preferences[Keys.LAST_RECIPE_BALANCE]
+                        ?.let { name -> Balance.entries.find { it.name == name } }
+                        ?: defaultRecipe.balance,
+                    level = preferences[Keys.LAST_RECIPE_LEVEL]
+                        ?.let { name -> Level.entries.find { it.name == name } }
+                        ?: defaultRecipe.level,
+                    isIcedDrip = preferences[Keys.LAST_RECIPE_IS_ICED_DRIP] ?: defaultRecipe.isIcedDrip,
+                    hotRatio = preferences[Keys.LAST_RECIPE_HOT_RATIO] ?: defaultRecipe.hotRatio,
+                ),
             )
         }
 
@@ -50,5 +74,16 @@ class DataStoreUserSettingsRepository @Inject constructor(
 
     override suspend fun setStepsDefaultExpanded(expanded: Boolean) {
         context.userSettingsDataStore.edit { it[Keys.STEPS_DEFAULT_EXPANDED] = expanded }
+    }
+
+    override suspend fun setLastRecipe(snapshot: RecipeSnapshot) {
+        context.userSettingsDataStore.edit { preferences ->
+            preferences[Keys.LAST_RECIPE_RATIO] = snapshot.ratio
+            preferences[Keys.LAST_RECIPE_COFFEE_WEIGHT] = snapshot.coffeeWeight
+            preferences[Keys.LAST_RECIPE_BALANCE] = snapshot.balance.name
+            preferences[Keys.LAST_RECIPE_LEVEL] = snapshot.level.name
+            preferences[Keys.LAST_RECIPE_IS_ICED_DRIP] = snapshot.isIcedDrip
+            preferences[Keys.LAST_RECIPE_HOT_RATIO] = snapshot.hotRatio
+        }
     }
 }

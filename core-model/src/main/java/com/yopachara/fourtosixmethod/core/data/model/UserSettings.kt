@@ -17,4 +17,5 @@ data class UserSettings(
     val themeConfig: ThemeConfig = ThemeConfig.SYSTEM,
     val accentColor: AccentColor = AccentColor.CLAY,
     val stepsDefaultExpanded: Boolean = false,
+    val lastRecipe: RecipeSnapshot = RecipeSnapshot(),
 )

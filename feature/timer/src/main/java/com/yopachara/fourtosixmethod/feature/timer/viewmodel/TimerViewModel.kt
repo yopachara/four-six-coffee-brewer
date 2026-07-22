@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
+import com.yopachara.fourtosixmethod.core.data.model.toSnapshot
 import com.yopachara.fourtosixmethod.core.data.repository.UserSettingsRepository
 import com.yopachara.fourtosixmethod.feature.timer.service.TimerController
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerSessionRepository
@@ -14,13 +15,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TimerViewModel @Inject constructor(
     private val sessionRepository: TimerSessionRepository,
     private val controller: TimerController,
-    userSettingsRepository: UserSettingsRepository,
+    private val userSettingsRepository: UserSettingsRepository,
 ) : ViewModel() {
 
     val timerDisplayStateFlow: StateFlow<TimerDisplayState> = sessionRepository.state
@@ -39,6 +41,9 @@ class TimerViewModel @Inject constructor(
 
     private inline fun updateRecipe(crossinline transform: (Recipe) -> Recipe) {
         sessionRepository.update { it.copy(recipe = transform(it.recipe)) }
+        viewModelScope.launch {
+            userSettingsRepository.setLastRecipe(sessionRepository.state.value.recipe.toSnapshot())
+        }
     }
 
     fun setCoffeeWeight(value: Float) = updateRecipe { it.copy(coffeeWeight = value) }

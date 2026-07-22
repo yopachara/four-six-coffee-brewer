@@ -1,20 +1,40 @@
+import java.util.Properties
+
 plugins {
     id("foursixmethod.android.application")
     id("foursixmethod.android.application.compose")
     id("foursixmethod.android.application.flavors")
+    id("foursixmethod.android.application.firebase")
     id("foursixmethod.android.hilt")
     alias(libs.plugins.kotlin.serialization)
+}
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val hasReleaseSigning = keystorePropertiesFile.exists()
+val keystoreProperties = Properties().apply {
+    if (hasReleaseSigning) load(keystorePropertiesFile.inputStream())
 }
 
 android {
     defaultConfig {
         applicationId = "com.yopachara.fourtosixmethod"
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
         }
     }
 
@@ -23,8 +43,15 @@ android {
             applicationIdSuffix = com.yopachara.foursixmethod.FSMBuildType.DEBUG.applicationIdSuffix
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     namespace = "com.yopachara.fourtosixmethod"

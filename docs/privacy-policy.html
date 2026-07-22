@@ -21,14 +21,33 @@
 data the app handles and how.</p>
 
 <h2>Data collection</h2>
-<p>The app does not collect, transmit, or share any personal data. It has no user accounts,
-no sign-in, and no analytics or advertising SDKs.</p>
+<p>The app has no user accounts and no sign-in. It does not collect any data you type or any
+brew data you create — that stays on your device (see below). It does use Firebase, a Google
+service, for crash reporting, performance monitoring, and basic usage analytics, described
+below.</p>
 
 <h2>Data stored locally</h2>
 <p>Brew settings and history (coffee weight, ratio, taste balance, and timestamps you create
 while using the timer) are stored only on your device, in a local database. This data never
 leaves your device and is not accessible to the developer or any third party. Uninstalling
 the app deletes this data.</p>
+
+<h2>Analytics and diagnostics (Firebase)</h2>
+<p>The app uses the following Firebase services, provided by Google, to help keep the app
+stable and understand basic usage:</p>
+<ul>
+  <li><strong>Firebase Crashlytics</strong> — collects crash logs and diagnostic device info
+  when the app crashes, so problems can be found and fixed.</li>
+  <li><strong>Firebase Performance Monitoring</strong> — collects diagnostic data such as app
+  startup time and rendering performance.</li>
+  <li><strong>Firebase Analytics</strong> — collects basic app interaction data (such as
+  screens viewed) and a device/app instance identifier, not tied to your name, email, or any
+  account.</li>
+</ul>
+<p>This data is sent to and processed by Google in accordance with the
+<a href="https://firebase.google.com/support/privacy">Firebase Privacy and Security policy</a>.
+It is transmitted encrypted (HTTPS/TLS). It is used only to operate, diagnose, and improve the
+app — not for advertising, and not sold or shared for any other purpose.</p>
 
 <h2>Permissions</h2>
 <ul>
@@ -37,17 +56,23 @@ the app deletes this data.</p>
   <li><strong>Foreground service</strong> — to keep the countdown timer running reliably while
   you brew.</li>
   <li><strong>Network state</strong> and <strong>boot-completed</strong> — required by
-  Android's WorkManager library, which the app uses for scheduling; no data is sent over the
-  network.</li>
+  Android's WorkManager library, which the app uses for scheduling.</li>
 </ul>
+<p>The app also uses network access to send the Firebase diagnostic data described above.</p>
 
 <h2>Third parties</h2>
-<p>The app does not integrate any third-party analytics, advertising, or crash-reporting
-services, and does not share data with third parties.</p>
+<p>The only third-party service integrated is Firebase (Google), for crash reporting,
+performance monitoring, and analytics as described above. The app does not integrate any
+advertising SDKs and does not sell or share data for marketing purposes.</p>
+
+<h2>Data deletion</h2>
+<p>Uninstalling the app deletes all locally stored brew data immediately. Firebase diagnostic
+data tied to your device's install instance can be requested for deletion by contacting the
+developer below.</p>
 
 <h2>Children's privacy</h2>
-<p>The app does not knowingly collect data from anyone, including children, since it collects
-no data at all.</p>
+<p>The app does not knowingly collect personal information from children. It has no accounts
+and no way to identify who is using it.</p>
 
 <h2>Changes to this policy</h2>
 <p>If this policy changes, the updated version will be posted at this same URL with a revised

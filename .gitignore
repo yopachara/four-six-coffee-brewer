@@ -1,6 +1,7 @@
 # built application files
 *.apk
 *.ap_
+*.aab
 
 # files for the dex VM
 *.dex
@@ -46,3 +47,14 @@ captures/
 
 # Graphify local output and cache files
 graphify-out/
+
+# Release signing — never commit the actual keystore or credentials
+keystore.properties
+*.jks
+*.keystore
+
+# Firebase project config — contains real project's API keys/app IDs
+google-services.json
+
+# Manually staged release bundles
+app/*/release/

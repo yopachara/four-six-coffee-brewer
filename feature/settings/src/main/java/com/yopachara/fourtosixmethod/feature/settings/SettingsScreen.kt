@@ -7,10 +7,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -45,12 +50,21 @@ internal fun SettingsRoute(
 ) {
     val settings by viewModel.settingsUiState.collectAsStateWithLifecycle()
 
-    SettingsScreen(
-        settings = settings,
-        onThemeConfigChange = viewModel::setThemeConfig,
-        onAccentColorChange = viewModel::setAccentColor,
-        onStepsDefaultExpandedChange = viewModel::setStepsDefaultExpanded,
-        modifier = modifier,
+    Scaffold(
+        // Bottom inset is already reserved by the outer app Scaffold's bottomBar;
+        // only the top status bar still needs handling here.
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+        content = { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding)) {
+                SettingsScreen(
+                    settings = settings,
+                    onThemeConfigChange = viewModel::setThemeConfig,
+                    onAccentColorChange = viewModel::setAccentColor,
+                    onStepsDefaultExpandedChange = viewModel::setStepsDefaultExpanded,
+                    modifier = modifier,
+                )
+            }
+        }
     )
 }
 
@@ -67,7 +81,7 @@ internal fun SettingsScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 48.dp)
+            .padding(horizontal = 20.dp, vertical = 24.dp)
     ) {
         Text(
             text = "4:6 METHOD",

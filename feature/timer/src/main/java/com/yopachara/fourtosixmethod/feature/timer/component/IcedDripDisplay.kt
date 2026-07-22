@@ -22,7 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,7 +58,7 @@ fun IcedDripDisplay(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "ICED DRIP",
+                    text = "Iced Drip",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 0.5.sp,
@@ -83,11 +83,12 @@ fun IcedDripDisplay(
         }
 
         if (recipe.isIcedDrip) {
-            var sliderPosition by remember<MutableState<Int>> { mutableStateOf(recipe.hotRatio) }
+            var sliderPosition by remember<MutableState<Int>> { mutableIntStateOf(recipe.hotRatio) }
             val hotWaterWeight = recipe.getHotWaterWeight()
             val iceWeight = recipe.getIceWeight()
-            val hotWaterFraction = (hotWaterWeight / (hotWaterWeight + iceWeight).coerceAtLeast(0.01f))
-                .coerceIn(0f, 1f)
+            val hotWaterFraction =
+                (hotWaterWeight / (hotWaterWeight + iceWeight).coerceAtLeast(0.01f))
+                    .coerceIn(0f, 1f)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -133,7 +134,7 @@ fun IcedDripDisplay(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "HOT POUR RATIO",
+                text = "Hot Pour Ratio",
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,

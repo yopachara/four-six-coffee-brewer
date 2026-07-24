@@ -2,6 +2,7 @@ package com.yopachara.fourtosixmethod.core.database.util
 
 import androidx.room.TypeConverter
 import com.yopachara.fourtosixmethod.core.database.model.StepEntity
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.LocalDate

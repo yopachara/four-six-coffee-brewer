@@ -96,15 +96,24 @@ iosMain     → Room builder(NSDocumentDir), DataStore(path), NSTimer/BGTask tim
 
 **Unrelated pre-existing bug fixed to unblock verification:** `core-database/util/Converters.kt` was missing the `import kotlinx.serialization.decodeFromString` (only had `encodeToString`), so `Json.decodeFromString<List<StepEntity>>(value)` resolved to the wrong overload and failed to compile — confirmed identical on `main`, so this predates the CMP work entirely and was presumably never caught because no one had run a full `assemble` recently. Fixed with a one-line import addition since it blocked validating this phase's actual changes.
 
-### Phase 3 — Move platform-neutral code to commonMain
-10. `core-model` → `commonMain` verbatim.
-11. `core-common` `Result`/dispatchers → `commonMain` (dispatchers: `Dispatchers.IO` doesn't exist on iOS in old coroutines — use `Dispatchers.Default`/`newSingleThreadContext` via `expect`, or coroutines >=1.8 `Dispatchers.IO` on native; note current catalog pins coroutines **1.6.4 → must bump to >=1.8**).
-12. `core-domain` use cases → `commonMain`.
+### Phase 3 — Move platform-neutral code to commonMain — DONE (2026-07-24, merged with Phase 4)
+10. ~~`core-model` → `commonMain`~~ Done — **not verbatim**: `Recipe.createAt` `java.time.LocalDate` → `kotlinx.datetime.LocalDate` (+ `currentDate()` helper via `Clock.System.todayIn(TimeZone.currentSystemDefault())`); `Step.getWaterWithScale` `BigDecimal.setScale(_, RoundingMode.UP)` → multiplatform `formatScaleUp()` (ceil-away-from-zero + fixed decimals, exact match for non-negative values). Module now `foursixmethod.kmp.library`.
+11. ~~`core-common` `Result`/dispatchers → `commonMain`~~ Done. Coroutines bumped **1.6.4 → 1.10.2**. `Result` and `Dispatchers.Default` are common-clean. `Dispatchers.IO` has **no common declaration** (separate actual on JVM and Native) → introduced `expect val ioDispatcher` (androidMain = `Dispatchers.IO`; iosMain = `Dispatchers.Default`, since **`Dispatchers.IO` is `internal` on Kotlin/Native**). `Number.roundTo` `String.format` → `kotlin.math.round`/`pow`.
+12. ~~`core-domain` use cases → `commonMain`~~ Done — pure move, no code change (had to happen with Phase 4: a KMP module's `commonMain` cannot consume the still-Android `core-data`, so domain could only move once data did).
 
-### Phase 4 — Data layer KMP
-13. **Room**: add KMP Room + `androidx.sqlite:sqlite-bundled`. Add `expect fun` for the `RoomDatabase.Builder` (Android: `Room.databaseBuilder(context, ...)`; iOS: `Room.databaseBuilder(dbFilePath)` under `NSDocumentDirectory`). Add `@ConstructedBy(AppDatabaseConstructor::class)` + `expect object AppDatabaseConstructor`. Verify `LocalDate` converter — `java.time.LocalDate` is JVM-only → switch to `kotlinx-datetime LocalDate` (catalog already has `kotlinxDatetime`). DAO/entities move to common.
-14. **DataStore**: replace `Context.preferencesDataStore` delegate with a common `createDataStore(producePath)` factory; `androidMain` supplies `context.filesDir`, `iosMain` supplies `NSDocumentDirectory` path.
-15. Repos (`OfflineRecipeRepository`, `DataStoreUserSettingsRepository`) → `commonMain`, injected path/builder from platform Koin modules.
+### Phase 4 — Data layer KMP — DONE (2026-07-24)
+13. ~~**Room** KMP~~ Done. `@ConstructedBy(AppDatabaseConstructor::class)` + `expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase>` (KSP generates the actual per target). Platform builder split into `expect val platformDatabaseModule` (androidMain: `Room.databaseBuilder<AppDatabase>(context, getDatabasePath("recipe-database").absolutePath)`; iosMain: `NSDocumentDirectory + "/recipe-database.db"`), finalized in common `databaseModule` with `.setDriver(BundledSQLiteDriver()).setQueryCoroutineContext(ioDispatcher).fallbackToDestructiveMigration(true)`. `LocalDateConverter` → `kotlinx.datetime.LocalDate` (`toString()`/`parse()` are ISO-8601, byte-compatible with the old `DateTimeFormatter.ISO_LOCAL_DATE` data). Room enum columns (`Balance`/`Level`/`State`) still handled natively by Room — no converters added. **Verified: `kspAndroidMain` + `kspKotlinIosSimulatorArm64` + `kspKotlinIosArm64` all generate + compile.** `ksp = 2.3.6` is compatible with Kotlin 2.3.0 + Room 2.8.4 (risk #6 resolved).
+14. ~~**DataStore** KMP~~ Done. `datastore-preferences-core` (multiplatform) + `okio`; common `createUserSettingsDataStore(producePath)` via `PreferenceDataStoreFactory.createWithPath`; `expect val platformDataModule` supplies the path (androidMain = `filesDir/datastore/user_settings.preferences_pb`, **matching the old `preferencesDataStore(name="user_settings")` location so existing data survives**; iosMain = `NSDocumentDirectory`). `DataStoreUserSettingsRepository` now takes `DataStore<Preferences>` instead of `Context`.
+15. ~~Repos → `commonMain`~~ Done. `OfflineRecipeRepository` (`LocalDate.now()` → `currentDate()`) and `DataStoreUserSettingsRepository` both in commonMain; interfaces + mappers (`RecipeExt`/`StepExt`) moved as-is. `repositoryModule` stays common; `FlowSixApplication.modules(...)` now also loads `platformDataModule` + `platformDatabaseModule`.
+
+**Gotchas found while implementing (worth knowing before Phase 5+):**
+- **`platform(bom)` is now a hard error inside a KMP `sourceSet.dependencies { }`** (deprecation elevated to error, KT-58759). Use `implementation(project.dependencies.platform(libs.koin.bom))`.
+- **`Dispatchers.IO` is unusable from `commonMain`** (no common decl) **and `internal` on Kotlin/Native.** Hence the `ioDispatcher` expect/actual with `Dispatchers.Default` on iOS.
+- **`iosX64` target dropped.** `androidx.sqlite:sqlite-bundled:2.7.0` publishes no `ios_x64` variant; modern KMP libs target only `iosArm64` (device) + `iosSimulatorArm64` (Apple-Silicon sim). Removed from both `KotlinMultiplatformConventionPlugin` and `KmpRoomConventionPlugin` KSP wiring.
+- **Android namespace derived in the convention plugin** from the Gradle path (`:core-model` → `com.yopachara.fourtosixmethod.core.model`) so no module script sets it; `core-common`'s namespace normalizes from the old `...foursixmethod.core.common` (resource-less lib, safe).
+- **kotlinx-datetime 0.6.2 format API**: no `LocalDate.format(fmt)` member — it's `fmt.format(date)`; the literal-string builder function is `char(Char)` only (no `chars(String)`); `toEpochDays()`/`fromEpochDays()` are `Int`. `HistoryItem`'s month name is now `MonthNames.ENGLISH_ABBREVIATED` (was device-locale `MMM`) — minor product-visible change.
+
+**Verification (this phase):** No device/emulator, but compiler coverage is broad and green — `:app:assembleDemoDebug` + `:app:assembleProdDebug` (full Android graph through all 5 now-KMP modules), `:app:testDemoDebugUnitTest`, and for every core module: `compileCommonMainKotlinMetadata` + `compileAndroidMain` + `compileKotlinIosSimulatorArm64`, plus `compileKotlinIosArm64` (device) for the Room modules. iOS **runtime** (actual DB/DataStore I/O on a simulator) still unproven — needs the Phase 7 iOS shell. Koin graph still lazily resolved (see Phase 2 note); the two new platform modules were traced against `FlowSixApplication.modules(...)`.
 
 ### Phase 5 — UI to commonMain
 16. Move `core-designsystem`, `feature:history/about/settings` screens + ViewModels to `commonMain`. Dynamic color = `expect fun dynamicColorScheme()` (Android: Material You; iOS: return null → fall back to brand palette). `AboutScreen` Context usage (open URL/version) → `expect` opener + `BuildKonfig`/expect version.
@@ -129,10 +138,10 @@ iosMain     → Room builder(NSDocumentDir), DataStore(path), NSTimer/BGTask tim
 
 1. **navigation3 non-JVM serialization** — resolved as KMP-ready in Phase 0, but every `NavKey` route needs explicit `SavedStateConfiguration` + polymorphic serializer registration for iOS, or nav silently only works on Android. Concrete Phase 5 task now, not a library-swap risk.
 2. **iOS background timer fidelity** — iOS has no WorkManager/foreground-service equivalent; the live pour timer degrades to scheduled local notifications when backgrounded. Product-visible; confirm acceptable.
-3. **coroutines 1.6.4** — too old for native `Dispatchers.IO`; must bump (ripples through dispatcher qualifiers).
-4. **`java.time.LocalDate` in Room converter** — swap to `kotlinx-datetime`.
-5. **Hilt removal blast radius** — 18 files; do it single-target (Android-only) first, keep green, then add iOS.
-6. **KSP/Kotlin version compat** — catalog's `ksp = "2.3.6"` needs verification against Room 2.8.4 compiler + Kotlin 2.3.0 before Phase 4 wiring.
+3. ~~**coroutines 1.6.4**~~ RESOLVED (Ph3) — bumped to 1.10.2; `Dispatchers.IO` handled via `ioDispatcher` expect/actual (Native has no public IO dispatcher → `Dispatchers.Default` on iOS).
+4. ~~**`java.time.LocalDate` in Room converter**~~ RESOLVED (Ph3/4) — swapped to `kotlinx-datetime`; ISO string form keeps stored data compatible.
+5. ~~**Hilt removal blast radius**~~ RESOLVED (Ph2).
+6. ~~**KSP/Kotlin version compat**~~ RESOLVED (Ph4) — `ksp 2.3.6` + Room 2.8.4 + Kotlin 2.3.0 generate & compile on android + iosArm64 + iosSimulatorArm64.
 
 ## Effort (rough)
 

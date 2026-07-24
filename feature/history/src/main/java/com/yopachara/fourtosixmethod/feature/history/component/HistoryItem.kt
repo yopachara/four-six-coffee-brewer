@@ -33,14 +33,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
 import com.yopachara.fourtosixmethod.core.data.model.displayName
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
+
+private val itemDateFormat = LocalDate.Format {
+    monthName(MonthNames.ENGLISH_ABBREVIATED)
+    char(' ')
+    dayOfMonth(padding = Padding.NONE)
+    char(',')
+    char(' ')
+    year()
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HistoryItem(recipe: Recipe) {
-    val dateFormat = remember { DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.getDefault()) }
-    val formattedDate = recipe.createAt.format(dateFormat)
+    val formattedDate = remember(recipe.createAt) { itemDateFormat.format(recipe.createAt) }
 
     Card(
         shape = RoundedCornerShape(16.dp),

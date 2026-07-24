@@ -3,8 +3,10 @@ package com.yopachara.fourtosixmethod
 import android.app.Application
 import androidx.work.Configuration
 import androidx.work.WorkerFactory
+import com.yopachara.fourtosixmethod.core.data.di.platformDataModule
 import com.yopachara.fourtosixmethod.core.data.di.repositoryModule
 import com.yopachara.fourtosixmethod.core.database.databaseModule
+import com.yopachara.fourtosixmethod.core.database.platformDatabaseModule
 import com.yopachara.fourtosixmethod.core.domain.di.domainModule
 import com.yopachara.fourtosixmethod.core.network.di.dispatcherModule
 import com.yopachara.fourtosixmethod.di.appModule
@@ -26,7 +28,9 @@ open class FlowSixApplication : Application(), Configuration.Provider {
             modules(
                 dispatcherModule,
                 repositoryModule,
+                platformDataModule,
                 databaseModule,
+                platformDatabaseModule,
                 domainModule,
                 appModule,
                 historyModule,

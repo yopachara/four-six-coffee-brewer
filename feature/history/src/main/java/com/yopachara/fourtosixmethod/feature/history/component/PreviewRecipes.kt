@@ -3,7 +3,7 @@ package com.yopachara.fourtosixmethod.feature.history.component
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 internal fun previewRecipes(): List<Recipe> = listOf(
     Recipe(
@@ -12,7 +12,7 @@ internal fun previewRecipes(): List<Recipe> = listOf(
         _coffeeWeight = 20f,
         _balance = Balance.Basic,
         _level = Level.Basic,
-        createAt = LocalDate.of(2026, 1, 15)
+        createAt = LocalDate(2026, 1, 15)
     ),
     Recipe(
         id = 2,
@@ -20,7 +20,7 @@ internal fun previewRecipes(): List<Recipe> = listOf(
         _coffeeWeight = 18f,
         _balance = Balance.Sweet,
         _level = Level.Week,
-        createAt = LocalDate.of(2026, 1, 16)
+        createAt = LocalDate(2026, 1, 16)
     ),
     Recipe(
         id = 3,
@@ -28,7 +28,7 @@ internal fun previewRecipes(): List<Recipe> = listOf(
         _coffeeWeight = 22f,
         _balance = Balance.Acid,
         _level = Level.Strong,
-        createAt = LocalDate.of(2026, 1, 17)
+        createAt = LocalDate(2026, 1, 17)
     ),
     Recipe(
         id = 3,
@@ -36,7 +36,7 @@ internal fun previewRecipes(): List<Recipe> = listOf(
         _coffeeWeight = 22f,
         _balance = Balance.Acid,
         _level = Level.Strong,
-        createAt = LocalDate.of(2026, 1, 17)
+        createAt = LocalDate(2026, 1, 17)
     ),
     Recipe(
         id = 3,
@@ -44,7 +44,7 @@ internal fun previewRecipes(): List<Recipe> = listOf(
         _coffeeWeight = 22f,
         _balance = Balance.Acid,
         _level = Level.Strong,
-        createAt = LocalDate.of(2026, 1, 18)
+        createAt = LocalDate(2026, 1, 18)
     ),
     Recipe(
         id = 4,
@@ -54,6 +54,6 @@ internal fun previewRecipes(): List<Recipe> = listOf(
         _level = Level.Basic,
         _isIcedDrip = true,
         _hotRatio = 10,
-        createAt = LocalDate.of(2026, 1, 19)
+        createAt = LocalDate(2026, 1, 19)
     )
 )

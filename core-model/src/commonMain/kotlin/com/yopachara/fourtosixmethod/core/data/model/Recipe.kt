@@ -1,0 +1,336 @@
+package com.yopachara.fourtosixmethod.core.data.model
+
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
+
+private const val MIN_HOT_RATIO = 6
+
+/** Multiplatform replacement for `java.time.LocalDate.now()`. */
+fun currentDate(): LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+class Recipe(
+    var id: Int = 0,
+    _ratio: Int = 12,
+    _coffeeWeight: Float = 15f,
+    _balance: Balance = Balance.Basic,
+    _level: Level = Level.Basic,
+    _isIcedDrip: Boolean = false,
+    _hotRatio: Int = 10,
+    var steps: List<Step> = getDefaultSteps(),
+    var createAt: LocalDate = currentDate()
+) {
+
+    var ratio: Int = _ratio
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    var coffeeWeight: Float = _coffeeWeight
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    var balance: Balance = _balance
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    var level: Level = _level
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    var isIcedDrip: Boolean = _isIcedDrip
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    var hotRatio: Int = _hotRatio
+        set(value) {
+            field = value
+            generateSteps()
+        }
+
+    init {
+        generateSteps()
+    }
+
+    fun copy(
+        id: Int = this.id,
+        ratio: Int = this.ratio,
+        coffeeWeight: Float = this.coffeeWeight,
+        balance: Balance = this.balance,
+        level: Level = this.level,
+        isIcedDrip: Boolean = this.isIcedDrip,
+        hotRatio: Int = this.hotRatio,
+        createAt: LocalDate = this.createAt,
+    ): Recipe = Recipe(
+        id = id,
+        _ratio = ratio,
+        _coffeeWeight = coffeeWeight,
+        _balance = balance,
+        _level = level,
+        _isIcedDrip = isIcedDrip,
+        _hotRatio = hotRatio,
+        createAt = createAt
+    )
+
+    fun getTotalWater(): Float {
+        return (coffeeWeight.times(ratio))
+    }
+
+    fun getEffectiveHotRatio(): Int {
+        return hotRatio.coerceIn(MIN_HOT_RATIO, (ratio - 1).coerceAtLeast(MIN_HOT_RATIO))
+    }
+
+    fun getHotWaterWeight(): Float {
+        return coffeeWeight * getEffectiveHotRatio()
+    }
+
+    fun getIceWeight(): Float {
+        return getTotalWater() - getHotWaterWeight()
+    }
+
+    private fun getPourWaterWeight(): Float {
+        return if (isIcedDrip) getHotWaterWeight() else getTotalWater()
+    }
+
+    fun getTotalState(): Int {
+        return when (level) {
+            Level.Basic -> 5
+            Level.Strong -> 6
+            Level.Week -> 4
+        }
+    }
+
+
+    fun getStateTotalTime(state: State?): Int {
+        return when (state) {
+            State.First,
+            State.Second,
+            -> 45
+
+            State.Third,
+            State.Forth,
+            State.Fifth,
+            State.Sixth,
+            -> {
+                when (level) {
+                    Level.Basic -> if (state != State.Fifth) 45 else 30
+                    Level.Strong -> 30
+                    Level.Week -> 60
+                }
+            }
+
+            null -> 45
+        }
+    }
+
+    fun getTotalTime(): Int {
+        return when (level) {
+            Level.Basic,
+            Level.Strong,
+            Level.Week,
+            -> 210
+        }
+    }
+
+    fun getCurrentWater(state: State?): Float {
+        return steps[state?.ordinal ?: 0].waterWeight
+    }
+
+    fun getWaterPercentState(secondsRemaining: Int?): Float {
+        return when (getCurrentStatePosition(secondsRemaining)) {
+            State.First -> balance.sweetIndex
+            State.Second -> balance.acidIndex
+            State.Third,
+            State.Forth,
+            State.Fifth,
+            State.Sixth,
+            -> level.firstIndex
+
+            null -> balance.sweetIndex
+        }
+    }
+
+
+    fun getCurrentStatePosition(secondsRemaining: Int?): State? {
+        return when (secondsRemaining) {
+            in 166..210 -> {
+                State.First
+            }
+
+            in 121..165 -> {
+                State.Second
+            }
+
+            in 0..120 -> {
+                when (level) {
+                    Level.Basic -> when (secondsRemaining) {
+                        in 0..30 -> State.Fifth
+                        in 31..75 -> State.Forth
+                        in 76..120 -> State.Third
+                        else -> null
+                    }
+
+                    Level.Strong -> when (secondsRemaining) {
+                        in 0..30 -> State.Sixth
+                        in 31..60 -> State.Fifth
+                        in 61..90 -> State.Forth
+                        in 91..120 -> State.Third
+                        else -> null
+                    }
+
+                    Level.Week -> when (secondsRemaining) {
+                        in 0..60 -> State.Forth
+                        in 61..120 -> State.Third
+                        else -> null
+                    }
+                }
+            }
+
+            else -> null
+        }
+    }
+
+
+    private fun generateSteps() {
+        steps = arrayListOf<Step>().apply {
+            for (i in 1..getTotalState()) {
+                add(
+                    computeStep(
+                        state = i.intToState(),
+                        level = level,
+                        balance = balance,
+                        weight =  getPourWaterWeight()
+                    )
+                )
+            }
+        }
+    }
+
+    fun getCurrentStateTime(second: Int?): Int {
+        return second?.minus(getTotalStatePass(second ?: 0)) ?: 0
+    }
+
+    fun getTotalStatePass(second: Int): Int {
+        return when (second) {
+            in 0..45 -> {
+                0
+            }
+
+            in 46..90 -> {
+                45
+            }
+
+            in 91..225 -> {
+                when (level) {
+                    Level.Basic -> when (second) {
+                        in 91..135 -> 90
+                        in 136..180 -> 135
+                        in 181..225 -> 180
+                        else -> 0
+                    }
+
+                    Level.Strong -> when (second) {
+                        in 91..120 -> 90
+                        in 121..150 -> 120
+                        in 151..180 -> 150
+                        in 181..210 -> 180
+                        else -> 0
+                    }
+
+                    Level.Week -> when (second) {
+                        in 91..150 -> 90
+                        in 151..210 -> 150
+                        else -> 0
+                    }
+                }
+            }
+
+            else -> 0
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Recipe) return false
+
+        if (id != other.id) return false
+        if (ratio != other.ratio) return false
+        if (coffeeWeight != other.coffeeWeight) return false
+        if (balance != other.balance) return false
+        if (level != other.level) return false
+        if (steps != other.steps) return false
+        if (isIcedDrip != other.isIcedDrip) return false
+        if (hotRatio != other.hotRatio) return false
+        if (createAt != other.createAt) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + ratio
+        result = 31 * result + coffeeWeight.hashCode()
+        result = 31 * result + balance.hashCode()
+        result = 31 * result + level.hashCode()
+        result = 31 * result + isIcedDrip.hashCode()
+        result = 31 * result + hotRatio
+        result = 31 * result + steps.hashCode()
+        result = 31 * result + createAt.hashCode()
+        return result
+    }
+}
+
+fun getDefaultSteps(): List<Step> {
+    return arrayListOf<Step>().apply {
+        add(
+            Step(
+                time = 45,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.First
+            )
+        )
+        add(
+            Step(
+                time = 45,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.Second
+            )
+        )
+        add(
+            Step(
+                time = 45,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.Third
+            )
+        )
+        add(
+            Step(
+                time = 45,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.Forth
+            )
+        )
+        add(
+            Step(
+                time = 30,
+                waterWeight = 36f,
+                stepPercentage = 0.20f,
+                state = State.Fifth
+            )
+        )
+    }
+}

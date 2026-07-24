@@ -58,3 +58,6 @@ google-services.json
 
 # Manually staged release bundles
 app/*/release/
+
+# Kotlin Multiplatform incremental compilation cache
+.kotlin/

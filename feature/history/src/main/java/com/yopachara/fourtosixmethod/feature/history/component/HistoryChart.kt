@@ -16,14 +16,22 @@ import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format.char
+
+private val chartDateFormat = LocalDate.Format {
+    dayOfMonth()
+    char('/')
+    monthNumber()
+    char('/')
+    yearTwoDigits(baseYear = 2000)
+}
 
 @Composable
 fun HistoryChart(recipeList: List<Recipe>) {
 
     val frequencies = recipeList.groupingBy { recipe ->
-        recipe.createAt.toEpochDay()
+        recipe.createAt.toEpochDays()
     }.eachCount()
 
     val value = frequencies.map { recipe ->
@@ -38,7 +46,7 @@ fun HistoryChart(recipeList: List<Recipe>) {
 
     val bottomAxisValueFormatter = AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _ ->
         if (x > 0) {
-            LocalDate.ofEpochDay(x.toLong()).format(DateTimeFormatter.ofPattern("dd/MM/yy"))
+            chartDateFormat.format(LocalDate.fromEpochDays(x.toInt()))
         } else ""
     }
 

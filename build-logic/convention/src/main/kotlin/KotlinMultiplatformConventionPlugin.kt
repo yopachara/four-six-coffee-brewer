@@ -24,6 +24,10 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                 // (ExtensionContainer.add), not a real DSL function, so it needs `configure<T>`
                 // rather than the `android { }` sugar available only inside .gradle.kts scripts.
                 configure<KotlinMultiplatformAndroidLibraryTarget> {
+                    // Derive the Android namespace from the Gradle path so no module script has to
+                    // set it (e.g. :core-model -> com.yopachara.fourtosixmethod.core.model).
+                    namespace = "com.yopachara.fourtosixmethod." +
+                        path.removePrefix(":").replace(':', '.').replace('-', '.')
                     compileSdk = 37
                     minSdk = 23
 
@@ -32,7 +36,9 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                     }
                 }
 
-                iosX64()
+                // iosX64 (Intel simulator) is intentionally omitted: modern KMP libraries such as
+                // androidx.sqlite:sqlite-bundled no longer publish an ios_x64 variant. Apple-Silicon
+                // simulators use iosSimulatorArm64; devices use iosArm64.
                 iosArm64()
                 iosSimulatorArm64()
 

@@ -53,6 +53,9 @@ room = "2.8.4"
 secrets = "2.0.1"
 sqlite = "2.7.0"
 turbine = "0.12.1"
+# 2.4.4 is the newest Vico whose native klibs are built with Kotlin 2.3.0 (abi_version 2.3.0);
+# 2.5.x bumped to Kotlin 2.4.0 klibs, which a 2.3.0 Kotlin/Native compiler cannot consume.
+vico = "2.4.4"
 
 [libraries]
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
@@ -137,6 +140,7 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "sqlite" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+vico-multiplatform = { group = "com.patrykandpatrick.vico", name = "multiplatform", version.ref = "vico" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

@@ -1,16 +1,12 @@
 plugins {
-    id("foursixmethod.android.feature")
-    id("foursixmethod.android.library.compose")
-    id("foursixmethod.android.library.jacoco")
+    id("foursixmethod.kmp.feature")
 }
 
-android {
-    namespace = "com.yopachara.foursixmethod.feature.history"
-}
-
-dependencies {
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.kotlinx.datetime)
-    implementation("com.patrykandpatrick.vico:compose-m3:1.6.5")
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.vico.multiplatform)
+        }
+    }
 }

@@ -18,8 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
 import androidx.navigation3.runtime.NavKey
 import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon
 import com.yopachara.fourtosixmethod.navigation.NavHost
@@ -85,7 +85,7 @@ private fun FlowSixBottomBar(
                         )
 
                         is Icon.DrawableResourceIcon -> Icon(
-                            painter = painterResource(id = icon.id),
+                            painter = painterResource(icon.id),
                             contentDescription = null,
                         )
                     }

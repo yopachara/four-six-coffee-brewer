@@ -1,18 +1,25 @@
 plugins {
-    id("foursixmethod.android.library")
-    id("foursixmethod.android.library.compose")
+    id("foursixmethod.kmp.library")
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.kotlin.compose)
 }
 
-android {
-    namespace = "com.yopachara.fourtosixmethod.core.designsystem"
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            api(compose.foundation)
+            api(compose.material3)
+            api(compose.materialIconsExtended)
+            api(compose.ui)
+            api(compose.components.resources)
+        }
+        androidMain.dependencies {
+            implementation(libs.androidx.core.ktx)
+        }
+    }
 }
 
-dependencies {
-
-    api(libs.androidx.compose.foundation)
-    api(libs.androidx.compose.foundation.layout)
-    api(libs.androidx.compose.material.iconsExtended)
-    api(libs.androidx.compose.material3)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.coil.kt.compose)
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.yopachara.fourtosixmethod.core.designsystem.generated.resources"
 }

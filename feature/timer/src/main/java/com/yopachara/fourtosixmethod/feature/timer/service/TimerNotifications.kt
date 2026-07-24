@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.yopachara.foursixmethod.feature.timer.R
-import com.yopachara.fourtosixmethod.core.designsystem.R as DesignSystemR
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerState
 
@@ -35,7 +34,7 @@ object TimerNotifications {
 
     fun build(context: Context, state: TimerDisplayState) =
         NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(DesignSystemR.drawable.ic_timer_24)
+            .setSmallIcon(R.drawable.ic_timer_24)
             .setContentTitle(context.getString(R.string.timer_notification_title))
             .setContentText(contentText(context, state))
             .setOngoing(state.isPlaying())

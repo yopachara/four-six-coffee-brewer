@@ -8,8 +8,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
  * KMP feature module: [KotlinMultiplatformConventionPlugin] + Compose Multiplatform + shared
- * project dependencies wired into `commonMain` (mirrors the old AndroidFeatureConventionPlugin,
- * but Hilt/coil/nav3 wiring is intentionally deferred to the phases that migrate DI and navigation).
+ * project dependencies wired into `commonMain` (screens/ViewModels/DI). Koin + Compose ViewModel
+ * are common; navigation3 stays Android-only (`androidMain`) until the Phase 7 iOS shell moves the
+ * shared nav host + polymorphic `NavKey` serialization to common.
  */
 class KotlinMultiplatformFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -37,8 +38,14 @@ class KotlinMultiplatformFeatureConventionPlugin : Plugin<Project> {
                         implementation(compose.runtime)
                         implementation(compose.foundation)
                         implementation(compose.material3)
+                        implementation(compose.materialIconsExtended)
                         implementation(compose.ui)
                         implementation(compose.components.resources)
+                        implementation(compose.components.uiToolingPreview)
+
+                        implementation(target.dependencies.platform(libs.findLibrary("koin.bom").get()))
+                        implementation(libs.findLibrary("koin.core").get())
+                        implementation(libs.findLibrary("koin.compose.viewmodel").get())
 
                         implementation(libs.findLibrary("kotlinx.coroutines.core").get())
                         implementation(libs.findLibrary("kotlinx.serialization.json").get())
@@ -49,6 +56,9 @@ class KotlinMultiplatformFeatureConventionPlugin : Plugin<Project> {
                     androidMain.dependencies {
                         implementation(libs.findLibrary("coil.kt").get())
                         implementation(libs.findLibrary("coil.kt.compose").get())
+                        implementation(libs.findLibrary("androidx.activity.compose").get())
+                        implementation(libs.findLibrary("androidx.navigation3.runtime").get())
+                        implementation(libs.findLibrary("androidx.navigation3.ui").get())
                     }
                 }
             }

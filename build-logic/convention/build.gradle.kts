@@ -38,10 +38,12 @@ tasks.withType<KotlinCompile>().configureEach {
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.compose.compiler.gradlePlugin)
+    compileOnly(libs.compose.multiplatform.gradlePlugin)
     compileOnly(libs.firebase.crashlytics.gradle)
     compileOnly(libs.firebase.performance.gradle)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 gradlePlugin {
@@ -93,6 +95,18 @@ gradlePlugin {
         register("androidFlavors") {
             id = "foursixmethod.android.application.flavors"
             implementationClass = "AndroidApplicationFlavorsConventionPlugin"
+        }
+        register("kmpLibrary") {
+            id = "foursixmethod.kmp.library"
+            implementationClass = "KotlinMultiplatformConventionPlugin"
+        }
+        register("kmpFeature") {
+            id = "foursixmethod.kmp.feature"
+            implementationClass = "KotlinMultiplatformFeatureConventionPlugin"
+        }
+        register("kmpRoom") {
+            id = "foursixmethod.kmp.room"
+            implementationClass = "KmpRoomConventionPlugin"
         }
     }
 }

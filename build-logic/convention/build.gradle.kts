@@ -80,10 +80,6 @@ gradlePlugin {
             id = "foursixmethod.android.test"
             implementationClass = "AndroidTestConventionPlugin"
         }
-        register("androidHilt") {
-            id = "foursixmethod.android.hilt"
-            implementationClass = "AndroidHiltConventionPlugin"
-        }
         register("androidRoom") {
             id = "foursixmethod.android.room"
             implementationClass = "AndroidRoomConventionPlugin"

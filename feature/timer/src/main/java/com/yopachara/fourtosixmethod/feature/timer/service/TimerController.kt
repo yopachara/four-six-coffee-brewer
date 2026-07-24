@@ -13,9 +13,6 @@ import androidx.work.await
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerSessionRepository
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerState
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -27,9 +24,8 @@ import kotlinx.coroutines.launch
  * (UI) and [TimerActionReceiver] (notification action taps) so both drive the
  * timer identically.
  */
-@Singleton
-class TimerController @Inject constructor(
-    @ApplicationContext private val context: Context,
+class TimerController(
+    private val context: Context,
     private val sessionRepository: TimerSessionRepository,
     private val workManager: WorkManager,
 ) {

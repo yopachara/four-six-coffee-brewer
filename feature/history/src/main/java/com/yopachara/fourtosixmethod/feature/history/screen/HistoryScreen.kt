@@ -13,19 +13,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
 import com.yopachara.fourtosixmethod.feature.history.component.HistoryContent
 import com.yopachara.fourtosixmethod.feature.history.component.HistoryEmptyState
 import com.yopachara.fourtosixmethod.feature.history.component.previewRecipes
 import com.yopachara.fourtosixmethod.feature.history.viewmodel.HistoryViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun HistoryRoute(
     onTopicClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HistoryViewModel = hiltViewModel(),
+    viewModel: HistoryViewModel = koinViewModel(),
 ) {
     val historyState by viewModel.historyStateFlow.collectAsStateWithLifecycle()
     Scaffold(

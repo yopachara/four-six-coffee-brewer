@@ -11,16 +11,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * App-scoped holder for [TimerDisplayState] so the UI-bound [TimerViewModel]
  * and the process-independent [TimerForegroundService] observe/mutate the
  * same state instead of two divergent copies.
  */
-@Singleton
-class TimerSessionRepository @Inject constructor(
+class TimerSessionRepository(
     userSettingsRepository: UserSettingsRepository,
 ) {
 

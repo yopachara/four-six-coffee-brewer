@@ -3,15 +3,12 @@ package com.yopachara.fourtosixmethod.feature.timer.service
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.os.Build
-import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.yopachara.fourtosixmethod.core.domain.InsertRecipeUseCase
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerSessionRepository
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerState
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
@@ -25,10 +22,9 @@ import kotlinx.coroutines.flow.onStart
  * cancelling the unique work (pause/stop, via [TimerController]) tears the
  * notification down automatically, no manual stopForeground() needed.
  */
-@HiltWorker
-class TimerWorker @AssistedInject constructor(
-    @Assisted appContext: Context,
-    @Assisted params: WorkerParameters,
+class TimerWorker(
+    appContext: Context,
+    params: WorkerParameters,
     private val sessionRepository: TimerSessionRepository,
     private val insertRecipeUseCase: InsertRecipeUseCase,
 ) : CoroutineWorker(appContext, params) {

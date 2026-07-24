@@ -37,16 +37,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yopachara.fourtosixmethod.core.data.model.AccentColor
 import com.yopachara.fourtosixmethod.core.data.model.ThemeConfig
 import com.yopachara.fourtosixmethod.core.data.model.UserSettings
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SettingsRoute(
     modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = hiltViewModel(),
+    viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val settings by viewModel.settingsUiState.collectAsStateWithLifecycle()
 

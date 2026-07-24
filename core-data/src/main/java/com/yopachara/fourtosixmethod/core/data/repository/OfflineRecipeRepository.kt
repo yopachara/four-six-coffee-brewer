@@ -5,8 +5,6 @@ import com.yopachara.fourtosixmethod.core.data.model.asEntity
 import com.yopachara.fourtosixmethod.core.database.dao.RecipeDao
 import com.yopachara.fourtosixmethod.core.database.model.RecipeEntity
 import com.yopachara.fourtosixmethod.core.database.model.asExternalModel
-import com.yopachara.fourtosixmethod.core.network.Dispatcher
-import com.yopachara.fourtosixmethod.core.network.FsmDispatchers
 import com.yopachara.fourtosixmethod.core.result.Result
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -14,11 +12,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import javax.inject.Inject
 
-class OfflineRecipeRepository @Inject constructor(
+class OfflineRecipeRepository(
     private val recipeDao: RecipeDao,
-    @Dispatcher(FsmDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : RecipeRepository {
     override fun getListRecipe(): Flow<List<Recipe>> = recipeDao.getRecipeList()
         .map { entities ->

@@ -1,6 +1,5 @@
 plugins {
     id("foursixmethod.android.library")
-    id("foursixmethod.android.hilt")
 }
 
 android {
@@ -11,10 +10,8 @@ dependencies {
     implementation(project(":core-data"))
     implementation(project(":core-model"))
     implementation(project(":core-common"))
-    implementation(libs.hilt.android)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.datetime)
-
-    ksp(libs.hilt.compiler)
-
 }

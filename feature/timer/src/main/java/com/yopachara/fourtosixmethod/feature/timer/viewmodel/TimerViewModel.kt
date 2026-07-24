@@ -10,16 +10,13 @@ import com.yopachara.fourtosixmethod.core.data.repository.UserSettingsRepository
 import com.yopachara.fourtosixmethod.feature.timer.service.TimerController
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerSessionRepository
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class TimerViewModel @Inject constructor(
+class TimerViewModel(
     private val sessionRepository: TimerSessionRepository,
     private val controller: TimerController,
     private val userSettingsRepository: UserSettingsRepository,

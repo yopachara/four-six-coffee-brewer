@@ -3,14 +3,12 @@ package com.yopachara.fourtosixmethod.feature.timer.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-@AndroidEntryPoint
-class TimerActionReceiver : BroadcastReceiver() {
+class TimerActionReceiver : BroadcastReceiver(), KoinComponent {
 
-    @Inject
-    lateinit var controller: TimerController
+    private val controller: TimerController by inject()
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {

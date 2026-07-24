@@ -13,7 +13,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.work.ktx)
-    implementation(libs.hilt.ext.work)
-    ksp(libs.hilt.ext.compiler)
+    implementation(libs.koin.androidx.workmanager)
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 }

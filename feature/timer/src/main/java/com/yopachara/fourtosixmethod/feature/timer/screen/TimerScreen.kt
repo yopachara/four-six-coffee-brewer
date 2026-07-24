@@ -47,7 +47,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
@@ -58,11 +57,12 @@ import com.yopachara.fourtosixmethod.feature.timer.component.StepsDisplay
 import com.yopachara.fourtosixmethod.feature.timer.component.TimerDisplay
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 import com.yopachara.fourtosixmethod.feature.timer.viewmodel.TimerViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun TimerRoute(
     modifier: Modifier = Modifier,
-    viewModel: TimerViewModel = hiltViewModel(),
+    viewModel: TimerViewModel = koinViewModel(),
 ) {
     val timerState by viewModel.timerDisplayStateFlow.collectAsStateWithLifecycle()
     val stepsDefaultExpanded by viewModel.stepsDefaultExpanded.collectAsStateWithLifecycle()

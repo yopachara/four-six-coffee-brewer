@@ -28,7 +28,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply {
                 apply("foursixmethod.android.library")
-                apply("foursixmethod.android.hilt")
                 apply("org.jetbrains.kotlin.plugin.serialization")
             }
             extensions.configure<LibraryExtension> {
@@ -55,7 +54,9 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("coil.kt").get())
                 add("implementation", libs.findLibrary("coil.kt.compose").get())
 
-                add("implementation", libs.findLibrary("androidx.hilt.navigation.compose").get())
+                add("implementation", platform(libs.findLibrary("koin.bom").get()))
+                add("implementation", libs.findLibrary("koin.core").get())
+                add("implementation", libs.findLibrary("koin.compose.viewmodel").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
 

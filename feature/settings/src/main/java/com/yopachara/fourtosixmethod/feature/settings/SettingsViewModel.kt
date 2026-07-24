@@ -7,15 +7,12 @@ import com.yopachara.fourtosixmethod.core.data.model.AccentColor
 import com.yopachara.fourtosixmethod.core.data.model.ThemeConfig
 import com.yopachara.fourtosixmethod.core.data.model.UserSettings
 import com.yopachara.fourtosixmethod.core.data.repository.UserSettingsRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsViewModel @Inject constructor(
+class SettingsViewModel(
     private val userSettingsRepository: UserSettingsRepository,
 ) : ViewModel() {
 

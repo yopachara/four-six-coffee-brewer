@@ -1,6 +1,5 @@
 plugins {
     id("foursixmethod.android.library")
-    id("foursixmethod.android.hilt")
 }
 
 android {
@@ -8,6 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
     implementation(libs.kotlinx.coroutines.android)
 }

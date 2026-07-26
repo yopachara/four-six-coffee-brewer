@@ -41,7 +41,12 @@ class KotlinMultiplatformFeatureConventionPlugin : Plugin<Project> {
                         implementation(compose.materialIconsExtended)
                         implementation(compose.ui)
                         implementation(compose.components.resources)
-                        implementation(compose.components.uiToolingPreview)
+                        // Supplies the multiplatform androidx.compose.ui.tooling.preview.Preview.
+                        // The older components:components-ui-tooling-preview artifact (reachable
+                        // as compose.components.uiToolingPreview) is deprecated as of CMP 1.11 and
+                        // only carries the org.jetbrains.compose.* annotation. Declared by
+                        // coordinate because the compose.preview accessor is itself deprecated.
+                        implementation(libs.findLibrary("compose.multiplatform.uiToolingPreview").get())
 
                         implementation(target.dependencies.platform(libs.findLibrary("koin.bom").get()))
                         implementation(libs.findLibrary("koin.core").get())
@@ -62,6 +67,16 @@ class KotlinMultiplatformFeatureConventionPlugin : Plugin<Project> {
                     }
                 }
             }
+
+            // The renderer Android Studio needs to actually draw this module's @Preview.
+            // Per the Compose Multiplatform preview-setup docs it goes on the Android runtime
+            // classpath rather than into a source set: the AGP KMP library plugin is
+            // single-variant, so there is no debugImplementation to scope it to, and keeping
+            // it off the compile classpath stops production code from referencing it.
+            dependencies.add(
+                "androidRuntimeClasspath",
+                libs.findLibrary("compose.multiplatform.uiTooling").get(),
+            )
         }
     }
 }

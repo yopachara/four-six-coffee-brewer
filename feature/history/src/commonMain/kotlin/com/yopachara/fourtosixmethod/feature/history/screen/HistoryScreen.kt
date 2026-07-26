@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
 import com.yopachara.fourtosixmethod.feature.history.component.HistoryContent
@@ -60,13 +60,13 @@ fun HistoryScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PreviewHistoryScreen() {
     HistoryScreen(historyState = previewRecipes())
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PreviewHistoryScreenEmpty() {
     HistoryScreen(historyState = emptyList())

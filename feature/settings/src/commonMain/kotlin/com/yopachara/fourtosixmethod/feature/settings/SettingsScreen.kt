@@ -40,7 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yopachara.fourtosixmethod.core.data.model.AccentColor
 import com.yopachara.fourtosixmethod.core.data.model.ThemeConfig
 import com.yopachara.fourtosixmethod.core.data.model.UserSettings
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -253,7 +253,7 @@ private fun AccentColorSelector(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PreviewSettingsScreen() {
     SettingsScreen(

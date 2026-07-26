@@ -17,10 +17,20 @@ data class Step(
 }
 
 /**
+ * Multiplatform replacement for `BigDecimal.setScale(scale, RoundingMode.UP).toFloat()`:
+ * rounds away from zero to [scale] decimals.
+ */
+fun Float.scaleUp(scale: Int): Float {
+    val factor = 10.0.pow(scale)
+    val magnitude = ceil(abs(this.toDouble()) * factor) / factor
+    return (if (this < 0f) -magnitude else magnitude).toFloat()
+}
+
+/**
  * Multiplatform replacement for `BigDecimal.setScale(scale, RoundingMode.UP).toString()`:
  * rounds away from zero to [scale] decimals and always renders exactly [scale] fraction digits.
  */
-internal fun Float.formatScaleUp(scale: Int): String {
+fun Float.formatScaleUp(scale: Int): String {
     val factor = 10.0.pow(scale)
     val magnitude = ceil(abs(this.toDouble()) * factor).toLong()
     val unit = factor.toLong()

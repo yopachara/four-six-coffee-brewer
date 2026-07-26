@@ -5,6 +5,15 @@ plugins {
 }
 
 kotlin {
+    android {
+        // Required for composeResources to reach the APK. Compose Resources packages its
+        // files as Android *assets*, wiring them via `variant.sources.assets`, which the KMP
+        // Android library plugin leaves null while resource processing is disabled (its
+        // default). Without this the copy task is still registered but never connected, and
+        // every painterResource() throws MissingResourceException at runtime.
+        androidResources.enable = true
+    }
+
     sourceSets {
         commonMain.dependencies {
             api(compose.foundation)

@@ -12,6 +12,7 @@ import com.yopachara.fourtosixmethod.core.network.di.dispatcherModule
 import com.yopachara.fourtosixmethod.di.appModule
 import com.yopachara.fourtosixmethod.feature.history.di.historyModule
 import com.yopachara.fourtosixmethod.feature.settings.di.settingsModule
+import com.yopachara.fourtosixmethod.feature.timer.di.platformTimerModule
 import com.yopachara.fourtosixmethod.feature.timer.di.timerModule
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
@@ -36,6 +37,7 @@ open class FlowSixApplication : Application(), Configuration.Provider {
                 historyModule,
                 settingsModule,
                 timerModule,
+                platformTimerModule,
             )
         }
     }

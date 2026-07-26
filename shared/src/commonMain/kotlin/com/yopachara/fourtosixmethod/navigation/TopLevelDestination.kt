@@ -2,7 +2,6 @@ package com.yopachara.fourtosixmethod.navigation
 
 import androidx.navigation3.runtime.NavKey
 import com.yopachara.flowsixmethod.feature.about.navigation.AboutRoute
-import com.yopachara.fourtosixmethod.R
 import com.yopachara.fourtosixmethod.core.designsystem.icon.FlowSixIcons
 import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon
 import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon.DrawableResourceIcon
@@ -10,6 +9,12 @@ import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon.ImageVectorIcon
 import com.yopachara.fourtosixmethod.feature.history.navigation.HistoryRoute
 import com.yopachara.fourtosixmethod.feature.settings.navigation.SettingsRoute
 import com.yopachara.fourtosixmethod.feature.timer.navigation.TimerRoute
+import com.yopachara.fourtosixmethod.shared.generated.resources.Res
+import com.yopachara.fourtosixmethod.shared.generated.resources.about
+import com.yopachara.fourtosixmethod.shared.generated.resources.history
+import com.yopachara.fourtosixmethod.shared.generated.resources.settings
+import com.yopachara.fourtosixmethod.shared.generated.resources.timer
+import org.jetbrains.compose.resources.StringResource
 
 /**
  * Type for the top level destinations in the application. Each of these destinations
@@ -20,8 +25,8 @@ enum class TopLevelDestination(
     val route: NavKey,
     val selectedIcon: Icon,
     val unselectedIcon: Icon,
-    val iconTextId: Int,
-    val titleTextId: Int,
+    val iconTextId: StringResource,
+    val titleTextId: StringResource,
 ) {
     TIMER(
         route = TimerRoute,
@@ -31,8 +36,8 @@ enum class TopLevelDestination(
         unselectedIcon = DrawableResourceIcon(
             FlowSixIcons.TimerUnfilled
         ),
-        iconTextId = R.string.timer,
-        titleTextId = R.string.timer,
+        iconTextId = Res.string.timer,
+        titleTextId = Res.string.timer,
     ),
     HISTORY(
         route = HistoryRoute,
@@ -42,8 +47,8 @@ enum class TopLevelDestination(
         unselectedIcon = DrawableResourceIcon(
             FlowSixIcons.HistoryUnfilled
         ),
-        iconTextId = R.string.history,
-        titleTextId = R.string.history,
+        iconTextId = Res.string.history,
+        titleTextId = Res.string.history,
     ),
     SETTINGS(
         route = SettingsRoute,
@@ -53,8 +58,8 @@ enum class TopLevelDestination(
         unselectedIcon = ImageVectorIcon(
             FlowSixIcons.SettingsOutlined
         ),
-        iconTextId = R.string.settings,
-        titleTextId = R.string.settings,
+        iconTextId = Res.string.settings,
+        titleTextId = Res.string.settings,
     ),
     ABOUT(
         route = AboutRoute,
@@ -64,7 +69,7 @@ enum class TopLevelDestination(
         unselectedIcon = DrawableResourceIcon(
             FlowSixIcons.AboutUnfilled
         ),
-        iconTextId = R.string.about,
-        titleTextId = R.string.about,
+        iconTextId = Res.string.about,
+        titleTextId = Res.string.about,
     ),
 }

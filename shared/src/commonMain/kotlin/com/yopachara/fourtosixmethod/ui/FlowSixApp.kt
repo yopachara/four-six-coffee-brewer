@@ -18,12 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import org.jetbrains.compose.resources.painterResource
 import androidx.navigation3.runtime.NavKey
 import com.yopachara.fourtosixmethod.core.designsystem.icon.Icon
 import com.yopachara.fourtosixmethod.navigation.NavHost
 import com.yopachara.fourtosixmethod.navigation.TopLevelDestination
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FlowSixApp(appState: FlowSixAppState = rememberFlowSixAppState()) {

@@ -8,9 +8,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
  * KMP feature module: [KotlinMultiplatformConventionPlugin] + Compose Multiplatform + shared
- * project dependencies wired into `commonMain` (screens/ViewModels/DI). Koin + Compose ViewModel
- * are common; navigation3 stays Android-only (`androidMain`) until the Phase 7 iOS shell moves the
- * shared nav host + polymorphic `NavKey` serialization to common.
+ * project dependencies wired into `commonMain` (screens/ViewModels/DI/navigation). The shared nav
+ * host and the polymorphic `NavKey` serialization that navigation3 needs off Android live in
+ * `:shared`.
  */
 class KotlinMultiplatformFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -56,14 +56,19 @@ class KotlinMultiplatformFeatureConventionPlugin : Plugin<Project> {
                         implementation(libs.findLibrary("kotlinx.serialization.json").get())
                         implementation(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
                         implementation(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
+
+                        // Each feature declares its route NavKey and entry extension, so the
+                        // navigation3 API has to be visible from commonMain. androidx publishes
+                        // navigation3-runtime as multiplatform; only the -ui artifact comes from
+                        // JetBrains (see the catalog comment on nav3UiMultiplatform).
+                        api(libs.findLibrary("androidx.navigation3.runtime").get())
+                        api(libs.findLibrary("androidx.navigation3.ui").get())
                     }
 
                     androidMain.dependencies {
                         implementation(libs.findLibrary("coil.kt").get())
                         implementation(libs.findLibrary("coil.kt.compose").get())
                         implementation(libs.findLibrary("androidx.activity.compose").get())
-                        implementation(libs.findLibrary("androidx.navigation3.runtime").get())
-                        implementation(libs.findLibrary("androidx.navigation3.ui").get())
                     }
                 }
             }

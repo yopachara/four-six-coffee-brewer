@@ -18,6 +18,7 @@ androidxMacroBenchmark = "1.1.1"
 androidxMetrics = "1.0.0"
 androidxNavigation = "2.9.8"
 androidxProfileinstaller = "1.4.1"
+androidxSavedState = "1.4.0"
 androidxStartup = "1.1.1"
 androidxTestCore = "1.5.0"
 androidxTestExt = "1.1.5"
@@ -42,7 +43,11 @@ kotlinxDatetime = "0.6.2"
 kotlinxSerializationJson = "1.5.0"
 ksp = "2.3.6"
 lint = "30.3.1"
+# androidx publishes navigation3-runtime as a multiplatform library, but its navigation3-ui is
+# Android-only (the other targets are stubs). JetBrains republishes a real multiplatform ui build
+# under org.jetbrains.androidx.navigation3, versioned independently of the androidx runtime.
 nav3Core = "1.1.4"
+nav3UiMultiplatform = "1.1.1"
 okhttp = "4.10.0"
 okio = "3.9.1"
 protobuf = "3.21.12"
@@ -92,7 +97,8 @@ androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "li
 androidx-metrics = { group = "androidx.metrics", name = "metrics-performance", version.ref = "androidxMetrics" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
 androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "nav3Core" }
-androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "nav3Core" }
+androidx-navigation3-ui = { group = "org.jetbrains.androidx.navigation3", name = "navigation3-ui", version.ref = "nav3UiMultiplatform" }
+androidx-savedstate-compose = { group = "androidx.savedstate", name = "savedstate-compose", version.ref = "androidxSavedState" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfileinstaller" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }

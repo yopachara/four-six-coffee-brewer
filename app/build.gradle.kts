@@ -5,7 +5,6 @@ plugins {
     id("foursixmethod.android.application.compose")
     id("foursixmethod.android.application.flavors")
     id("foursixmethod.android.application.firebase")
-    alias(libs.plugins.kotlin.serialization)
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -58,33 +57,19 @@ android {
 
 dependencies {
 
+    // The whole UI, navigation and Koin graph live in :shared; this module is only the Android
+    // entry point (Application + Activity), so it needs nothing else from the module graph.
+    implementation(project(":shared"))
 
-    implementation(project(":core-common"))
-    implementation(project(":core-data"))
-    implementation(project(":core-designsystem"))
-    implementation(project(":core-model"))
-    implementation(project(":core-database"))
-    implementation(project(":core-domain"))
-    implementation(project(":feature:timer"))
-    implementation(project(":feature:history"))
-    implementation(project(":feature:about"))
-    implementation(project(":feature:settings"))
-
-    implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.activity.compose)
+    // ThemeOverlay.AppCompat.* in res/values/themes.xml.
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
+    // Configuration.Provider / WorkerFactory for the timer's foreground worker.
     implementation(libs.androidx.work.ktx)
-    implementation(libs.coil.kt)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.workmanager)
-    implementation(libs.koin.compose.viewmodel)
-    implementation(libs.androidx.lifecycle.runtimeCompose)
-    implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.navigation3.ui)
-    implementation(libs.kotlinx.serialization.json)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.ui.tooling.preview)
 
 }

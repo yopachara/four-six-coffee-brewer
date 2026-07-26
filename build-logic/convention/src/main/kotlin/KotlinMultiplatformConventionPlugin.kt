@@ -34,6 +34,11 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                     compilerOptions {
                         jvmTarget.set(JvmTarget.JVM_17)
                     }
+
+                    // Off by default in KMP library modules, which silently leaves commonTest
+                    // unrunnable on the JVM (Gradle warns but registers no task). Running the
+                    // iOS equivalents needs a simulator, so this is where commonTest executes.
+                    withHostTest { }
                 }
 
                 // iosX64 (Intel simulator) is intentionally omitted: modern KMP libraries such as

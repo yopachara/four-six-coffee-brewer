@@ -61,3 +61,8 @@ app/*/release/
 
 # Kotlin Multiplatform incremental compilation cache
 .kotlin/
+
+# Xcode
+xcuserdata/
+*.xcworkspace/xcuserdata/
+iosApp/build/

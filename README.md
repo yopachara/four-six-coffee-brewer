@@ -1,34 +1,67 @@
 # 4:6 Coffee Brew Timer ☕
 
-Android app implementing Tetsu Kasuya's 4:6 coffee brewing method — a step-by-step pour-over timer.
-Set weight, ratio, and taste balance (Body/Sweet/Acidity, Basic/Strong/Weak), then follow a generated
-pour schedule with a countdown timer. Past brews are saved locally and charted in a history screen.
+Compose Multiplatform app implementing Tetsu Kasuya's 4:6 coffee brewing method — a step-by-step
+pour-over timer. Set weight, ratio, and taste balance (Body/Sweet/Acidity, Basic/Strong/Weak), then
+follow a generated pour schedule with a countdown timer. Past brews are saved locally and charted in
+a history screen.
 
 respect to Tetsu Kasuya
 
 ## Features
 
 - Pour schedule generated from coffee weight, ratio, and taste balance
-- Countdown timer per pour step
+- Countdown timer per pour step, with notifications that keep firing in the background
+- Iced-drip mode (splits the recipe into hot water and ice)
 - Brew history stored locally (Room) and charted
-- Light/dark theming via Compose
+- Light/dark theming and a configurable accent colour
+
+## Platforms
+
+Android is the shipping platform. The codebase was ported to Compose Multiplatform, so the UI,
+navigation, domain logic, and persistence are all shared, and an iOS app target exists — but **iOS
+has not been run yet.** It compiles for `iosArm64`/`iosSimulatorArm64`; linking the framework and
+opening `iosApp/` needs a full Xcode install, which the current dev setup lacks. Treat iOS as
+work in progress.
+
+The one place the platforms deliberately differ is the background timer: Android keeps a live
+foreground countdown notification, while iOS pre-schedules a local notification per pour boundary,
+so alerts still fire on time but the on-screen readout freezes while the app is suspended.
 
 ## Tech stack
 
-- Kotlin, Jetpack Compose
-- Multi-module Gradle project (Now in Android-style structure), Hilt DI, Room, Coroutines/Flow
-- Convention plugins in `build-logic/convention` for shared module config
+- Kotlin Multiplatform, Compose Multiplatform
+- Koin for DI, Room + DataStore for persistence, Coroutines/Flow
+- navigation3, Vico for charts
+- Multi-module Gradle project (Now in Android-style structure), with convention plugins in
+  `build-logic/convention` for shared module config
 
 ## Modules
 
-- `app` — application entry point, navigation host, bottom nav
-- `feature:timer`, `feature:history`, `feature:about` , `feature:settings` — one module per screen
+Every module except `app` is Kotlin Multiplatform (`commonMain` / `androidMain` / `iosMain`).
+
+- `app` — Android entry point only: `Application` + `Activity`
+- `shared` — the shared root composable, bottom nav, navigation host, and DI setup; also exports the
+  iOS framework
+- `iosApp` — Xcode project hosting the shared UI
+- `feature:timer`, `feature:history`, `feature:about`, `feature:settings` — one module per screen
 - `core-model` — pure Kotlin domain types (`Recipe`, `Step`, `Level`, `Balance`)
-- `core-data` / `core-database` — repository + Room persistence
+- `core-data` / `core-database` — repositories + Room persistence
 - `core-domain` — use cases between features and data
 - `core-common` — dispatchers, shared utils
-- `core-designsystem` — theme, icons
+- `core-designsystem` — theme, icons, shared drawables
 
+## Building
+
+```
+./gradlew :app:assembleDemoDebug   # Android APK (demo flavor)
+./gradlew testAndroidHostTest      # shared unit tests
+```
+
+Note that `./gradlew test` only covers `:app` — the multiplatform modules' tests run under
+`testAndroidHostTest`.
+
+For iOS, once a full Xcode is installed: `open iosApp/iosApp.xcodeproj` and run. The Gradle build
+of the shared framework is wired in as a build phase.
 
 <table style="padding:10px">
   <tr>

@@ -38,10 +38,12 @@ tasks.withType<KotlinCompile>().configureEach {
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.compose.compiler.gradlePlugin)
+    compileOnly(libs.compose.multiplatform.gradlePlugin)
     compileOnly(libs.firebase.crashlytics.gradle)
     compileOnly(libs.firebase.performance.gradle)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 gradlePlugin {
@@ -54,38 +56,6 @@ gradlePlugin {
             id = "foursixmethod.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
-        register("androidApplicationJacoco") {
-            id = "foursixmethod.android.application.jacoco"
-            implementationClass = "AndroidApplicationJacocoConventionPlugin"
-        }
-        register("androidLibraryCompose") {
-            id = "foursixmethod.android.library.compose"
-            implementationClass = "AndroidLibraryComposeConventionPlugin"
-        }
-        register("androidLibrary") {
-            id = "foursixmethod.android.library"
-            implementationClass = "AndroidLibraryConventionPlugin"
-        }
-        register("androidFeature") {
-            id = "foursixmethod.android.feature"
-            implementationClass = "AndroidFeatureConventionPlugin"
-        }
-        register("androidLibraryJacoco") {
-            id = "foursixmethod.android.library.jacoco"
-            implementationClass = "AndroidLibraryJacocoConventionPlugin"
-        }
-        register("androidTest") {
-            id = "foursixmethod.android.test"
-            implementationClass = "AndroidTestConventionPlugin"
-        }
-        register("androidHilt") {
-            id = "foursixmethod.android.hilt"
-            implementationClass = "AndroidHiltConventionPlugin"
-        }
-        register("androidRoom") {
-            id = "foursixmethod.android.room"
-            implementationClass = "AndroidRoomConventionPlugin"
-        }
         register("androidFirebase") {
             id = "foursixmethod.android.application.firebase"
             implementationClass = "AndroidApplicationFirebaseConventionPlugin"
@@ -93,6 +63,18 @@ gradlePlugin {
         register("androidFlavors") {
             id = "foursixmethod.android.application.flavors"
             implementationClass = "AndroidApplicationFlavorsConventionPlugin"
+        }
+        register("kmpLibrary") {
+            id = "foursixmethod.kmp.library"
+            implementationClass = "KotlinMultiplatformConventionPlugin"
+        }
+        register("kmpFeature") {
+            id = "foursixmethod.kmp.feature"
+            implementationClass = "KotlinMultiplatformFeatureConventionPlugin"
+        }
+        register("kmpRoom") {
+            id = "foursixmethod.kmp.room"
+            implementationClass = "KmpRoomConventionPlugin"
         }
     }
 }

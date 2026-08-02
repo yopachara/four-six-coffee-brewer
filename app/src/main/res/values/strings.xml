@@ -1,7 +1,3 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">4:6 Coffee Brew Timer</string>
-    <string name="history">History</string>
-    <string name="timer">Timer</string>
-    <string name="about" tools:ignore="ExtraTranslation">About</string>
-    <string name="settings">Settings</string>
 </resources>

@@ -1,13 +1,13 @@
 plugins {
-    id("foursixmethod.android.library")
-    id("foursixmethod.android.hilt")
+    id("foursixmethod.kmp.library")
 }
 
-android {
-    namespace = "com.yopachara.foursixmethod.core.common"
-}
-
-dependencies {
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.kotlinx.coroutines.android)
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.kotlinx.coroutines.core)
+        }
+    }
 }

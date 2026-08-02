@@ -1,18 +1,20 @@
 plugins {
-    id("foursixmethod.android.library")
-    id("foursixmethod.android.hilt")
+    id("foursixmethod.kmp.library")
 }
 
-android {
-    namespace = "com.yopachara.fourtosixmethod.core.data"
-}
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":core-database"))
+            implementation(project(":core-model"))
+            implementation(project(":core-common"))
 
-dependencies {
-    implementation(project(":core-database"))
-    implementation(project(":core-model"))
-    implementation(project(":core-common"))
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.dataStore.preferences)
-    implementation(libs.kotlinx.coroutines.android)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.androidx.dataStore.preferences.core)
+            implementation(libs.okio)
+        }
+    }
 }

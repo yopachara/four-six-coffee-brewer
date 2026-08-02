@@ -1,17 +1,25 @@
 package com.yopachara.fourtosixmethod
 
 import android.app.Application
-import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
+import androidx.work.WorkerFactory
+import com.yopachara.fourtosixmethod.di.initKoin
+import org.koin.android.ext.android.get
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.workmanager.koin.workManagerFactory
 
-@HiltAndroidApp
 open class FlowSixApplication : Application(), Configuration.Provider {
 
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    override fun onCreate() {
+        super.onCreate()
+        initKoin {
+            androidContext(this@FlowSixApplication)
+            workManagerFactory()
+        }
+    }
 
     override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
+        get() = Configuration.Builder()
+            .setWorkerFactory(get<WorkerFactory>())
+            .build()
 }

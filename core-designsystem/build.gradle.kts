@@ -1,18 +1,34 @@
 plugins {
-    id("foursixmethod.android.library")
-    id("foursixmethod.android.library.compose")
+    id("foursixmethod.kmp.library")
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.kotlin.compose)
 }
 
-android {
-    namespace = "com.yopachara.fourtosixmethod.core.designsystem"
+kotlin {
+    android {
+        // Required for composeResources to reach the APK. Compose Resources packages its
+        // files as Android *assets*, wiring them via `variant.sources.assets`, which the KMP
+        // Android library plugin leaves null while resource processing is disabled (its
+        // default). Without this the copy task is still registered but never connected, and
+        // every painterResource() throws MissingResourceException at runtime.
+        androidResources.enable = true
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            api(compose.foundation)
+            api(compose.material3)
+            api(compose.materialIconsExtended)
+            api(compose.ui)
+            api(compose.components.resources)
+        }
+        androidMain.dependencies {
+            implementation(libs.androidx.core.ktx)
+        }
+    }
 }
 
-dependencies {
-
-    api(libs.androidx.compose.foundation)
-    api(libs.androidx.compose.foundation.layout)
-    api(libs.androidx.compose.material.iconsExtended)
-    api(libs.androidx.compose.material3)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.coil.kt.compose)
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.yopachara.fourtosixmethod.core.designsystem.generated.resources"
 }

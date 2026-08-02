@@ -34,12 +34,11 @@ firebaseBom = "34.16.0"
 firebaseCrashlyticsPlugin = "3.0.7"
 firebasePerfPlugin = "2.0.2"
 gmsPlugin = "4.5.0"
-jacoco = "0.8.7"
 junit4 = "4.13.2"
 koin = "4.1.1"
 kotlin = "2.3.0"
 kotlinxCoroutines = "1.10.2"
-kotlinxDatetime = "0.6.2"
+kotlinxDatetime = "0.7.1"
 kotlinxSerializationJson = "1.5.0"
 ksp = "2.3.6"
 lint = "30.3.1"
@@ -160,8 +159,6 @@ ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devto
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "androidGradlePlugin" }
-android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }

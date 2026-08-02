@@ -56,34 +56,6 @@ gradlePlugin {
             id = "foursixmethod.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
-        register("androidApplicationJacoco") {
-            id = "foursixmethod.android.application.jacoco"
-            implementationClass = "AndroidApplicationJacocoConventionPlugin"
-        }
-        register("androidLibraryCompose") {
-            id = "foursixmethod.android.library.compose"
-            implementationClass = "AndroidLibraryComposeConventionPlugin"
-        }
-        register("androidLibrary") {
-            id = "foursixmethod.android.library"
-            implementationClass = "AndroidLibraryConventionPlugin"
-        }
-        register("androidFeature") {
-            id = "foursixmethod.android.feature"
-            implementationClass = "AndroidFeatureConventionPlugin"
-        }
-        register("androidLibraryJacoco") {
-            id = "foursixmethod.android.library.jacoco"
-            implementationClass = "AndroidLibraryJacocoConventionPlugin"
-        }
-        register("androidTest") {
-            id = "foursixmethod.android.test"
-            implementationClass = "AndroidTestConventionPlugin"
-        }
-        register("androidRoom") {
-            id = "foursixmethod.android.room"
-            implementationClass = "AndroidRoomConventionPlugin"
-        }
         register("androidFirebase") {
             id = "foursixmethod.android.application.firebase"
             implementationClass = "AndroidApplicationFirebaseConventionPlugin"

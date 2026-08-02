@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
@@ -91,22 +94,25 @@ private fun LoopingDotsIndicator(
 }
 
 @Composable
-private fun TimerReadout(
+internal fun TimerReadout(
     timerDisplayState: TimerDisplayState,
     onToggle: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 76.sp,
+    totalFontSize: TextUnit = 18.sp,
+    contentPadding: PaddingValues = PaddingValues(top = 32.dp, bottom = 24.dp)
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .clickable { onToggle() }
-            .padding(top = 32.dp, bottom = 24.dp)
+            .padding(contentPadding)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(
                 text = timerDisplayState.displaySeconds,
-                fontSize = 76.sp,
-                lineHeight = 76.sp,
+                fontSize = fontSize,
+                lineHeight = fontSize,
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-3).sp,
@@ -115,7 +121,7 @@ private fun TimerReadout(
             )
             Text(
                 text = "/ ${timerDisplayState.displayTotalSeconds}",
-                fontSize = 18.sp,
+                fontSize = totalFontSize,
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.outline,
@@ -134,9 +140,10 @@ private fun TimerReadout(
 }
 
 @Composable
-private fun StepProgressBar(
+internal fun StepProgressBar(
     timerDisplayState: TimerDisplayState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    barHeight: Dp = 6.dp
 ) {
     val isRunning = timerDisplayState.isRunning()
     val currentIndex = timerDisplayState.getCurrentStateIndex()
@@ -189,7 +196,7 @@ private fun StepProgressBar(
                 Box(
                     modifier = Modifier
                         .weight(step.time.toFloat())
-                        .height(6.dp)
+                        .height(barHeight)
                         .clip(RoundedCornerShape(3.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
@@ -222,7 +229,7 @@ private fun PreviewTimerReadout() {
 @Preview(showBackground = true)
 @Composable
 private fun PreviewStepProgressBar() {
-    StepProgressBar(timerDisplayState = TimerDisplayState(60))
+    StepProgressBar(timerDisplayState = TimerDisplayState(90))
 }
 
 @Preview(showBackground = true)

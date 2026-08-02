@@ -144,6 +144,69 @@ fun StepsDisplay(
     }
 }
 
+/**
+ * The wide-window counterpart of [StepsDisplay]: the schedule gets a permanent side pane instead
+ * of an expand/collapse toggle, so every pour stays visible while the timer runs.
+ */
+@Composable
+fun StepsSchedulePanel(
+    timerDisplayState: TimerDisplayState,
+    modifier: Modifier = Modifier
+) {
+    val isRunning = timerDisplayState.isRunning()
+    val currentIndex = timerDisplayState.getCurrentStateIndex()
+    val steps = timerDisplayState.recipe.steps
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = if (isRunning) "Now brewing" else "Up next",
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.ExtraBold,
+            letterSpacing = 1.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+
+        CurrentStepCard(
+            step = steps[currentIndex],
+            index = currentIndex,
+            steps = steps
+        )
+
+        Text(
+            text = "Full schedule",
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.ExtraBold,
+            letterSpacing = 1.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
+        )
+
+        Card(
+            shape = RoundedCornerShape(18.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column {
+                steps.forEachIndexed { index, step ->
+                    StepRow(
+                        index = index,
+                        step = step,
+                        steps = steps,
+                        isActive = isRunning && index == currentIndex,
+                        isCompleted = isRunning && index < currentIndex,
+                        showCumulative = true
+                    )
+                    if (index != steps.lastIndex) {
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun CurrentStepCard(
     step: Step,
@@ -257,7 +320,8 @@ private fun StepRow(
     steps: List<Step>,
     isActive: Boolean,
     isCompleted: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showCumulative: Boolean = false
 ) {
     val rowColor by animateColorAsState(
         targetValue = if (isActive) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
@@ -310,7 +374,11 @@ private fun StepRow(
                 color = if (isActive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "${step.time}s",
+                text = if (showCumulative) {
+                    "${step.time}s · to ${weightOnScale(index, steps)}g"
+                } else {
+                    "${step.time}s"
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -3,12 +3,14 @@ package com.yopachara.fourtosixmethod.feature.timer.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -77,46 +79,55 @@ fun RecipeSettingBottomSheetContent(
     onBalanceChange: (Balance) -> Unit,
     onBodyChange: (Level) -> Unit
 ) {
-    Column(
+    // Full-bleed sliders and segmented groups get unusable on a tablet-width sheet, so the
+    // content column keeps a readable measure and centres in whatever width the sheet gets.
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp)
-            .padding(bottom = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .verticalScroll(rememberScrollState()),
+        contentAlignment = Alignment.TopCenter
     ) {
-        RecipeSheetHeader(onDone = onDone)
+        Column(
+            modifier = Modifier
+                .widthIn(max = 560.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            RecipeSheetHeader(onDone = onDone)
 
-        RecipeStatsRow(timerDisplayState = timerDisplayState)
+            RecipeStatsRow(timerDisplayState = timerDisplayState)
 
-        SettingCard {
-            WeightDisplay(timerDisplayState, onWeightChanged)
-        }
+            SettingCard {
+                WeightDisplay(timerDisplayState, onWeightChanged)
+            }
 
-        SettingCard {
-            RatioDisplay(timerDisplayState, onRatioChanged)
-        }
+            SettingCard {
+                RatioDisplay(timerDisplayState, onRatioChanged)
+            }
 
-        SettingCard {
-            IcedDripDisplay(
-                timerDisplayState = timerDisplayState,
-                onIcedDripToggle = onIcedDripToggle,
-                onHotRatioChange = onHotRatioChange
-            )
-        }
+            SettingCard {
+                IcedDripDisplay(
+                    timerDisplayState = timerDisplayState,
+                    onIcedDripToggle = onIcedDripToggle,
+                    onHotRatioChange = onHotRatioChange
+                )
+            }
 
-        SettingCard {
-            BalanceDisplay(
-                timerDisplayState = timerDisplayState,
-                changeBalanceLevel = onBalanceChange
-            )
-        }
+            SettingCard {
+                BalanceDisplay(
+                    timerDisplayState = timerDisplayState,
+                    changeBalanceLevel = onBalanceChange
+                )
+            }
 
-        SettingCard {
-            BodyDisplay(
-                timerDisplayState = timerDisplayState,
-                changeBodyLevel = onBodyChange
-            )
+            SettingCard {
+                BodyDisplay(
+                    timerDisplayState = timerDisplayState,
+                    changeBodyLevel = onBodyChange
+                )
+            }
         }
     }
 }

@@ -5,8 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,16 +41,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yopachara.fourtosixmethod.core.data.model.Balance
 import com.yopachara.fourtosixmethod.core.data.model.Level
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
+import com.yopachara.fourtosixmethod.core.designsystem.layout.LocalWindowSizeClass
+import com.yopachara.fourtosixmethod.core.designsystem.layout.WindowHeightClass
+import com.yopachara.fourtosixmethod.core.designsystem.layout.WindowWidthClass
 import com.yopachara.fourtosixmethod.feature.timer.component.GlassCard
 import com.yopachara.fourtosixmethod.feature.timer.component.RecipeSettingBottomSheet
+import com.yopachara.fourtosixmethod.feature.timer.component.StepProgressBar
 import com.yopachara.fourtosixmethod.feature.timer.component.StepsDisplay
+import com.yopachara.fourtosixmethod.feature.timer.component.StepsSchedulePanel
 import com.yopachara.fourtosixmethod.feature.timer.component.TimerDisplay
+import com.yopachara.fourtosixmethod.feature.timer.component.TimerReadout
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 import com.yopachara.fourtosixmethod.feature.timer.viewmodel.TimerViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -97,6 +107,8 @@ internal fun TimerScreen(
     val recipe = timerDisplayState.recipe
     val isRunning = timerDisplayState.isRunning()
 
+    val windowSizeClass = LocalWindowSizeClass.current
+
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -105,38 +117,52 @@ internal fun TimerScreen(
     Scaffold(
         modifier = modifier,
         bottomBar = {
-            TimerBottomBar(
-                timerDisplayState = timerDisplayState,
-                onToggle = toggleStartPause,
-                onStop = onStop,
-            )
+            // A wide window puts the transport controls at the foot of the timer pane instead,
+            // so the schedule pane runs the full height beside them.
+            if (!windowSizeClass.isWide) {
+                TimerBottomBar(
+                    timerDisplayState = timerDisplayState,
+                    onToggle = toggleStartPause,
+                    onStop = onStop,
+                )
+            }
         }
     ) { contentPadding ->
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(contentPadding)
-        ) {
-            TimerHeader(
-                recipe = recipe,
-                onOpenSettings = { showBottomSheet = true }
+        if (windowSizeClass.isWide) {
+            WideTimerContent(
+                timerDisplayState = timerDisplayState,
+                toggleStartPause = toggleStartPause,
+                onStop = onStop,
+                onOpenSettings = { showBottomSheet = true },
+                modifier = Modifier.padding(contentPadding)
             )
+        } else {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(contentPadding)
+            ) {
+                TimerHeader(
+                    recipe = recipe,
+                    onOpenSettings = { showBottomSheet = true }
+                )
 
-            if (recipe.isIcedDrip && !isRunning) {
-                IcePrepBanner(recipe = recipe)
+                if (recipe.isIcedDrip && !isRunning) {
+                    IcePrepBanner(recipe = recipe)
+                }
+
+                TimerDisplay(
+                    timerDisplayState = timerDisplayState,
+                    toggleStartPause = toggleStartPause
+                )
+
+                StepsDisplay(
+                    timerDisplayState = timerDisplayState,
+                    defaultExpanded = stepsDefaultExpanded
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
-
-            TimerDisplay(
-                timerDisplayState = timerDisplayState,
-                toggleStartPause = toggleStartPause
-            )
-
-            StepsDisplay(
-                timerDisplayState = timerDisplayState,
-                defaultExpanded = stepsDefaultExpanded
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
         }
 
         if (showBottomSheet) {
@@ -155,16 +181,119 @@ internal fun TimerScreen(
     }
 }
 
+/**
+ * Landscape and tablet layout: navigation already lives in the app-level rail, so the screen
+ * splits into a timer pane (header, readout, progress, transport) and a schedule pane that keeps
+ * every pour on screen at once.
+ */
+@Composable
+private fun WideTimerContent(
+    timerDisplayState: TimerDisplayState,
+    toggleStartPause: () -> Unit,
+    onStop: () -> Unit,
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val windowSizeClass = LocalWindowSizeClass.current
+    val isExpandedWidth = windowSizeClass.width == WindowWidthClass.Expanded
+    val isShort = windowSizeClass.height == WindowHeightClass.Compact
+    val recipe = timerDisplayState.recipe
+    val isRunning = timerDisplayState.isRunning()
+
+    // The readout is the one element with room to grow, so it carries the size difference
+    // between a phone on its side and a tablet.
+    val timerFontSize = when {
+        isShort -> 72.sp
+        isExpandedWidth -> 128.sp
+        else -> 96.sp
+    }
+    val timerTotalFontSize = when {
+        isShort -> 18.sp
+        isExpandedWidth -> 26.sp
+        else -> 22.sp
+    }
+    val panePadding = if (isExpandedWidth) 32.dp else 20.dp
+    val schedulePaneWidth = if (isExpandedWidth) 380.dp else 320.dp
+
+    Row(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(horizontal = panePadding, vertical = if (isShort) 12.dp else 24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            TimerHeader(
+                recipe = recipe,
+                onOpenSettings = onOpenSettings,
+                showSettingsLabel = true,
+                contentPadding = PaddingValues()
+            )
+
+            if (recipe.isIcedDrip && !isRunning) {
+                IcePrepBanner(recipe = recipe, contentPadding = PaddingValues())
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                TimerReadout(
+                    timerDisplayState = timerDisplayState,
+                    onToggle = toggleStartPause,
+                    fontSize = timerFontSize,
+                    totalFontSize = timerTotalFontSize,
+                    contentPadding = PaddingValues(vertical = 8.dp)
+                )
+            }
+
+            StepProgressBar(
+                timerDisplayState = timerDisplayState,
+                barHeight = 8.dp,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            TimerControls(
+                timerDisplayState = timerDisplayState,
+                onToggle = toggleStartPause,
+                onStop = onStop,
+                buttonSize = if (isShort) 48.dp else 56.dp,
+                modifier = Modifier.padding(top = if (isShort) 4.dp else 12.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .width(schedulePaneWidth)
+                .fillMaxHeight()
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = if (isShort) 16.dp else 24.dp)
+        ) {
+            StepsSchedulePanel(timerDisplayState = timerDisplayState)
+        }
+    }
+}
+
 @Composable
 private fun TimerHeader(
     recipe: Recipe,
     onOpenSettings: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showSettingsLabel: Boolean = false,
+    contentPadding: PaddingValues = PaddingValues(
+        start = 20.dp,
+        end = 20.dp,
+        top = 16.dp,
+        bottom = 4.dp
+    )
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 4.dp),
+            .padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -212,19 +341,45 @@ private fun TimerHeader(
             Spacer(modifier = Modifier.width(8.dp))
         }
 
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .clickable { onOpenSettings() }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Tune,
-                contentDescription = "Recipe settings",
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+        if (showSettingsLabel) {
+            // Wide windows have room to spell the action out rather than leaning on the icon.
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .height(44.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .clickable { onOpenSettings() }
+                    .padding(horizontal = 14.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Tune,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = "Recipe",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        } else {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .clickable { onOpenSettings() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Tune,
+                    contentDescription = "Recipe settings",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
         }
     }
 }
@@ -232,12 +387,13 @@ private fun TimerHeader(
 @Composable
 private fun IcePrepBanner(
     recipe: Recipe,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 4.dp)
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 4.dp)
+            .padding(contentPadding)
             .clip(RoundedCornerShape(14.dp))
             .background(MaterialTheme.colorScheme.tertiaryContainer)
             .padding(horizontal = 14.dp, vertical = 12.dp),
@@ -266,66 +422,80 @@ private fun TimerBottomBar(
     onStop: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    GlassCard(modifier = modifier.fillMaxWidth()) {
+        TimerControls(
+            timerDisplayState = timerDisplayState,
+            onToggle = onToggle,
+            onStop = onStop,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+        )
+    }
+}
+
+@Composable
+private fun TimerControls(
+    timerDisplayState: TimerDisplayState,
+    onToggle: () -> Unit,
+    onStop: () -> Unit,
+    modifier: Modifier = Modifier,
+    buttonSize: Dp = 48.dp
+) {
     val isRunning = timerDisplayState.isRunning()
     val isPlaying = timerDisplayState.isPlaying()
+    val shape = RoundedCornerShape(if (buttonSize >= 56.dp) 18.dp else 16.dp)
 
-    GlassCard(modifier = modifier.fillMaxWidth()) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(buttonSize)
+                .clip(shape)
+                .background(
+                    if (isRunning) MaterialTheme.colorScheme.errorContainer
+                    else MaterialTheme.colorScheme.surfaceVariant
+                )
+                .clickable(enabled = isRunning) { onStop() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Stop,
+                contentDescription = "Stop brew",
+                tint = if (isRunning) MaterialTheme.colorScheme.onErrorContainer
+                else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+            )
+        }
+
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                .weight(1f)
+                .height(buttonSize)
+                .clip(shape)
+                .background(MaterialTheme.colorScheme.primary)
+                .clickable { onToggle() },
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        if (isRunning) MaterialTheme.colorScheme.errorContainer
-                        else MaterialTheme.colorScheme.surfaceVariant
-                    )
-                    .clickable(enabled = isRunning) { onStop() }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Stop,
-                    contentDescription = "Stop brew",
-                    tint = if (isRunning) MaterialTheme.colorScheme.onErrorContainer
-                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primary)
-                    .clickable { onToggle() },
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(20.dp)
-                )
-                Text(
-                    text = when {
-                        isPlaying -> "Pause"
-                        isRunning -> "Resume"
-                        else -> "Start brewing"
-                    },
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Default,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
+            Icon(
+                imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = when {
+                    isPlaying -> "Pause"
+                    isRunning -> "Resume"
+                    else -> "Start brewing"
+                },
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Default,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(start = 8.dp)
+            )
         }
     }
-
 }

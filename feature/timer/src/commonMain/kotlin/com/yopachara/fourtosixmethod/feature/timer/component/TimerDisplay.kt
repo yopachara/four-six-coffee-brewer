@@ -34,11 +34,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yopachara.fourtosixmethod.core.logging.AppLogger
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerDisplayState
 import kotlinx.coroutines.delay
-
-private const val TAG = "TimerDisplay"
 
 @Composable
 fun TimerDisplay(
@@ -204,8 +201,6 @@ internal fun StepProgressBar(
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     if (fill > 0f) {
-                        AppLogger.d(TAG) { "Step $index fill: $fill" }
-
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()

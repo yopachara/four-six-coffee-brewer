@@ -132,36 +132,47 @@ data class Recipe(
         return second?.minus(getTotalStatePass(second)) ?: 0
     }
 
+    /**
+     * Seconds of brew time that elapsed before the pour [second] falls in, so
+     * [getCurrentStateTime] can subtract it and get the elapsed time *within* the current pour.
+     *
+     * The upper bound of each range is exclusive of the next pour's first second: these
+     * boundaries have to line up exactly with [getCurrentStatePosition], which switches state at
+     * second 45/90/135/180. They used to be one second late (`0..45`, `46..90`, ...), so on the
+     * first tick of every pour after the first, the elapsed time of the pour that just *ended*
+     * was divided by the new pour's length - a full progress bar that immediately snapped back
+     * to empty.
+     */
     fun getTotalStatePass(second: Int): Int {
         return when (second) {
-            in 0..45 -> {
+            in 0..44 -> {
                 0
             }
 
-            in 46..90 -> {
+            in 45..89 -> {
                 45
             }
 
-            in 91..TOTAL_BREW_SECONDS -> {
+            in 90..TOTAL_BREW_SECONDS -> {
                 when (level) {
                     Level.Basic -> when (second) {
-                        in 91..135 -> 90
-                        in 136..180 -> 135
-                        in 181..210 -> 180
+                        in 90..134 -> 90
+                        in 135..179 -> 135
+                        in 180..210 -> 180
                         else -> 0
                     }
 
                     Level.Strong -> when (second) {
-                        in 91..120 -> 90
-                        in 121..150 -> 120
-                        in 151..180 -> 150
-                        in 181..210 -> 180
+                        in 90..119 -> 90
+                        in 120..149 -> 120
+                        in 150..179 -> 150
+                        in 180..210 -> 180
                         else -> 0
                     }
 
                     Level.Week -> when (second) {
-                        in 91..150 -> 90
-                        in 151..210 -> 150
+                        in 90..149 -> 90
+                        in 150..210 -> 150
                         else -> 0
                     }
                 }

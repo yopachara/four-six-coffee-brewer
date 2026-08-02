@@ -57,4 +57,46 @@ class RecipeTest {
         assertEquals(State.Fifth, recipe.getCurrentStatePosition(30))
         assertEquals(null, recipe.getCurrentStatePosition(211))
     }
+
+    /**
+     * The elapsed-time-within-a-pour split has to agree with
+     * [Recipe.getCurrentStatePosition] on where each pour starts. When it did not, the first
+     * second of pours 2..n reported the previous pour's full length and drew a full progress bar.
+     */
+    @Test
+    fun each_pour_starts_from_zero_elapsed_time() {
+        listOf(
+            Level.Basic to listOf(0, 45, 90, 135, 180),
+            Level.Strong to listOf(0, 45, 90, 120, 150, 180),
+            Level.Week to listOf(0, 45, 90, 150),
+        ).forEach { (level, pourStarts) ->
+            val recipe = Recipe(level = level)
+
+            pourStarts.forEach { start ->
+                assertEquals(
+                    0,
+                    recipe.getCurrentStateTime(start),
+                    "$level: pour starting at ${start}s should report 0s elapsed",
+                )
+                // ...and the second before it belongs to the previous pour, fully elapsed.
+                if (start > 0) {
+                    val previousState = recipe.getCurrentStatePosition(TOTAL_BREW_SECONDS - start + 1)
+                    assertEquals(
+                        recipe.getStateTotalTime(previousState) - 1,
+                        recipe.getCurrentStateTime(start - 1),
+                        "$level: ${start - 1}s should be the last second of the previous pour",
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun elapsed_time_advances_within_a_pour() {
+        val recipe = Recipe(level = Level.Basic)
+
+        assertEquals(1, recipe.getCurrentStateTime(46))
+        assertEquals(44, recipe.getCurrentStateTime(89))
+        assertEquals(5, recipe.getCurrentStateTime(185))
+    }
 }

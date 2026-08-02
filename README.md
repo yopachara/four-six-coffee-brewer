@@ -14,6 +14,7 @@ respect to Tetsu Kasuya
 - Iced-drip mode (splits the recipe into hot water and ice)
 - Brew history stored locally (Room) and charted
 - Light/dark theming and a configurable accent colour
+- Adaptive layout: phone portrait, phone landscape, and tablet each get their own arrangement
 
 ## Platforms
 
@@ -22,6 +23,21 @@ navigation, domain logic, and persistence are all shared, and an iOS app target 
 has not been run yet.** It compiles for `iosArm64`/`iosSimulatorArm64`; linking the framework and
 opening `iosApp/` needs a full Xcode install, which the current dev setup lacks. Treat iOS as
 work in progress.
+
+## Adaptive layout
+
+One screen, three arrangements, chosen from the window size rather than the device:
+
+| Window | Navigation | Timer screen |
+| --- | --- | --- |
+| Compact width (< 600dp) — phone portrait | Bottom bar | Single scrolling column; the pour schedule sits behind a *Full schedule* toggle |
+| Medium width (600–839dp) — phone landscape, small tablet | Icon-only rail | Two panes: timer + transport controls beside a permanent schedule pane |
+| Expanded width (≥ 840dp) — tablet | Rail with labels | Same two panes, larger readout and roomier padding |
+
+The size class is measured once near the root with `BoxWithConstraints` (so it stays in
+`commonMain` and re-measures for free on rotation, resize, or a foldable opening) and published
+through `LocalWindowSizeClass` in `core-designsystem`. A short window keeps phone-sized type even
+when it is wide, which is what stops a phone in landscape from clipping.
 
 The one place the platforms deliberately differ is the background timer: Android keeps a live
 foreground countdown notification, while iOS pre-schedules a local notification per pour boundary,
@@ -40,15 +56,15 @@ so alerts still fire on time but the on-screen readout freezes while the app is 
 Every module except `app` is Kotlin Multiplatform (`commonMain` / `androidMain` / `iosMain`).
 
 - `app` — Android entry point only: `Application` + `Activity`
-- `shared` — the shared root composable, bottom nav, navigation host, and DI setup; also exports the
-  iOS framework
+- `shared` — the shared root composable, adaptive navigation (bottom bar or rail), navigation host,
+  and DI setup; also exports the iOS framework
 - `iosApp` — Xcode project hosting the shared UI
 - `feature:timer`, `feature:history`, `feature:about`, `feature:settings` — one module per screen
 - `core-model` — pure Kotlin domain types (`Recipe`, `Step`, `Level`, `Balance`)
 - `core-data` / `core-database` — repositories + Room persistence
 - `core-domain` — use cases between features and data
-- `core-common` — dispatchers, shared utils
-- `core-designsystem` — theme, icons, shared drawables
+- `core-common` — dispatchers, `AppLogger` (logcat on Android, `NSLog` on iOS), shared utils
+- `core-designsystem` — theme, icons, shared drawables, window size class
 
 ## Building
 

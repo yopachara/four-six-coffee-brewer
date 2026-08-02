@@ -88,4 +88,11 @@ of the shared framework is wired in as a build phase.
     <td><img width="260px" alt="Screenshot_20260721_094931" src="https://github.com/user-attachments/assets/f23125ea-3fe1-42d7-a424-836adac0af6c" /></td>
     <td><img width="260px" alt="Screenshot_20260721_094942" src="https://github.com/user-attachments/assets/5512e92e-0972-403c-8506-3aaea4fcada6" /></td>
   </tr>
+
+</table>
+<table>
+  <tr>
+   <td><img width="520" alt="Screenshot_1785680066" src="https://github.com/user-attachments/assets/e9b8a2db-a06d-44af-a8dc-d1dde2bc5347" /> </td>
+   <td><img width="520" alt="Screenshot_1785680076" src="https://github.com/user-attachments/assets/440b06cb-51df-4e4f-bb70-26cbcc4b38cf" /> </td>
+ </tr>
 </table>

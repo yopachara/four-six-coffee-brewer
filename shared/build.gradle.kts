@@ -17,6 +17,10 @@ kotlin {
         binaries.framework {
             baseName = "Shared"
             isStatic = true
+            // Xcode 16.2's simulator SDK stub omits this private UIKit class that Skiko only
+            // probes for at runtime (NSClassFromString) - -U leaves it unresolved at link time
+            // instead of failing, matching JetBrains' documented workaround for this symbol family.
+            linkerOpts("-Wl,-U,_OBJC_CLASS_\$_UIViewLayoutRegion")
         }
     }
 

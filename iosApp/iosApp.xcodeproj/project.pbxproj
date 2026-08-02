@@ -226,6 +226,7 @@
 					"$(inherited)",
 					"-framework",
 					Shared,
+					"-Wl,-U,_OBJC_CLASS_\$_UIViewLayoutRegion",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yopachara.fourtosixmethod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -257,6 +258,7 @@
 					"$(inherited)",
 					"-framework",
 					Shared,
+					"-Wl,-U,_OBJC_CLASS_\$_UIViewLayoutRegion",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yopachara.fourtosixmethod;
 				PRODUCT_NAME = "$(TARGET_NAME)";

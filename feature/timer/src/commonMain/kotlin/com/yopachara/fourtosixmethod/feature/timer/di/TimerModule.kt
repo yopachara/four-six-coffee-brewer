@@ -1,5 +1,6 @@
 package com.yopachara.fourtosixmethod.feature.timer.di
 
+import com.yopachara.fourtosixmethod.core.network.FsmDispatchers
 import com.yopachara.fourtosixmethod.feature.timer.service.TimerController
 import com.yopachara.fourtosixmethod.feature.timer.service.TimerEngine
 import com.yopachara.fourtosixmethod.feature.timer.state.TimerSessionRepository
@@ -7,10 +8,12 @@ import com.yopachara.fourtosixmethod.feature.timer.viewmodel.TimerViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val timerModule = module {
-    singleOf(::TimerSessionRepository)
+    // Explicit rather than singleOf(): the dispatcher argument needs a qualifier.
+    single { TimerSessionRepository(get(), get(named(FsmDispatchers.IO.name))) }
     singleOf(::TimerEngine)
 
     viewModelOf(::TimerViewModel)

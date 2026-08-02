@@ -2,8 +2,8 @@ package com.yopachara.fourtosixmethod.feature.timer.state
 
 import com.yopachara.fourtosixmethod.core.data.model.toRecipe
 import com.yopachara.fourtosixmethod.core.data.repository.UserSettingsRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
  */
 class TimerSessionRepository(
     userSettingsRepository: UserSettingsRepository,
+    ioDispatcher: CoroutineDispatcher,
 ) {
 
     private val _state = MutableStateFlow(TimerDisplayState())
@@ -27,7 +28,9 @@ class TimerSessionRepository(
 
     // App-scoped: seeds the recipe from the last-used settings once at process
     // start, before any screen has a chance to read the default TimerDisplayState.
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    // The seeding read hits DataStore, hence the injected IO dispatcher rather than
+    // Dispatchers.Default (and never Dispatchers.IO, which has no common declaration).
+    private val scope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
     init {
         scope.launch {

@@ -12,6 +12,8 @@ import com.yopachara.fourtosixmethod.feature.timer.di.platformTimerModule
 import com.yopachara.fourtosixmethod.feature.timer.di.timerModule
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
+import org.koin.core.logger.Logger
 import org.koin.dsl.KoinAppDeclaration
 
 /**

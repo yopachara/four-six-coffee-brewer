@@ -17,7 +17,11 @@ val databaseModule = module {
         get<RoomDatabase.Builder<AppDatabase>>()
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(ioDispatcher)
-            .fallbackToDestructiveMigration(true)
+            // Destructive only for the pre-3 schemas, which shipped without migrations and
+            // whose users were already wiped by the blanket fallback this replaces. From 3
+            // on there is real brew history to lose, so an unmigrated schema change now
+            // fails loudly at build/open time instead of silently dropping every recipe.
+            .fallbackToDestructiveMigrationFrom(true, 1, 2)
             .build()
     }
 

@@ -24,12 +24,15 @@ class LocalDateConverter {
 class StateListConverter {
     @TypeConverter
     fun stateToString(recipe: List<StepEntity>): String {
-        return Json.encodeToString(recipe)
+        return json.encodeToString(recipe)
     }
 
     @TypeConverter
     fun stringToState(value: String): List<StepEntity> {
-        val result = Json.decodeFromString<List<StepEntity>>(value)
-        return result
+        return json.decodeFromString<List<StepEntity>>(value)
     }
 }
+
+// This JSON is a persisted format, so decoding has to survive StepEntity gaining a field:
+// strict decoding would reject every previously-stored row the moment one is added.
+private val json = Json { ignoreUnknownKeys = true }

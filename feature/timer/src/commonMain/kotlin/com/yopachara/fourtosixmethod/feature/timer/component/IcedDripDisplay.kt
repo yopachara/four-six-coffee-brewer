@@ -203,7 +203,7 @@ private fun IcedDripStatRow(
 fun PreviewIcedDripDisplay() {
     IcedDripDisplay(
         timerDisplayState = TimerDisplayState(
-            recipe = Recipe(_isIcedDrip = true, _coffeeWeight = 20f, _ratio = 15, _hotRatio = 10)
+            recipe = Recipe(isIcedDrip = true, coffeeWeight = 20f, ratio = 15, hotRatio = 10)
         ),
         onIcedDripToggle = {},
         onHotRatioChange = {}

@@ -251,10 +251,10 @@ fun RecipeSettingBottomSheetContentPreview() {
     RecipeSettingBottomSheetContent(
         timerDisplayState = TimerDisplayState(
             recipe = Recipe(
-                _isIcedDrip = true,
-                _coffeeWeight = 30f,
-                _ratio = 15,
-                _hotRatio = 10,
+                isIcedDrip = true,
+                coffeeWeight = 30f,
+                ratio = 15,
+                hotRatio = 10,
             )
         ),
         onDone = {},

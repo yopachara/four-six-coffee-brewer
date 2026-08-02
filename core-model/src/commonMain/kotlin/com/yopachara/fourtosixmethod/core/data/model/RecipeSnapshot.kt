@@ -23,10 +23,10 @@ fun Recipe.toSnapshot(): RecipeSnapshot = RecipeSnapshot(
 )
 
 fun RecipeSnapshot.toRecipe(): Recipe = Recipe(
-    _ratio = ratio,
-    _coffeeWeight = coffeeWeight,
-    _balance = balance,
-    _level = level,
-    _isIcedDrip = isIcedDrip,
-    _hotRatio = hotRatio,
+    ratio = ratio,
+    coffeeWeight = coffeeWeight,
+    balance = balance,
+    level = level,
+    isIcedDrip = isIcedDrip,
+    hotRatio = hotRatio,
 )

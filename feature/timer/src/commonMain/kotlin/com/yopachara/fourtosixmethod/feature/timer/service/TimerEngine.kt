@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 /**
  * The countdown itself, platform-neutral: it owns the tick loop, the session-state
@@ -54,12 +56,23 @@ class TimerEngine(
         insertRecipeUseCase(sessionRepository.state.value.recipe)
     }
 
+    /**
+     * Ticks against a monotonic deadline rather than `delay(1000)` per iteration.
+     * A plain per-iteration delay is "at least 1s" and the collector's own work
+     * (state update, plus [run]'s `onTick` - a `setForeground()` binder round-trip on
+     * Android) lands on top of it, so the error compounds across the ~210 ticks of a
+     * brew. Anchoring each tick to `start + n` lets a slow tick borrow from the next
+     * one instead of shifting every pour boundary that follows it.
+     */
     private fun tickerFlow(totalSeconds: Int, continueFrom: Int?): Flow<Int> = flow {
         if (continueFrom == null) emit(totalSeconds)
+        val start = TimeSource.Monotonic.markNow()
         val firstTick = totalSeconds - (continueFrom ?: 0) - 1
+        var tick = 1
         for (remaining in firstTick downTo 0) {
-            delay(1000)
+            delay(tick.seconds - start.elapsedNow())
             emit(remaining)
+            tick++
         }
     }.conflate()
 }

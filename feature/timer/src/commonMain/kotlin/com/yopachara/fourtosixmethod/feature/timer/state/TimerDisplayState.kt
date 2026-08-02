@@ -1,17 +1,23 @@
 package com.yopachara.fourtosixmethod.feature.timer.state
 
 import com.yopachara.fourtosixmethod.core.data.model.Recipe
+import com.yopachara.fourtosixmethod.core.data.model.TOTAL_BREW_SECONDS
 import com.yopachara.fourtosixmethod.core.data.model.scaleUp
 
+/**
+ * All properties are `val` and everything derived is a `get()`: the derived values used to be
+ * computed once in the initializer while the inputs stayed `var`, so writing to one left the
+ * readouts - and `equals`/`hashCode` - describing the previous state.
+ */
 data class TimerDisplayState(
     val secondsRemaining: Int? = null,
     val seconds: Int? = null,
-    var totalSeconds: Int = 210,
-    var recipe: Recipe = Recipe(),
-    var timerState: TimerState = TimerState.Stop,
+    val totalSeconds: Int = TOTAL_BREW_SECONDS,
+    val recipe: Recipe = Recipe(),
+    val timerState: TimerState = TimerState.Stop,
 ) {
-    val displaySeconds: String = (getTimeDisplay(seconds))
-    val displayTotalSeconds: String = getTimeDisplay(totalSeconds)
+    val displaySeconds: String get() = getTimeDisplay(seconds)
+    val displayTotalSeconds: String get() = getTimeDisplay(totalSeconds)
 
     fun isPlaying() = timerState == TimerState.Play
     fun isComplete() = totalSeconds == seconds
@@ -24,9 +30,11 @@ data class TimerDisplayState(
     }
 
     // Show 100% if seconds remaining is null
-    val progressPercentage: Float = (secondsRemaining ?: totalSeconds) / totalSeconds.toFloat()
-    val statePercentage: Float =
-        (recipe.getCurrentStateTime(seconds)) / recipe.getStateTotalTime(
+    val progressPercentage: Float
+        get() = (secondsRemaining ?: totalSeconds) / totalSeconds.toFloat()
+
+    val statePercentage: Float
+        get() = (recipe.getCurrentStateTime(seconds)) / recipe.getStateTotalTime(
             recipe.getCurrentStatePosition(secondsRemaining)
         ).toFloat()
 

@@ -26,9 +26,10 @@ class OfflineRecipeRepository(
 
     override suspend fun saveRecipe(recipe: Recipe) = withContext(ioDispatcher) {
         return@withContext try {
-            Result.Success(recipeDao.insertRecipe(recipe.apply {
-                createAt = currentDate()
-            }.asEntity()))
+            // copy(), not apply {}: the caller's Recipe is the mutable instance held in
+            // the timer's session StateFlow, and every already-published state shares
+            // that reference - stamping createAt in place would edit them all silently.
+            Result.Success(recipeDao.insertRecipe(recipe.copy(createAt = currentDate()).asEntity()))
         } catch (e: Exception) {
             Result.Error(e)
         }

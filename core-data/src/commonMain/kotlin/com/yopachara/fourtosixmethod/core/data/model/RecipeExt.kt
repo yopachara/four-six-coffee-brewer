@@ -6,7 +6,9 @@ import com.yopachara.fourtosixmethod.core.database.model.RecipeEntity
 fun Recipe.asEntity(): RecipeEntity {
     return RecipeEntity(
         id = id,
-        steps = getDefaultSteps().map { it.asEntity() },
+        // This recipe's own schedule, not getDefaultSteps() - that stored the stock
+        // 5x36g Basic schedule against every saved brew regardless of its settings.
+        steps = steps.map { it.asEntity() },
         createAt = createAt,
         ratio = ratio,
         coffeeWeight = coffeeWeight,

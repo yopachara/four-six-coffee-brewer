@@ -7,6 +7,10 @@ a history screen.
 
 respect to Tetsu Kasuya
 
+<a href="https://play.google.com/store/apps/details?id=com.yopachara.fourtosixmethod">
+  <img src="https://github.com/pioug/google-play-badges/blob/main/svg/en.svg" alt="4:6 Coffee Brew Timer" title="4:6 Coffee Brew Timer" width="auto" height="50">
+</a>
+
 ## Features
 
 - Pour schedule generated from coffee weight, ratio, and taste balance

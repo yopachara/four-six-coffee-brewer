@@ -16,8 +16,8 @@ val keystoreProperties = Properties().apply {
 android {
     defaultConfig {
         applicationId = "com.yopachara.fourtosixmethod"
-        versionCode = 4
-        versionName = "1.3"
+        versionCode = 5
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
